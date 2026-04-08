@@ -10,8 +10,8 @@ html {
   @include mat.theme(
     (
       color: (
-        primary: mat.$magenta-palette,
-        tertiary: mat.$violet-palette,
+        primary: mat.$green-palette, // Cambiado a verde SENA
+        tertiary: mat.$blue-palette,
       ),
       typography: Roboto,
       density: 0,
@@ -20,20 +20,107 @@ html {
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
+  background-color: #f4f4f7;
+
+  /* Contenedor principal que ocupa toda la pantalla y centra la tarjeta */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #f4f4f7; // Un gris muy claro para que resalte la tarjeta blanca
+}
+
+/* La tarjeta blanca (Card) */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  border-radius: 25px; // Bordes muy redondeados como en la foto
+  background: white;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important; // Sombra suave
+  text-align: center;
+
+  mat-card-header {
+    display: block;
+    margin-bottom: 25px;
+  }
+
+  mat-card-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  mat-card-subtitle {
+    font-size: 14px;
+    color: #666;
+  }
+}
+
+/* Estilo para los inputs (Correo y Contraseña) */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 12px;
+
+  /* Para que los iconos y el texto se vean limpios */
+  mat-icon {
+    color: #555;
+  }
+}
+
+/* Fila de 'Recordarme' y 'Olvide contraseña' */
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 25px 0;
+  font-size: 13px;
+
+  .forgot-link {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: 500;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* El botón verde de Iniciar Sesión */
+.login-button {
+  width: 100%;
+  padding: 22px; // Botón más gordito
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 10px;
+  background-color: #006400 !important; // Verde SENA
+  color: white !important;
+  margin-bottom: 20px;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: #004d00 !important;
+  }
+}
+
+/* Texto de 'Registrate aquí' en el pie */
+.footer-text {
+  font-size: 14px;
+  color: #444;
+
+  .register-link {
+    color: #0056b3;
+    font-weight: 700;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
 }
 /* You can add global styles to this file, and also import other style files */

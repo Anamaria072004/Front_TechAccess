@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginInterface } from '../interfaces/login';
 import { Auth } from '../services/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
@@ -31,6 +32,7 @@ export class LogIn {
 
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
+  private router = inject(Router);
   hidePassword = true;
 
   loginForm = this.fb.group({
@@ -46,7 +48,7 @@ export class LogIn {
         next: (res) => {
           console.log('Usuario autenticado:', res);
           // Aquí podrías usar el Router para ir al home
-          // this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           // Aquí podrías mostrar un mensaje con MatSnackBar
