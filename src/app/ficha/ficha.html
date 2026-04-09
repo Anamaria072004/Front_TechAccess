@@ -1,0 +1,136 @@
+<div class="fichas-container">
+  <!-- Header -->
+  <div class="header-section">
+    <h1 class="section-title">
+      <mat-icon>school</mat-icon>
+      Gestión de Fichas
+    </h1>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon>
+      Nueva Ficha
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Buscar ficha</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Número, programa o jornada">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Estado</mat-label>
+          <mat-select>
+            <mat-option value="todos">Todos</mat-option>
+            <mat-option value="activo">Activo</mat-option>
+            <mat-option value="inactivo">Inactivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tabla de datos -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      @if (!loading) {
+        <div class="table-container">
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+            
+            <!-- Columna Número Ficha -->
+            <ng-container matColumnDef="numficha">
+              <th mat-header-cell *matHeaderCellDef> Número Ficha </th>
+              <td mat-cell *matCellDef="let ficha"> 
+                <strong>{{ ficha.numficha }}</strong>
+              </td>
+            </ng-container>
+
+            <!-- Columna Programa -->
+            <ng-container matColumnDef="programa">
+              <th mat-header-cell *matHeaderCellDef> Programa </th>
+              <td mat-cell *matCellDef="let ficha"> {{ ficha.programa }} </td>
+            </ng-container>
+
+            <!-- Columna Nivel -->
+            <ng-container matColumnDef="nivelFormacion">
+              <th mat-header-cell *matHeaderCellDef> Nivel </th>
+              <td mat-cell *matCellDef="let ficha">
+                <mat-chip>{{ ficha.nivelFormacion }}</mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Columna Jornada -->
+            <ng-container matColumnDef="jornada">
+              <th mat-header-cell *matHeaderCellDef> Jornada </th>
+              <td mat-cell *matCellDef="let ficha">
+                <mat-chip [class]="getJornadaClass(ficha.jornada)">
+                  {{ ficha.jornada }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Columna Estado -->
+            <ng-container matColumnDef="estado">
+              <th mat-header-cell *matHeaderCellDef> Estado </th>
+              <td mat-cell *matCellDef="let ficha">
+                <span class="estado-badge" [ngClass]="getEstadoClass(ficha.estado)">
+                  {{ ficha.estado }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Columna Fecha Inicio -->
+            <ng-container matColumnDef="fechaInicio">
+              <th mat-header-cell *matHeaderCellDef> Fecha Inicio </th>
+              <td mat-cell *matCellDef="let ficha"> {{ ficha.fechaInicio | date:'dd/MM/yyyy' }} </td>
+            </ng-container>
+
+            <!-- Columna Fecha Fin -->
+            <ng-container matColumnDef="fechafin">
+              <th mat-header-cell *matHeaderCellDef> Fecha Fin </th>
+              <td mat-cell *matCellDef="let ficha"> {{ ficha.fechafin | date:'dd/MM/yyyy' }} </td>
+            </ng-container>
+
+            <!-- Columna Acciones -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef> Acciones </th>
+              <td mat-cell *matCellDef="let ficha">
+                <button mat-icon-button color="primary" (click)="openEditDialog(ficha)" matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteFicha(ficha.id)" matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            
+            @for (ficha of dataSource; track ficha.id) {
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            }
+
+            @if (dataSource.length === 0) {
+              <tr class="mat-row">
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                  <div class="no-data">
+                    <mat-icon>info</mat-icon>
+                    <span>No hay fichas registradas</span>
+                  </div>
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
+      } @else {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Cargando fichas...</p>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

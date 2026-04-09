@@ -1,38 +1,46 @@
 <div class="dashboard-container">
   <mat-sidenav-container class="sidenav-container">
     
-    <!-- 1. SIDEBAR IZQUIERDO -->
+    <!-- 1. SIDEBAR IZQUIERDO (Menú de navegación) -->
     <mat-sidenav #sidenav mode="side" opened class="main-sidenav">
       <div class="logo-header">
-        <!-- Asegúrate de que esta imagen exista en src/assets -->
+        <!-- Logo del SENA -->
         <img src="assets/logo-sena-blanco.png" alt="SENA" class="sena-logo">
-        <span>TechAccess</span>
+        <span class="brand-name">TechAccess</span>
       </div>
 
       <mat-nav-list>
-        <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+        <!-- Enlace a Inicio (Cartas) -->
+        <a mat-list-item routerLink="/dashboard/inicio" routerLinkActive="active-link">
           <mat-icon matListItemIcon>grid_view</mat-icon>
           <span matListItemTitle>Inicio</span>
         </a>
-        <a mat-list-item routerLink="/usuarios" routerLinkActive="active-link">
+
+        <!-- Enlace a Usuarios -->
+        <a mat-list-item routerLink="/dashboard/usuarios" routerLinkActive="active-link">
           <mat-icon matListItemIcon>group</mat-icon>
           <span matListItemTitle>Usuarios</span>
         </a>
-        <a mat-list-item routerLink="/vehiculo" routerLinkActive="active-link">
+
+        <!-- Enlace a Vehículos -->
+        <a mat-list-item routerLink="/dashboard/vehiculos" routerLinkActive="active-link">
           <mat-icon matListItemIcon>directions_car</mat-icon>
           <span matListItemTitle>Vehículos</span>
         </a>
-        <a mat-list-item routerLink="/fichas" routerLinkActive="active-link">
+
+        <!-- Enlace a Fichas -->
+        <a mat-list-item routerLink="/dashboard/fichas" routerLinkActive="active-link">
           <mat-icon matListItemIcon>school</mat-icon>
           <span matListItemTitle>Fichas</span>
         </a>
       </mat-nav-list>
+
     </mat-sidenav>
 
-    <!-- 2. CONTENIDO DERECHO -->
+    <!-- 2. CONTENIDO DERECHO (Toolbar + Vistas dinámicas) -->
     <mat-sidenav-content>
       
-      <!-- TOOLBAR (Una sola, limpia) -->
+      <!-- TOOLBAR SUPERIOR -->
       <mat-toolbar class="top-toolbar">
         <button mat-icon-button (click)="sidenav.toggle()">
           <mat-icon>menu</mat-icon>
@@ -40,6 +48,7 @@
         <span class="title">Gestión de Acceso SENA</span>
         <span class="spacer"></span>
         
+        <!-- Información del Usuario -->
         <span class="user-name">Hola, {{ userName }}</span>
         
         <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -51,46 +60,17 @@
             <mat-icon>person</mat-icon>
             <span>Mi Perfil</span>
           </button>
-        <!-- Botón de cerrar sesión al final -->
-        <div class="logout-item">
-          <a mat-list-item (click)="logout()">
-            <mat-icon matListItemIcon>exit_to_app</mat-icon>
-            <span matListItemTitle>Cerrar Sesión</span>
-          </a>
-        </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Cerrar Sesión</span>
+          </button>
         </mat-menu>
       </mat-toolbar>
 
-      <!-- ÁREA DE BIENVENIDA Y CARDS -->
       <div class="content-padding">
-        <h1 class="welcome-title">Bienvenido al Sistema TechAccess SENA</h1>
-        <p class="subtitle">Selecciona una de las opciones para comenzar a gestionar el acceso.</p>
-
-        <div class="cards-grid">
-          <mat-card class="access-card" routerLink="/usuarios">
-            <mat-icon class="card-icon blue">groups</mat-icon>
-            <mat-card-content>
-              <h2>Usuarios</h2>
-              <p>Gestionar aprendices y personal</p>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="access-card" routerLink="/vehiculos">
-            <mat-icon class="card-icon green">directions_car</mat-icon>
-            <mat-card-content>
-              <h2>Vehículos</h2>
-              <p>Registro de placas y propietarios</p>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="access-card" routerLink="/fichas">
-            <mat-icon class="card-icon orange">school</mat-icon>
-            <mat-card-content>
-              <h2>Fichas</h2>
-              <p>Programas y jornadas de formación</p>
-            </mat-card-content>
-          </mat-card>
-        </div>
+      
+        <router-outlet></router-outlet>
       </div>
 
     </mat-sidenav-content>

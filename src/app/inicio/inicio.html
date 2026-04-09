@@ -1,0 +1,50 @@
+<div class="welcome-container">
+  <div class="welcome-text">
+    <h1 class="welcome-title">Bienvenido al Sistema TechAccess SENA</h1>
+    <p class="subtitle">Selecciona una de las opciones para comenzar a gestionar el acceso institucional.</p>
+  </div>
+
+  <div class="cards-grid">
+    <!-- Card de Usuarios -->
+    <mat-card class="access-card" routerLink="/dashboard/usuarios">
+      <div class="card-header-icon blue">
+        <mat-icon>groups</mat-icon>
+      </div>
+      <mat-card-content>
+        <h2>Usuarios</h2>
+        <p>Gestión de aprendices, instructores y personal administrativo.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">GESTIONAR</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Card de Vehículos -->
+    <mat-card class="access-card" routerLink="/dashboard/vehiculos">
+      <div class="card-header-icon green">
+        <mat-icon>directions_car</mat-icon>
+      </div>
+      <mat-card-content>
+        <h2>Vehículos</h2>
+        <p>Control de ingreso de automóviles y motocicletas al centro.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="accent">GESTIONAR</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Card de Fichas -->
+    <mat-card class="access-card" routerLink="/dashboard/fichas">
+      <div class="card-header-icon orange">
+        <mat-icon>school</mat-icon>
+      </div>
+      <mat-card-content>
+        <h2>Fichas</h2>
+        <p>Administración de programas de formación y registros.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="warn">GESTIONAR</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

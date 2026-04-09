@@ -1,4 +1,4 @@
-.vehiculos-container {
+.fichas-container {
   padding: 20px;
   background: #f5f5f5;
   min-height: calc(100vh - 64px);
@@ -74,69 +74,40 @@
   }
 }
 
-/* Placa badge */
-.placa-badge {
+.estado-badge {
   display: inline-block;
   padding: 4px 12px;
-  background: #2c3e50;
-  color: white;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* Tipo de vehículo chips */
-mat-chip {
+  border-radius: 20px;
   font-size: 0.75rem;
-  padding: 4px 12px;
-  min-height: 28px;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.estado-activo {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.estado-inactivo {
+    background: #ffebee;
+    color: #c62828;
+  }
 }
 
-.tipo-automovil {
+.jornada-manana {
   background: #e3f2fd;
   color: #1565c0;
 }
 
-.tipo-motocicleta {
+.jornada-tarde {
   background: #fff3e0;
   color: #e65100;
 }
 
-.tipo-camioneta {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.tipo-camion {
+.jornada-noche {
   background: #f3e5f5;
   color: #6a1b9a;
 }
 
-/* Color indicator */
-.color-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.color-circle {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: inline-block;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Usuario */
-.usuario-nombre {
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-/* Estado de carga */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -156,9 +127,8 @@ mat-chip {
   font-size: 1rem;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
-  .vehiculos-container {
+  .fichas-container {
     padding: 12px;
   }
 
@@ -173,13 +143,5 @@ mat-chip {
 
   .filter-row {
     flex-direction: column;
-  }
-
-  .table-container {
-    font-size: 0.75rem;
-  }
-
-  td, th {
-    padding: 8px 12px;
   }
 }
