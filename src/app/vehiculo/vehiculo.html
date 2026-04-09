@@ -1,0 +1,58 @@
+<div class="container-fluid py-4">
+  <!-- Encabezado de Sección -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold">Gestión de Vehículos</h2>
+    <button class="btn btn-success d-flex align-items-center gap-2">
+      <i class="bi bi-plus-circle"></i> Nuevo Vehículo
+    </button>
+  </div>
+
+  <!-- Card Principal -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="px-4 py-3 text-secondary">ID</th>
+              <th class="py-3 text-secondary">Placa</th>
+              <th class="py-3 text-secondary">Tipo</th>
+              <th class="py-3 text-secondary">Marca</th>
+              <th class="py-3 text-secondary">Color</th>
+              <th class="py-3 text-secondary">Usuario</th>
+              <th class="py-3 text-center text-secondary">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Aquí usamos *ngFor para iterar la lista de tu backend -->
+            <tr *ngFor="let vehiculo of vehiculos">
+              <td class="px-4 py-3 fw-bold text-muted">{{ vehiculo.id }}</td>
+              <td class="py-3">
+                <span class="badge bg-dark text-uppercase p-2">{{ vehiculo.placa }}</span>
+              </td>
+              <td class="py-3">{{ vehiculo.tipoVehiculo }}</td>
+              <td class="py-3">{{ vehiculo.marca }}</td>
+              <td class="py-3">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="color-circle" [style.backgroundColor]="vehiculo.colorHex"></span>
+                  {{ vehiculo.color }}
+                </div>
+              </td>
+              <td class="py-3">
+                <span class="text-primary">{{ vehiculo.usuario?.nombre || 'No asignado' }}</span>
+              </td>
+              <td class="py-3 text-center">
+                <button class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

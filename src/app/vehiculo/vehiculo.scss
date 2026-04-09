@@ -1,0 +1,32 @@
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+thead th {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tbody tr {
+  transition: background-color 0.2s ease;
+  vertical-align: middle;
+}
+
+.color-circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  display: inline-block;
+}
+
+.text-primary {
+  color: #39A900 !important; /* El verde característico del SENA */
+}
+
+.btn-success {
+  background-color: #39A900;
+  border: none;
+}

@@ -1,23 +1,26 @@
 import { Routes } from '@angular/router';
-// Asegúrate de importar el componente aquí
-import { Dashboard } from './dashboard/dashboard'; 
+import { Dashboard } from './dashboard/dashboard';
+import { Vehiculo } from './vehiculo/vehiculo';
 
 export const routes: Routes = [
     {
         path: 'auth',
         loadChildren: () => import('./auth/auth.routes').then(m => m.AUTH_ROUTES)
-    },
-    { 
-        path: 'dashboard', 
+    }, // Ajusta la ruta de importación
+
+    { path: 'vehiculo', component: Vehiculo },
+    {
+        path: 'dashboard',
         component: Dashboard
     },
+
     {
         path: '',
-        redirectTo: 'auth', 
+        redirectTo: 'auth',
         pathMatch: 'full'
     },
     {
-        path: '**', 
+        path: '**',
         redirectTo: 'auth'
     }
 ];
