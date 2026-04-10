@@ -48,7 +48,7 @@ export class LogIn {
         next: (res) => {
           console.log('Usuario autenticado:', res);
           // Aquí podrías usar el Router para ir al home
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard/inicio']);
         },
         error: (err) => {
           // Aquí podrías mostrar un mensaje con MatSnackBar

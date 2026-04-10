@@ -1,0 +1,223 @@
+.usuarios-container {
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: calc(100vh - 64px);
+}
+
+/* ── Header ── */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #333;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #39A900;
+    }
+  }
+
+  .btn-nuevo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #39A900;
+    border: 1.5px solid #39A900;
+    border-radius: 8px;
+    padding: 6px 18px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background: #39A90015;
+    }
+  }
+}
+
+/* ── Table card ── */
+.table-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+
+  .table-container {
+    overflow-x: auto;
+    min-height: 400px;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  th {
+    background: #f5f5f5;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.82rem;
+  }
+
+  td {
+    padding: 12px 16px;
+    font-size: 0.875rem;
+  }
+}
+
+/* ── Nombre col ── */
+.nombre-col {
+  display: flex;
+  flex-direction: column;
+
+  .fw  { font-weight: 500; font-size: 0.875rem; }
+  .sub { font-size: 0.75rem; color: #888; }
+}
+
+/* ── Mono ── */
+.mono { font-family: monospace; font-size: 0.82rem; }
+
+/* ── Icon cell ── */
+.icon-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .cell-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #aaa;
+  }
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &.badge-doc {
+    background: #f0f0f0;
+    color: #555;
+    border: 0.5px solid #ddd;
+  }
+
+  &.badge-role {
+    background: #e3f2fd;
+    color: #1565c0;
+    margin: 2px;
+  }
+
+  &.badge-ficha {
+    background: #f0f0f0;
+    color: #555;
+    border: 0.5px solid #ddd;
+  }
+}
+
+/* ── Estado badge ── */
+.estado-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.estado-activo     { background: #e8f5e9; color: #2e7d32; }
+  &.estado-inactivo   { background: #ffebee; color: #c62828; }
+  &.estado-suspendido { background: #fff8e1; color: #e65100; }
+}
+
+/* ── Roles ── */
+.roles-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+/* ── ID col ── */
+.id-col { font-weight: 500; color: #888; font-size: 0.8rem; }
+
+/* ── Muted ── */
+.muted { color: #bbb; }
+.small { font-size: 0.8rem; }
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+
+.btn-act {
+  &.ver  { color: #1565c0; }
+  &.dev  { color: #0f6e56; }
+  &.edit { color: #555;    }
+  &.del  { color: #c62828; }
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+/* ── Center ── */
+.center { text-align: center !important; }
+
+/* ── Loading / empty ── */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  gap: 16px;
+  color: #888;
+}
+
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: #999;
+  font-size: 1rem;
+
+  mat-icon { color: #ccc; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .usuarios-container { padding: 12px; }
+
+  .header-section {
+    flex-direction: column;
+    align-items: stretch;
+
+    .section-title { font-size: 1.4rem; }
+    .btn-nuevo     { justify-content: center; }
+  }
+}

@@ -27,7 +27,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatCardModule,
     MatDividerModule
   ],
-  templateUrl: './dashboard.html', // Verifica que el archivo se llame así y no dashboard.component.html
+  templateUrl: './dashboard.html', 
   styleUrl: './dashboard.scss'
 })
 export class Dashboard implements OnInit {
