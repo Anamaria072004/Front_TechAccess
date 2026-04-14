@@ -1,185 +1,176 @@
+/* vehiculo.scss */
 .vehiculos-container {
-  padding: 20px;
-  background: #f5f5f5;
-  min-height: calc(100vh - 64px);
-}
-
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-  gap: 16px;
-
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 500;
-    color: #333;
-
-    mat-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      color: #39A900;
-    }
-  }
-}
-
-.filter-card {
-  margin-bottom: 24px;
+  padding: 30px;
   background: white;
-  border-radius: 12px;
-
-  .filter-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-
-    .filter-field {
-      flex: 1;
-      min-width: 200px;
-    }
-  }
-}
-
-.table-card {
-  border-radius: 12px;
-  overflow: hidden;
-
-  .table-container {
-    overflow-x: auto;
-    min-height: 400px;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  th {
-    background: #f5f5f5;
-    font-weight: 600;
-    color: #555;
-    font-size: 0.85rem;
-  }
-
-  td {
-    padding: 12px 16px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Placa badge */
-.placa-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  background: #2c3e50;
-  color: white;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* Tipo de vehículo chips */
-mat-chip {
-  font-size: 0.75rem;
-  padding: 4px 12px;
-  min-height: 28px;
-}
-
-.tipo-automovil {
-  background: #e3f2fd;
-  color: #1565c0;
-}
-
-.tipo-motocicleta {
-  background: #fff3e0;
-  color: #e65100;
-}
-
-.tipo-camioneta {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.tipo-camion {
-  background: #f3e5f5;
-  color: #6a1b9a;
-}
-
-/* Color indicator */
-.color-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.color-circle {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: inline-block;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Usuario */
-.usuario-nombre {
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-/* Estado de carga */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  gap: 16px;
-}
-
-.no-data {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 40px;
-  color: #999;
-  font-size: 1rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .vehiculos-container {
-    padding: 12px;
-  }
+  min-height: calc(100vh - 64px);
+  font-family: 'Plus Jakarta Sans', sans-serif;
 
   .header-section {
-    flex-direction: column;
-    align-items: stretch;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
 
     .section-title {
-      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+      }
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: #39A900;
+        background: rgba(57, 169, 0, 0.1);
+        padding: 12px;
+        border-radius: 12px;
+        box-sizing: content-box;
+      }
+    }
+
+    .btn-nuevo {
+      height: 48px;
+      padding: 0 24px;
+      background: linear-gradient(135deg, #39A900 0%, #2e8a00 100%);
+      color: white;
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 15px -3px rgba(57, 169, 0, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(57, 169, 0, 0.4);
+      }
     }
   }
 
-  .filter-row {
+  .table-card {
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+
+      th {
+        padding: 18px 24px;
+        background: #f8fafc;
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        border-bottom: 2px solid #e2e8f0;
+      }
+
+      td {
+        padding: 16px 24px;
+        color: #000;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      tr:hover td {
+        background-color: #f8fafc;
+      }
+    }
+  }
+
+  .placa-badge {
+    background: #fef9c3;
+    color: #854d0e;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: monospace;
+    font-size: 1.1rem;
+    border: 1px solid #fde047;
+  }
+
+  .vehicle-info {
+    display: flex;
     flex-direction: column;
+    strong {
+      color: #1e293b;
+      line-height: 1.2;
+    }
+    span {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 500;
+    }
   }
 
-  .table-container {
-    font-size: 0.75rem;
+  .owner-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    .avatar-owner {
+      width: 32px;
+      height: 32px;
+      background: #e2e8f0;
+      color: #475569;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
   }
 
-  td, th {
-    padding: 8px 12px;
+  .actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+
+    .btn-act {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.edit {
+        background: #f1f5f9;
+        color: #1e293b;
+        &:hover { background: #e2e8f0; }
+      }
+
+      &.del {
+        background: #fef2f2;
+        color: #ef4444;
+        &:hover { background: #fee2e2; }
+      }
+    }
+  }
+
+  .loading-container, .no-data {
+    padding: 80px;
+    text-align: center;
+    color: #94a3b8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
   }
 }

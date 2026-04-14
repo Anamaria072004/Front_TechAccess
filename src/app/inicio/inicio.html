@@ -1,50 +1,86 @@
-<div class="welcome-container">
-  <div class="welcome-text">
-    <h1 class="welcome-title">Bienvenido al Sistema TechAccess SENA</h1>
-    <p class="subtitle">Selecciona una de las opciones para comenzar a gestionar el acceso institucional.</p>
+<div class="dashboard-wrapper">
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div class="hero-content">
+      <h1 class="welcome-title">Bienvenido nuevamente, {{ userName }}!</h1>
+      <p class="welcome-subtitle">Aquí tienes tu resumen de accesos institucionales en TechAccess.</p>
+      <div class="date-badge">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ currentDate | date:'fullDate':'':'es' }}</span>
+      </div>
+    </div>
+    <div class="hero-illustration">
+      <mat-icon class="bg-icon">dashboard</mat-icon>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <!-- Card de Usuarios -->
-    <mat-card class="access-card" routerLink="/dashboard/usuarios">
-      <div class="card-header-icon blue">
-        <mat-icon>groups</mat-icon>
+  <!-- KPI CARDS (STATISTICS) -->
+  <div class="kpi-grid">
+    
+    <div class="kpi-card" routerLink="/dashboard/users">
+      <div class="kpi-icon blue">
+        <mat-icon>people</mat-icon>
       </div>
-      <mat-card-content>
-        <h2>Usuarios</h2>
-        <p>Gestión de aprendices, instructores y personal administrativo.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary">GESTIONAR</button>
-      </mat-card-actions>
-    </mat-card>
+      <div class="kpi-info">
+        <span class="kpi-title">Usuarios Activos</span>
+        <span class="kpi-value">{{ totalUsuarios }}</span>
+      </div>
+    </div>
 
-    <!-- Card de Vehículos -->
-    <mat-card class="access-card" routerLink="/dashboard/vehiculos">
-      <div class="card-header-icon green">
+    <div class="kpi-card" routerLink="/dashboard/vehiculos">
+      <div class="kpi-icon green">
         <mat-icon>directions_car</mat-icon>
       </div>
-      <mat-card-content>
-        <h2>Vehículos</h2>
-        <p>Control de ingreso de automóviles y motocicletas al centro.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="accent">GESTIONAR</button>
-      </mat-card-actions>
-    </mat-card>
+      <div class="kpi-info">
+        <span class="kpi-title">Vehículos Registrados</span>
+        <span class="kpi-value">{{ totalVehiculos }}</span>
+      </div>
+    </div>
 
-    <!-- Card de Fichas -->
-    <mat-card class="access-card" routerLink="/dashboard/fichas">
-      <div class="card-header-icon orange">
+    <div class="kpi-card">
+      <div class="kpi-icon purple">
+        <mat-icon>how_to_reg</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Ingresos Históricos</span>
+        <span class="kpi-value">{{ totalIngresos }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card" routerLink="/dashboard/fichas">
+      <div class="kpi-icon orange">
         <mat-icon>school</mat-icon>
       </div>
-      <mat-card-content>
-        <h2>Fichas</h2>
-        <p>Administración de programas de formación y registros.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="warn">GESTIONAR</button>
-      </mat-card-actions>
-    </mat-card>
+      <div class="kpi-info">
+        <span class="kpi-title">Fichas en Curso</span>
+        <span class="kpi-value">{{ totalFichas }}</span>
+      </div>
+    </div>
+
   </div>
+
+  <!-- RECENT ACTIVITY SECTION (GLASSMORPHISM) -->
+  <div class="activity-section">
+    <div class="section-header">
+      <h2><mat-icon>history_toggle_off</mat-icon> Feed de Actividad Reciente</h2>
+      <button mat-button color="primary">VER TODO</button>
+    </div>
+    
+    <div class="activity-list">
+      <div class="activity-item" *ngFor="let activity of recentActivity">
+        <div class="activity-icon" [ngClass]="activity.color">
+          <mat-icon>{{ activity.icon }}</mat-icon>
+        </div>
+        <div class="activity-details">
+          <span class="activity-message">{{ activity.message }}</span>
+          <span class="activity-time">{{ activity.time }}</span>
+        </div>
+        <button mat-icon-button class="action-btn">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>

@@ -49,7 +49,7 @@ export interface AuthResponse {
 export class Auth {
 
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000/auth';
+  private readonly API_URL = 'http://localhost:3000/api/auth';
 
   // 1. Estado privado (Signal) - Almacena el objeto completo del back
   private _authStatus = signal<AuthResponse | null>(null);
@@ -64,7 +64,6 @@ export class Auth {
     return user ? user.roles.flatMap(r => r.modules.map(m => m.name)) : [];
   });
 
-  /** Método principal de Login */
   public login(credentials: LoginInterface): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap((response) => {
@@ -72,6 +71,7 @@ export class Auth {
         this._authStatus.set(response);
         // Persistencia básica para recargas de página
         localStorage.setItem('token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
       })
     );
   }
@@ -79,6 +79,7 @@ export class Auth {
   public logout(): void {
     this._authStatus.set(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 
   // public login(user: LoginInterface){

@@ -1,0 +1,84 @@
+<div class="users-container">
+  <div class="header-section">
+    <div class="section-title">
+      <mat-icon>school</mat-icon>
+      <h1>Gestión de Aprendices</h1>
+    </div>
+    <button class="btn-nuevo" (click)="abrirModalNuevo()">
+      <mat-icon>add</mat-icon>
+      Registrar Aprendiz
+    </button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-container">
+      <!-- Spinner -->
+      <div class="loading-container" *ngIf="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Cargando base de datos de aprendices...</span>
+      </div>
+
+      <!-- Tabla -->
+      <table mat-table [dataSource]="aprendices" *ngIf="!loading && aprendices.length > 0">
+        
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre Completo</th>
+          <td mat-cell *matCellDef="let u">
+            <div class="user-info">
+              <strong>{{ u.name }} {{ u.lastName }}</strong>
+              <span>{{ u.email }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="documento">
+          <th mat-header-cell *matHeaderCellDef>Documento</th>
+          <td mat-cell *matCellDef="let u">
+            {{ u.docType }} {{ u.docNumber }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ficha">
+          <th mat-header-cell *matHeaderCellDef>Ficha de Formación</th>
+          <td mat-cell *matCellDef="let u">
+            <div class="ficha-info" *ngIf="u.fichas">
+              <span class="ficha-num">{{ u.fichas.numficha }}</span>
+              <span class="ficha-prog">{{ u.fichas.programa }}</span>
+            </div>
+            <span class="muted" *ngIf="!u.fichas">Sin ficha asignada</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let u">
+            <span class="status-badge" [ngClass]="u.state">{{ u.state }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef class="center">Acciones</th>
+          <td mat-cell *matCellDef="let u">
+            <div class="actions">
+              <button class="btn-act edit" (click)="editarAprendiz(u)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="btn-act del" (click)="eliminarAprendiz(u)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- No Data -->
+      <div class="no-data" *ngIf="!loading && aprendices.length === 0">
+        <mat-icon>group_off</mat-icon>
+        <span>No se encontraron aprendices registrados.</span>
+      </div>
+    </div>
+  </div>
+</div>

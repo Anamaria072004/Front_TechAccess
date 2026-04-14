@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
@@ -33,6 +33,7 @@ export class LogIn {
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
   private router = inject(Router);
+  private ngZone = inject(NgZone);
   hidePassword = true;
 
   loginForm = this.fb.group({
@@ -47,11 +48,12 @@ export class LogIn {
       this.authService.login(rawForm).subscribe({
         next: (res) => {
           console.log('Usuario autenticado:', res);
-          // Aquí podrías usar el Router para ir al home
-          this.router.navigate(['/dashboard/inicio']);
+          // Forzar la ejecución de enrutamiento y ChangeDetection dentro de la Zona
+          this.ngZone.run(() => {
+            this.router.navigate(['/dashboard/inicio']);
+          });
         },
         error: (err) => {
-          // Aquí podrías mostrar un mensaje con MatSnackBar
           console.error('Error en login:', err.error.message);
         }
       });

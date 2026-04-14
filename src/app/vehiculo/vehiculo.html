@@ -1,135 +1,81 @@
 <div class="vehiculos-container">
-  <!-- Header -->
   <div class="header-section">
-    <h1 class="section-title">
+    <div class="section-title">
       <mat-icon>directions_car</mat-icon>
-      Gestión de Vehículos
-    </h1>
-    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      <h1>Control de Vehículos</h1>
+    </div>
+    <button class="btn-nuevo" (click)="openCreateDialog()">
       <mat-icon>add</mat-icon>
-      Nuevo Vehículo
+      Registrar Vehículo
     </button>
   </div>
 
-  <!-- Filtros -->
-  <mat-card class="filter-card">
-    <mat-card-content>
-      <div class="filter-row">
-        <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>Buscar vehículo</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Placa, marca o tipo">
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>Tipo de Vehículo</mat-label>
-          <mat-select (selectionChange)="filterByType($event.value)">
-            <mat-option value="todos">Todos</mat-option>
-            <mat-option value="Automóvil">Automóvil</mat-option>
-            <mat-option value="Motocicleta">Motocicleta</mat-option>
-            <mat-option value="Camioneta">Camioneta</mat-option>
-            <mat-option value="Camión">Camión</mat-option>
-          </mat-select>
-        </mat-form-field>
+  <div class="table-card">
+    <div class="table-container">
+      <!-- Spinner -->
+      <div class="loading-container" *ngIf="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Cargando parqueadero virtual...</span>
       </div>
-    </mat-card-content>
-  </mat-card>
 
-  <!-- Tabla de datos -->
-  <mat-card class="table-card">
-    <mat-card-content>
-      @if (!loading) {
-        <div class="table-container">
-          <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
-            
-            <!-- Columna ID -->
-            <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef> ID </th>
-              <td mat-cell *matCellDef="let vehiculo"> 
-                <strong>{{ vehiculo.id }}</strong>
-              </td>
-            </ng-container>
+      <!-- Tabla -->
+      <table mat-table [dataSource]="dataSource" *ngIf="!loading && dataSource.length > 0">
+        
+        <!-- Placa -->
+        <ng-container matColumnDef="placa">
+          <th mat-header-cell *matHeaderCellDef>Placa</th>
+          <td mat-cell *matCellDef="let v">
+            <span class="placa-badge">{{ v.placa }}</span>
+          </td>
+        </ng-container>
 
-            <!-- Columna Placa -->
-            <ng-container matColumnDef="placa">
-              <th mat-header-cell *matHeaderCellDef> Placa </th>
-              <td mat-cell *matCellDef="let vehiculo">
-                <span class="placa-badge">{{ vehiculo.placa }}</span>
-              </td>
-            </ng-container>
+        <!-- Vehiculo Info -->
+        <ng-container matColumnDef="info">
+          <th mat-header-cell *matHeaderCellDef>Vehículo</th>
+          <td mat-cell *matCellDef="let v">
+            <div class="vehicle-info">
+              <strong>{{ v.marca }} - {{ v.modelo }}</strong>
+              <span>{{ v.tipoVehiculo }} ({{ v.color }})</span>
+            </div>
+          </td>
+        </ng-container>
 
-            <!-- Columna Tipo -->
-            <ng-container matColumnDef="tipoVehiculo">
-              <th mat-header-cell *matHeaderCellDef> Tipo </th>
-              <td mat-cell *matCellDef="let vehiculo">
-                <mat-chip [class]="getTipoClass(vehiculo.tipoVehiculo)">
-                  {{ vehiculo.tipoVehiculo }}
-                </mat-chip>
-              </td>
-            </ng-container>
+        <!-- Propietario -->
+        <ng-container matColumnDef="usuario">
+          <th mat-header-cell *matHeaderCellDef>Propietario / Dueño</th>
+          <td mat-cell *matCellDef="let v">
+            <div class="owner-cell" *ngIf="v.usuario">
+              <div class="avatar-owner">{{ v.usuario.name[0] }}{{ v.usuario.lastName[0] }}</div>
+              <span>{{ v.usuario.name }} {{ v.usuario.lastName }}</span>
+            </div>
+            <span class="muted" *ngIf="!v.usuario">Sin asignar</span>
+          </td>
+        </ng-container>
 
-            <!-- Columna Marca -->
-            <ng-container matColumnDef="marca">
-              <th mat-header-cell *matHeaderCellDef> Marca </th>
-              <td mat-cell *matCellDef="let vehiculo"> {{ vehiculo.marca }} </td>
-            </ng-container>
+        <!-- Acciones -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef class="center">Acciones</th>
+          <td mat-cell *matCellDef="let v">
+            <div class="actions">
+              <button class="btn-act edit" (click)="openEditDialog(v)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="btn-act del" (click)="deleteVehiculo(v.id)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
 
-            <!-- Columna Color -->
-            <ng-container matColumnDef="color">
-              <th mat-header-cell *matHeaderCellDef> Color </th>
-              <td mat-cell *matCellDef="let vehiculo">
-                <div class="color-indicator">
-                  <span class="color-circle" [style.backgroundColor]="vehiculo.colorHex || '#ccc'"></span>
-                  {{ vehiculo.color }}
-                </div>
-              </td>
-            </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
 
-            <!-- Columna Usuario -->
-            <ng-container matColumnDef="usuario">
-              <th mat-header-cell *matHeaderCellDef> Usuario </th>
-              <td mat-cell *matCellDef="let vehiculo">
-                <span class="usuario-nombre">{{ vehiculo.usuario.nombre || 'No asignado' }}</span>
-              </td>
-            </ng-container>
-
-            <!-- Columna Acciones -->
-            <ng-container matColumnDef="acciones">
-              <th mat-header-cell *matHeaderCellDef> Acciones </th>
-              <td mat-cell *matCellDef="let vehiculo">
-                <button mat-icon-button color="primary" (click)="openEditDialog(vehiculo)" matTooltip="Editar">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteVehiculo(vehiculo.id)" matTooltip="Eliminar">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            
-            @for (vehiculo of dataSource; track vehiculo.id) {
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            }
-
-            @if (dataSource.length === 0) {
-              <tr class="mat-row">
-                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-                  <div class="no-data">
-                    <mat-icon>info</mat-icon>
-                    <span>No hay vehículos registrados</span>
-                  </div>
-                </td>
-              </tr>
-            }
-          </table>
-        </div>
-      } @else {
-        <div class="loading-container">
-          <mat-spinner diameter="40"></mat-spinner>
-          <p>Cargando vehículos...</p>
-        </div>
-      }
-    </mat-card-content>
-  </mat-card>
+      <!-- No Data -->
+      <div class="no-data" *ngIf="!loading && dataSource.length === 0">
+        <mat-icon>no_traffic</mat-icon>
+        <span>No se han encontrado vehículos registrados en el sistema.</span>
+      </div>
+    </div>
+  </div>
 </div>

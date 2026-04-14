@@ -1,10 +1,12 @@
-import { Routes } from '@angular/router';
+import { Routes } from '@angular/router'; // v1.0.1
 import { Dashboard } from './dashboard/dashboard';
-import { Vehiculo } from './vehiculo/vehiculo';
+import { VehiculosComponent } from './vehiculo/vehiculos';
+import { Aprendices } from './users/aprendices';
 import { authGuard } from './core/guards/auth-guard';
-import { Ficha, Fichas } from './ficha/ficha';
+import { Fichas } from './ficha/ficha';
 import { Inicio } from './inicio/inicio';
 import { Users } from './users/users';
+import { RolesComponent } from './roles/roles';
 
 export const routes: Routes = [
   {
@@ -14,14 +16,17 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    canActivate: [authGuard], 
+    canActivate: [authGuard],
     children: [
-      { path: 'vehiculos', component: Vehiculo },
+      { path: 'vehiculos', component: VehiculosComponent },
       { path: 'fichas', component: Fichas },
       { path: 'inicio', component: Inicio },
       { path: 'users', component: Users },
+      { path: 'aprendices', component: Aprendices },
+      { path: 'roles', component: RolesComponent },
+      { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]
   },
-  { path: '', redirectTo: 'dashboard/inicio', pathMatch: 'full' },
-  { path: '**', redirectTo: 'auth' }
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'auth/login' }
 ];

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { Auth } from '../auth/services/auth';
 
 // Importaciones de Material necesarias
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -32,7 +33,13 @@ import { MatDividerModule } from '@angular/material/divider';
 })
 export class Dashboard implements OnInit {
   private router = inject(Router);
+  private authService = inject(Auth);
   userName: string = 'Usuario';
+  isCollapsed = false;
+
+  toggleSidebar() {
+    this.isCollapsed = !this.isCollapsed;
+  }
 
   ngOnInit() {
     const userData = localStorage.getItem('user');
@@ -47,8 +54,7 @@ export class Dashboard implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
+    this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 }

@@ -1,0 +1,38 @@
+<div class="dialog-header">
+  <h2 mat-dialog-title>{{ isEdit ? 'Editar Rol y Permisos' : 'Crear Nuevo Rol' }}</h2>
+  <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="roleForm" class="form-grid">
+    <mat-form-field appearance="outline" class="col-span-2">
+      <mat-label>Nombre del Rol</mat-label>
+      <input matInput formControlName="name" placeholder="Ej. Administrador" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col-span-2">
+      <mat-label>Descripción</mat-label>
+      <input matInput formControlName="description" placeholder="Resumen de funciones" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col-span-4">
+      <mat-label>Módulos / Permisos</mat-label>
+      <mat-select formControlName="moduleIds" multiple required>
+        <mat-option *ngFor="let m of modules" [value]="m.id">
+          {{ m.name }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Seleccione los módulos a los que este rol tendrá acceso.</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="actions-row">
+  <button mat-button mat-dialog-close class="btn-cancel">Cancelar</button>
+  <button mat-flat-button 
+          class="btn-save" 
+          [disabled]="roleForm.invalid" 
+          (click)="save()">
+    {{ isEdit ? 'Actualizar Rol' : 'Crear Rol' }}
+  </button>
+</mat-dialog-actions>
