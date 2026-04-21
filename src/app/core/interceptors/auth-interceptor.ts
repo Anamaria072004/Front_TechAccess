@@ -6,7 +6,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (token) {
     req = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        'Cache-Control': 'no-cache', // Evita que el navegador almacene en caché las respuestas
+        'Pragma': 'no-cache', // Compatibilidad con HTTP/1.0
       }
     });
   }

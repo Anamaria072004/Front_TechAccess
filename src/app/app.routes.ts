@@ -7,6 +7,7 @@ import { Fichas } from './ficha/ficha';
 import { Inicio } from './inicio/inicio';
 import { Users } from './users/users';
 import { RolesComponent } from './roles/roles';
+import { AdminLayoutComponent } from './core/components/admin-layout/admin-layout';
 
 export const routes: Routes = [
   {
@@ -14,8 +15,10 @@ export const routes: Routes = [
     loadChildren: () => import('./auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
   {
-    path: 'dashboard',
-    component: Dashboard,
+    // path: 'dashboard',
+    // component: Dashboard,
+    path: '',
+    component: AdminLayoutComponent,
     canActivate: [authGuard],
     children: [
       { path: 'vehiculos', component: VehiculosComponent },

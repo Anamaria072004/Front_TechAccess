@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginInterface } from '../interfaces/login';
-import { Auth } from '../services/auth';
+import { Auth } from '../../core/services/auth';
 import { Router } from '@angular/router';
 
 @Component({
@@ -33,7 +33,6 @@ export class LogIn {
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
   private router = inject(Router);
-  private ngZone = inject(NgZone);
   hidePassword = true;
 
   loginForm = this.fb.group({
@@ -48,10 +47,7 @@ export class LogIn {
       this.authService.login(rawForm).subscribe({
         next: (res) => {
           console.log('Usuario autenticado:', res);
-          // Forzar la ejecución de enrutamiento y ChangeDetection dentro de la Zona
-          this.ngZone.run(() => {
-            this.router.navigate(['/dashboard/inicio']);
-          });
+          this.router.navigate(['/users']);
         },
         error: (err) => {
           console.error('Error en login:', err.error.message);
