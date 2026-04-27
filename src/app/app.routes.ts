@@ -1,12 +1,14 @@
 import { Routes } from '@angular/router';
-import { VehiculosComponent } from './features/vehiculo/vehiculos';
-import { Aprendices } from './features/users/aprendices';
 import { authGuard } from './core/guards/auth-guard';
-import { Fichas } from './features/ficha/ficha';
-import { Inicio } from './features/inicio/inicio';
-import { Users } from './features/users/users';
-import { RolesComponent } from './features/roles/roles';
 import { AdminLayoutComponent } from './core/components/admin-layout/admin-layout';
+
+// Importaciones de componentes (Asegúrate de que las rutas de archivo sean exactas)
+import { VehiculosComponent } from './features/vehiculo/vehiculos';
+import { FichasComponent } from './features/ficha/ficha';
+import { InicioComponent } from './features/inicio/inicio';
+import { UsersComponent } from './features/users/users';
+import { RolesComponent } from './features/roles/roles';
+import { DispositivosComponent } from './features/dispositivos/dispositivos';
 
 export const routes: Routes = [
   {
@@ -18,15 +20,18 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [authGuard],
     children: [
+      { path: 'inicio', component: InicioComponent },
       { path: 'vehiculos', component: VehiculosComponent },
-      { path: 'fichas', component: Fichas },
-      { path: 'inicio', component: Inicio },
-      { path: 'users', component: Users },
-      { path: 'aprendices', component: Aprendices },
+      { path: 'fichas', component: FichasComponent },
+      { path: 'users', component: UsersComponent },
       { path: 'roles', component: RolesComponent },
+      { path: 'dispositivos', component: DispositivosComponent },
+      // Redirección interna: si entras a el admin sin ruta hija, se va a inicio
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]
   },
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'auth/login' }
+  // Redirección global: Si la URL está totalmente vacía, mandamos a auth
+  { path: '', redirectTo: 'auth', pathMatch: 'full' },
+  // Comodín para rutas no encontradas
+  { path: '**', redirectTo: 'auth' }
 ];

@@ -1,19 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface ModuleEntity {
-  id: number;
-  name: string;
-  description: string;
-}
-
-export interface Role {
-  id: number;
-  name: string;
-  description: string;
-  modules: ModuleEntity[];
-}
+import { Role, Modulo } from '@models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -31,20 +19,20 @@ export class RolesService {
     return this.http.get<Role>(`${this.apiUrl}/${id}`);
   }
 
-  create(role: any): Observable<Role> {
+  create(role: Omit<Role, 'id'>): Observable<Role> {
     return this.http.post<Role>(this.apiUrl, role);
   }
 
-  update(id: number, role: any): Observable<Role> {
+  update(id: number, role: Partial<Role>): Observable<Role> {
     return this.http.patch<Role>(`${this.apiUrl}/${id}`, role);
   }
 
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Métodos para módulos
-  getModules(): Observable<ModuleEntity[]> {
-    return this.http.get<ModuleEntity[]>(this.modulesUrl);
+  // Cambiado a getModules para que coincida con la llamada de tu Dialog y Componente
+  getModules(): Observable<Modulo[]> {
+    return this.http.get<Modulo[]>(this.modulesUrl);
   }
 }

@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/services/users.service';
 
 @Component({
   selector: 'app-vehiculo-dialog',

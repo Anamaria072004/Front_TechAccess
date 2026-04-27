@@ -1,0 +1,24 @@
+<div class="main-container">
+  <div class="page-header">
+    <div class="title-section">
+      <div class="icon-box">
+        <mat-icon>devices</mat-icon>
+      </div>
+      <h1>Gestión de Dispositivos</h1>
+    </div>
+    
+    <button mat-raised-button class="btn-primary" (click)="openRegisterModal()">
+      <mat-icon>add</mat-icon>
+      Registrar Dispositivo
+    </button>
+  </div>
+
+  <mat-card class="content-card">
+    <mat-card-content>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">phonelink_off</mat-icon>
+        <p>No se encontraron dispositivos registrados.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

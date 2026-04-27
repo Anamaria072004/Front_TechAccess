@@ -19,7 +19,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './inicio.html',
   styleUrls: ['./inicio.scss']
 })
-export class Inicio implements OnInit {
+export class InicioComponent implements OnInit {
   userName = 'Usuario';
   currentDate = new Date();
   

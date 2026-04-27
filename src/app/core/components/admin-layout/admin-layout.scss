@@ -1,0 +1,180 @@
+/* =====================
+   SIDENAV GLOBAL - Fondo oscuro profesional, texto claro
+   ===================== */
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 280px;
+  background: linear-gradient(180deg, #0a1118 0%, #0f1923 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  transition: width 0.2s ease-in-out;
+  
+  mat-toolbar {
+    background: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* =====================
+   LISTA DE NAVEGACIÓN - TEXTO BLANCO BRILLANTE
+   ===================== */
+mat-nav-list {
+  padding: 12px 8px;
+
+  a[mat-list-item] {
+    border-radius: 12px;
+    margin-bottom: 4px;
+    // Texto blanco con alta opacidad (casi puro)
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    mat-icon[matListItemIcon] {
+      color: rgba(255, 255, 255, 0.85) !important;
+      margin-right: 12px;
+    }
+
+    span[matListItemTitle] {
+      font-weight: 500;
+      font-size: 1rem;
+      color: #ffffff !important;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+      transform: translateX(4px);
+
+      mat-icon[matListItemIcon] {
+        color: #ffffff !important;
+      }
+    }
+
+    &.active-link {
+      background: linear-gradient(90deg, #39a900 0%, #2d8c00 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 6px rgba(57, 169, 0, 0.4);
+      font-weight: 600;
+
+      mat-icon[matListItemIcon] {
+        color: #ffffff !important;
+      }
+
+      span[matListItemTitle] {
+        color: #ffffff !important;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+/* =====================
+   BOTÓN CERRAR SESIÓN - más visible
+   ===================== */
+mat-nav-list a:last-of-type {
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #ffb3a8 !important;
+
+  span[matListItemTitle] {
+    font-weight: 500;
+    color: #ffb3a8 !important;
+  }
+
+  &:hover {
+    background-color: rgba(255, 80, 80, 0.2) !important;
+    color: #ffffff !important;
+    
+    span[matListItemTitle] {
+      color: #ffffff !important;
+    }
+  }
+
+  &.active-link {
+    background: linear-gradient(90deg, #d32f2f 0%, #b71c1c 100%) !important;
+    box-shadow: 0 2px 6px rgba(211, 47, 47, 0.3);
+  }
+}
+
+/* =====================
+   TOOLBAR PRINCIPAL
+   ===================== */
+mat-toolbar[color="primary"] {
+  background: #1e2a36 !important;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 0 20px;
+
+  button[mat-icon-button] {
+    margin-right: 16px;
+    color: white;
+  }
+
+  span:last-child {
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+    color: white;
+  }
+}
+
+/* =====================
+   CONTENIDO PRINCIPAL
+   ===================== */
+mat-sidenav-content {
+  background: #f4f7fc;
+  overflow-x: hidden;
+}
+
+router-outlet + * {
+  display: block;
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================
+   RESPONSIVE
+   ===================== */
+@media (max-width: 599px) {
+  .sidenav {
+    width: 260px;
+  }
+  mat-nav-list a[mat-list-item] {
+    padding: 8px 16px;
+  }
+  mat-toolbar[color="primary"] span:last-child {
+    font-size: 1rem;
+  }
+}
+
+/* =====================
+   SCROLLBAR (verde SENA)
+   ===================== */
+.sidenav ::-webkit-scrollbar {
+  width: 5px;
+}
+.sidenav ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.sidenav ::-webkit-scrollbar-thumb {
+  background: #39a900;
+  border-radius: 10px;
+}

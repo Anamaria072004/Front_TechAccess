@@ -7,7 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RolesService, ModuleEntity } from './roles.service';
+
+// Importaciones corregidas con Paths y nombres limpios
+import { RolesService } from '../../services/roles.service';
+import { Role, Modulo } from '@models/user.model';
 
 @Component({
   selector: 'app-role-dialog',
@@ -32,26 +35,44 @@ export class RoleDialogComponent implements OnInit {
 
   isEdit = false;
   roleForm: FormGroup;
-  modules: ModuleEntity[] = [];
+  
+  // Usamos el nombre limpio 'Modulo' y tipado estricto
+  modules: Modulo[] = [];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Role | null) {
     this.isEdit = !!data;
+    
     this.roleForm = this.fb.group({
-      name: [data?.name || '', Validators.required],
-      description: [data?.description || '', Validators.required],
-      moduleIds: [data?.modules?.map((m: any) => m.id) || []] // Permisos ahora opcionales
+      name: [data?.name || '', [Validators.required]],
+      description: [data?.description || '', [Validators.required]],
+      // Mapeo de IDs de módulos asignados
+      moduleIds: [data?.modules?.map((m: Modulo) => m.id) || []]
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.cargarModulos();
+  }
+
+  cargarModulos(): void {
+    // Asegúrate de que el método en el servicio se llame 'getModules' o 'getModulosDisponibles'
     this.rolesService.getModules().subscribe({
-      next: (res) => this.modules = res,
-      error: () => console.log('Error Loading modules') 
+      next: (res: Modulo[]) => {
+        this.modules = res;
+      },
+      error: (err) => {
+        console.error('Error loading modules:', err);
+      }
     });
   }
 
-  save() {
-    if (this.roleForm.invalid) return;
-    this.dialogRef.close(this.roleForm.value);
+  save(): void {
+    if (this.roleForm.valid) {
+      this.dialogRef.close(this.roleForm.value);
+    }
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
   }
 }

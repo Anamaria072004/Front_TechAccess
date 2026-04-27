@@ -34,7 +34,7 @@ import { FichaDialogComponent } from './ficha-dialog';
   templateUrl: './ficha.html',
   styleUrls: ['./ficha.scss'],
 })
-export class Fichas implements OnInit {
+export class FichasComponent implements OnInit {
   private fichaService = inject(FichaService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);

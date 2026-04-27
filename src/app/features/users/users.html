@@ -1,5 +1,4 @@
 <div class="usuarios-container">
-
   <div class="header-section">
     <h2 class="section-title">
       <mat-icon>group</mat-icon>
@@ -11,118 +10,13 @@
     </button>
   </div>
 
-  <!-- Card de tabla -->
   <div class="table-card mat-elevation-z1">
-    <div class="table-container">
-      <div *ngIf="loading" class="loading-container">
-        <mat-spinner diameter="40" color="primary"></mat-spinner>
-        <span>Cargando usuarios...</span>
-      </div>
-
-      <div *ngIf="!loading && usuarios.length === 0" class="no-data">
-        <mat-icon>person_off</mat-icon>
-        <span>No hay usuarios registrados</span>
-      </div>
-
-      <table mat-table [dataSource]="usuarios" *ngIf="!loading && usuarios.length > 0">
-
-
-
-        <!-- Nombre -->
-        <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef>Nombre completo</th>
-          <td mat-cell *matCellDef="let u">
-            <div class="nombre-col">
-              <span class="fw">{{ u.name }} {{ u.lastName }}</span>
-              <span class="sub">ID: {{ u.id }}</span>
-            </div>
-          </td>
-        </ng-container>
-
-        <!-- Tipo doc -->
-        <ng-container matColumnDef="docType">
-          <th mat-header-cell *matHeaderCellDef>Tipo doc.</th>
-          <td mat-cell *matCellDef="let u">
-            <span class="badge badge-doc">{{ u.docType }}</span>
-          </td>
-        </ng-container>
-
-        <!-- Número doc -->
-        <ng-container matColumnDef="docNumber">
-          <th mat-header-cell *matHeaderCellDef>N° documento</th>
-          <td mat-cell *matCellDef="let u" class="mono">{{ u.docNumber }}</td>
-        </ng-container>
-
-        <!-- Email -->
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef>Email</th>
-          <td mat-cell *matCellDef="let u">
-            <div class="email-cell">
-              <mat-icon>email</mat-icon>
-              <span>{{ u.email }}</span>
-            </div>
-          </td>
-        </ng-container>
-
-        <!-- Teléfono -->
-        <ng-container matColumnDef="telephone">
-          <th mat-header-cell *matHeaderCellDef>Teléfono</th>
-          <td mat-cell *matCellDef="let u">
-            <div class="phone-cell">
-              <mat-icon>phone</mat-icon>
-              <span>{{ u.telephone || '—' }}</span>
-            </div>
-          </td>
-        </ng-container>
-
-
-
-        <!-- Estado -->
-        <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef>Estado</th>
-          <td mat-cell *matCellDef="let u">
-            <span class="estado-badge"
-              [ngClass]="{
-                'estado-activo':     u.state === 'activo',
-                'estado-inactivo':   u.state === 'inactivo',
-                'estado-suspendido': u.state === 'suspendido'
-              }">
-              {{ u.state }}
-            </span>
-          </td>
-        </ng-container>
-
-        <!-- Roles -->
-        <ng-container matColumnDef="roles">
-          <th mat-header-cell *matHeaderCellDef>Roles</th>
-          <td mat-cell *matCellDef="let u">
-            <div class="roles-wrap">
-              <span class="badge-role" *ngFor="let r of u.roles">{{ r.name }}</span>
-              <span class="muted small" *ngIf="!u.roles?.length">Sin roles</span>
-            </div>
-          </td>
-        </ng-container>
-
-
-        <!-- Acciones -->
-        <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef class="center">Acciones</th>
-          <td mat-cell *matCellDef="let u">
-            <div class="actions">
-              <button class="btn-act edit" title="Editar" (click)="editarUsuario(u)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button class="btn-act del" title="Eliminar" (click)="eliminarUsuario(u)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </div>
+    <app-data-table 
+      [dataSource]="usuarios" 
+      [columns]="userColumns" 
+      [loading]="loading"
+      (onEdit)="editarUsuario($event)"
+      (onDelete)="eliminarUsuario($event)">
+    </app-data-table>
   </div>
-
 </div>

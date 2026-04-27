@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { UsersService } from './users.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-usuario-dialog',
