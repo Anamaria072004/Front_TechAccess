@@ -6,8 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { VehiculoService, Vehiculo } from './vehiculo.service';
-import { VehiculoDialogComponent } from './vehiculo-dialog';
+import { VehiculoService, Vehiculo } from './services/vehiculo.service';
+import { VehiculoDialogComponent } from './components/vehiculo-dialog';
 
 @Component({
   selector: 'app-vehiculo',
