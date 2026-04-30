@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./", // Obligatorio para que funcionen los paths
+    // "baseUrl": "./", 
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
@@ -16,13 +16,24 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@shared/*": ["src/app/shared/*"],
-      "@models/*": ["src/app/shared/models/*"],
-      "@features/*": ["src/app/features/*"],
-      "@env/*": ["src/environments/*"]
+      "@shared/*": [
+        "./src/app/shared/*"
+      ],
+      "@models/*": [
+        "./src/app/shared/models/*"
+      ],
+      "@features/*": [
+        "./src/app/features/*"
+      ],
+      "@env/*": [
+        "./src/environments/*"
+      ]
     },
     "useDefineForClassFields": false,
-    "lib": ["ES2022", "dom"]
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -32,7 +43,11 @@
   },
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.spec.json" }
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
   ]
 }
