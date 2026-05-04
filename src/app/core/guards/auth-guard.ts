@@ -7,12 +7,12 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(Auth);
   const router = inject(Router);
 
-  // 1. Si ya tenemos los datos en el Signal, permitimos el paso
+  // Si ya tenemos los datos en el Signal, permitimos el paso
   if (authService.isAuthenticated()) {
     return true;
   }
 
-  // 2. Si no están en el Signal (ej: F5), usamos el checkAuthStatus del servicio
+  // Si no están en el Signal (ej: F5), usamos el checkAuthStatus del servicio
   return authService.checkAuthStatus().pipe(
     map(isLoggedIn => {
       if (!isLoggedIn) {

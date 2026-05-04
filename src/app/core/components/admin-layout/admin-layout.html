@@ -7,21 +7,24 @@
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="(isHandset$ | async) === false"
   >
-    <mat-toolbar>Menu</mat-toolbar>
+    <mat-toolbar>Menú</mat-toolbar>
     @if (authService.isAuthenticated()) {
       <mat-nav-list>
-        @for (moduleName of menuItems(); track moduleName) {
-          <a mat-list-item 
-            [routerLink]="'/' + moduleName.toLowerCase()" 
-            routerLinkActive="active-link">
-            <span matListItemTitle>{{ moduleName }}</span>
+        @for (item of menuItems(); track item.path) {
+          <a 
+            mat-list-item 
+            [routerLink]="item.path" 
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{exact: true}">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.name }}</span>
           </a>
         }
 
         <a mat-list-item (click)="logout()">
-            <!-- <mat-icon matListItemIcon>{{ getIcon(moduleName) }}</mat-icon> -->
-            <span matListItemTitle>cerrar sesión</span>
-          </a>
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle>Cerrar sesión</span>
+        </a>
       </mat-nav-list>
     }
   </mat-sidenav>
@@ -34,9 +37,6 @@
       }
       <span>Admin</span>
     </mat-toolbar>
-    <!-- Add Content Here -->
-     <router-outlet>
-      
-     </router-outlet>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -28,8 +28,7 @@ export class DispositivosComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
-  // Arriba con los otros inject
-  private dispositivoService = inject(DispositivoService); // Sin el "this." y preferiblemente con "d" minúscula.
+  private dispositivoService = inject(DispositivoService); 
 
 
   dispositivos: any[] = [];
@@ -56,19 +55,18 @@ cargarDispositivos(): void {
   this.loading = true;
   this.dispositivoService.getAll().subscribe({
     next: (data) => {
-      console.log('Datos del backend:', JSON.stringify(data, null, 2)); // 👈 VER ESTRUCTURA
+      console.log('Datos del backend:', JSON.stringify(data, null, 2));
       
       this.dispositivos = data.map((d: any) => {
-        console.log('Dispositivo individual:', d); // 👈 VER CADA UNO
+        console.log('Dispositivo individual:', d); 
         
         return {
           ...d,
-          // Prueba con diferentes opciones
-          usuarioNombre: d.usuario?.nombre ||      // Opción 1: objeto usuario
-                         d.usuario?.name ||        // Opción 2: nombre en inglés
-                         d.nombreUsuario ||        // Opción 3: campo directo
-                         d.usuarioNombre ||        // Opción 4: otro campo directo
-                         `ID: ${d.usuarioId}` ||   // Opción 5: solo el ID
+          usuarioNombre: d.usuario?.nombre ||      
+                         d.usuario?.name ||        
+                         d.nombreUsuario ||        
+                         d.usuarioNombre ||        
+                         `ID: ${d.usuarioId}` ||   
                          'Sin asignar'
         };
       });
@@ -93,7 +91,7 @@ cargarDispositivos(): void {
       this.dispositivoService.delete(id).subscribe({
         next: () => {
           this.snackBar.open('Dispositivo eliminado correctamente', 'Cerrar', { duration: 3000 });
-          this.cargarDispositivos(); // Refrescamos la lista
+          this.cargarDispositivos(); 
         },
         error: (err) => {
           console.error('Error al eliminar:', err);
@@ -104,7 +102,7 @@ cargarDispositivos(): void {
   }
 
  editarDispositivo(dispositivo: any): void {
-  // 🔥 Transformar el usuario al formato que espera el diálogo
+  // Transformar el usuario al formato que espera el diálogo
   const dataParaDialogo = {
     ...dispositivo,
     usuario: dispositivo.usuario ? {
@@ -115,7 +113,7 @@ cargarDispositivos(): void {
     } : null
   };
   
-  console.log('Datos enviados al diálogo:', dataParaDialogo); // 👈 Verifica
+  console.log('Datos enviados al diálogo:', dataParaDialogo); 
   
   const ref = this.dialog.open(AddDispositivoModalComponent, {
     width: '95vw',
@@ -151,7 +149,7 @@ cargarDispositivos(): void {
 
     ref.afterClosed().subscribe(result => {
       if (result) {
-        // 2. Le decimos a TypeScript que este objeto es un CreateDispositivoDto
+        //Le decimos a TypeScript que este objeto es un CreateDispositivoDto
         const dataParaGuardar = {
           tipoDispositivo: result.tipoDispositivo,
           marca: result.marca,
@@ -159,7 +157,7 @@ cargarDispositivos(): void {
           usuarioId: Number(result.usuario.id)
         };
 
-        // 3. Ahora el servicio aceptará dataParaGuardar porque los tipos coinciden
+        
         this.dispositivoService.create(dataParaGuardar as any).subscribe({
           next: () => {
             this.snackBar.open('Dispositivo registrado', 'Cerrar', { duration: 3000 });

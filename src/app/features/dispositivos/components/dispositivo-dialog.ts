@@ -55,15 +55,13 @@ export class AddDispositivoModalComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isEditMode = !!this.data;
-
-    // Suscripción al buscador: Solo actúa cuando el usuario escribe (string)
+    
     this.usuarioSearchControl.valueChanges.subscribe(searchValue => {
       if (typeof searchValue === 'string') {
         const term = searchValue.trim();
         
         if (term.length > 0) {
           this.filtrarUsuarios(term);
-          // Solo abrir si el usuario tiene el foco activo
           if (this.panelAbierto && this.autoTrigger) {
             this.autoTrigger.openPanel();
           }
@@ -87,7 +85,7 @@ export class AddDispositivoModalComponent implements OnInit, AfterViewInit {
     this.panelAbierto = true;
     const currentValue = this.usuarioSearchControl.value;
     
-    // Si ya hay texto, filtramos, si no, mantenemos la lista vacía para no desplegar nada
+    // Si ya hay texto, filtramos, si no, mantenemos la lista vacía 
     if (typeof currentValue === 'string' && currentValue.trim().length > 0) {
       this.filtrarUsuarios(currentValue);
     } else {
@@ -105,7 +103,7 @@ export class AddDispositivoModalComponent implements OnInit, AfterViewInit {
     this.usersService.getAll().subscribe({
       next: (data: Usuario[]) => {
         this.usuarios = data;
-        this.filteredUsuarios = []; // Inicia siempre vacía
+        this.filteredUsuarios = [];
         this.datosCargados = true;
 
         if (this.isEditMode) {
@@ -128,7 +126,6 @@ export class AddDispositivoModalComponent implements OnInit, AfterViewInit {
 
     if (usuarioEncontrado) {
       this.deviceForm.patchValue({ usuario: usuarioEncontrado });
-      // emitEvent: false es CLAVE para que no se abra el panel al cargar el modal
       this.usuarioSearchControl.setValue(usuarioEncontrado, { emitEvent: false });
     }
 
