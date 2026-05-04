@@ -7,8 +7,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { DataTableComponent } from '../../shared/components/data-table/data-table.component';
 import { RolesService } from './services/roles.service';
-import { Role } from '../../shared/models/user.model'; // Ajustada ruta si falla el alias
 import { RoleDialogComponent } from './components/role-dialog/role-dialog';
+import { Role } from './models/roles.model';
 
 @Component({
   selector: 'app-roles',

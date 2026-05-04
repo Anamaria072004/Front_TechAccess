@@ -1,50 +1,177 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DispositivoService } from './services/dispositivo.service';
+import { AddDispositivoModalComponent } from './components/dispositivo-dialog';
+import { Dispositivo } from './models/dispositivos.model';
+import { DataTableComponent } from '@shared/components/data-table/data-table.component';
+
 
 @Component({
   selector: 'app-dispositivos',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    MatCardModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    MatSelectModule, 
-    MatButtonModule, 
+    CommonModule,
+    MatButtonModule,
     MatIconModule,
-    RouterModule
+    MatSnackBarModule,
+    MatDialogModule,
+    DataTableComponent
   ],
   templateUrl: './dispositivos.html',
   styleUrl: './dispositivos.scss'
 })
-export class DispositivosComponent {
-  private fb = inject(FormBuilder);
+export class DispositivosComponent implements OnInit {
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
+  // Arriba con los otros inject
+  private dispositivoService = inject(DispositivoService); // Sin el "this." y preferiblemente con "d" minúscula.
 
-  deviceForm = this.fb.group({
-    ownerId: ['', Validators.required],
-    type: ['Portátil', Validators.required],
-    brand: ['', Validators.required],
-    serial: ['', Validators.required],
-    observations: ['']
+
+  dispositivos: any[] = [];
+  loading = false;
+  // Definimos las columnas para la tabla general
+  dispositivoColumns = [
+    { key: 'tipoDispositivo', label: 'Tipo', type: 'text' },
+    { key: 'marca', label: 'Marca', type: 'text' },
+    { key: 'color', label: 'Color', type: 'text' },
+    // Para mostrar el nombre del usuario, el backend debe traer el objeto usuario
+    { key: 'usuarioNombre', label: 'Dueño', type: 'text' },
+    { key: 'actions', label: 'Acciones', type: 'actions' }
+  ];
+
+  constructor() { }
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.cargarDispositivos();
+    });
+  }
+
+cargarDispositivos(): void {
+  this.loading = true;
+  this.dispositivoService.getAll().subscribe({
+    next: (data) => {
+      console.log('Datos del backend:', JSON.stringify(data, null, 2)); // 👈 VER ESTRUCTURA
+      
+      this.dispositivos = data.map((d: any) => {
+        console.log('Dispositivo individual:', d); // 👈 VER CADA UNO
+        
+        return {
+          ...d,
+          // Prueba con diferentes opciones
+          usuarioNombre: d.usuario?.nombre ||      // Opción 1: objeto usuario
+                         d.usuario?.name ||        // Opción 2: nombre en inglés
+                         d.nombreUsuario ||        // Opción 3: campo directo
+                         d.usuarioNombre ||        // Opción 4: otro campo directo
+                         `ID: ${d.usuarioId}` ||   // Opción 5: solo el ID
+                         'Sin asignar'
+        };
+      });
+      
+      console.log('Dispositivos mapeados:', this.dispositivos);
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Error:', err);
+      this.loading = false;
+    }
   });
+}
 
-  onSubmit() {
-    if (this.deviceForm.valid) {
-      console.log('Dispositivo registrado:', this.deviceForm.value);
-      // Aquí llamarías a tu servicio para guardar en la base de datos
+  deleteDispositivo(dispositivo: any): void {
+    // Usamos el ID del dispositivo que emite la tabla
+    const id = dispositivo.id;
+    const marca = dispositivo.marca;
+
+    if (confirm(`¿Estás seguro de que deseas eliminar el dispositivo ${marca}?`)) {
+      this.dispositivoService.delete(id).subscribe({
+        next: () => {
+          this.snackBar.open('Dispositivo eliminado correctamente', 'Cerrar', { duration: 3000 });
+          this.cargarDispositivos(); // Refrescamos la lista
+        },
+        error: (err) => {
+          console.error('Error al eliminar:', err);
+          this.snackBar.open('No se pudo eliminar el dispositivo', 'Cerrar');
+        }
+      });
     }
   }
-  openRegisterModal() {
-  console.log('Abriendo formulario de registro...');
-  // Aquí luego pondrás la lógica para abrir un diálogo o navegar
+
+ editarDispositivo(dispositivo: any): void {
+  // 🔥 Transformar el usuario al formato que espera el diálogo
+  const dataParaDialogo = {
+    ...dispositivo,
+    usuario: dispositivo.usuario ? {
+      id: dispositivo.usuario.id,
+      docNumber: dispositivo.usuario.docNumber || dispositivo.usuario.documento || dispositivo.usuario.cedula || '',
+      name: dispositivo.usuario.name || dispositivo.usuario.nombre || '',
+      lastName: dispositivo.usuario.lastName || dispositivo.usuario.apellido || ''
+    } : null
+  };
+  
+  console.log('Datos enviados al diálogo:', dataParaDialogo); // 👈 Verifica
+  
+  const ref = this.dialog.open(AddDispositivoModalComponent, {
+    width: '95vw',
+    maxWidth: '600px',
+    data: dataParaDialogo
+  });
+
+  ref.afterClosed().subscribe(result => {
+    if (result) {
+      const dataActualizada = {
+        tipoDispositivo: result.tipoDispositivo,
+        marca: result.marca,
+        color: result.color,
+        usuarioId: Number(result.usuario.id)
+      };
+
+      this.dispositivoService.update(dispositivo.id, dataActualizada).subscribe({
+        next: () => {
+          this.snackBar.open('Dispositivo actualizado', 'Cerrar', { duration: 3000 });
+          this.cargarDispositivos();
+        },
+        error: (err) => {
+          console.error('Error al actualizar:', err);
+          this.snackBar.open('Error al actualizar los datos', 'Cerrar');
+        }
+      });
+    }
+  });
 }
+
+  openRegisterModal(): void {
+    const ref = this.dialog.open(AddDispositivoModalComponent, { width: '95vw', maxWidth: '600px' });
+
+    ref.afterClosed().subscribe(result => {
+      if (result) {
+        // 2. Le decimos a TypeScript que este objeto es un CreateDispositivoDto
+        const dataParaGuardar = {
+          tipoDispositivo: result.tipoDispositivo,
+          marca: result.marca,
+          color: result.color,
+          usuarioId: Number(result.usuario.id)
+        };
+
+        // 3. Ahora el servicio aceptará dataParaGuardar porque los tipos coinciden
+        this.dispositivoService.create(dataParaGuardar as any).subscribe({
+          next: () => {
+            this.snackBar.open('Dispositivo registrado', 'Cerrar', { duration: 3000 });
+            this.cargarDispositivos();
+          },
+          error: (err) => {
+            console.error('Error 400 detalle:', err.error);
+            this.snackBar.open('Error al guardar', 'Cerrar');
+          }
+        });
+      }
+    });
+  }
+
 }

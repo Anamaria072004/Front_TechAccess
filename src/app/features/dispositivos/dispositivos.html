@@ -1,24 +1,22 @@
-<div class="main-container">
-  <div class="page-header">
-    <div class="title-section">
-      <div class="icon-box">
-        <mat-icon>devices</mat-icon>
-      </div>
-      <h1>Gestión de Dispositivos</h1>
-    </div>
-    
-    <button mat-raised-button class="btn-primary" (click)="openRegisterModal()">
-      <mat-icon>add</mat-icon>
+<div class="dispositivos-container">
+  <div class="header-section">
+    <h2 class="section-title">
+      <mat-icon>devices</mat-icon>
+      Gestión de Dispositivos
+    </h2>
+    <button mat-raised-button class="btn-nuevo" (click)="openRegisterModal()">
+      <mat-icon>add_circle</mat-icon>
       Registrar Dispositivo
     </button>
   </div>
 
-  <mat-card class="content-card">
-    <mat-card-content>
-      <div class="empty-state">
-        <mat-icon class="empty-icon">phonelink_off</mat-icon>
-        <p>No se encontraron dispositivos registrados.</p>
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <div class="table-card mat-elevation-z1">
+    <app-data-table 
+      [dataSource]="dispositivos"           
+      [columns]="dispositivoColumns" 
+      [loading]="loading"
+      (onEdit)="editarDispositivo($event)"   
+      (onDelete)="deleteDispositivo($event)"> 
+    </app-data-table>
+  </div>
 </div>

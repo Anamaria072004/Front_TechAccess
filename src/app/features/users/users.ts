@@ -10,7 +10,7 @@ import { DataTableComponent } from '../../shared/components/data-table/data-tabl
 
 import { UsersService } from './services/users.service'; 
 import { UsuarioDialogComponent } from './components/usuario-dialog/usuario-dialog';
-import { Usuario } from '../../shared/models/user.model'; 
+import { Usuario } from './models/users.model';
 
 @Component({
   selector: 'app-usuarios',

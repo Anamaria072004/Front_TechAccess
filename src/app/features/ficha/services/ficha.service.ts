@@ -1,17 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface Ficha {
-  id: number;
-  numficha: string;
-  programa: string;
-  nivelFormacion: string;
-  jornada: string;
-  estado: string;
-  fechaInicio: string | Date;
-  fechafin: string | Date;
-}
+import { Ficha } from '../models/ficha.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,11 +22,11 @@ export class FichaService {
     return this.http.get<Ficha>(`${this.apiUrl}/${id}`);
   }
 
-  create(ficha: any): Observable<Ficha> {
+  create(ficha: Ficha): Observable<Ficha> {
     return this.http.post<Ficha>(this.apiUrl, ficha);
   }
 
-  update(id: number, ficha: any): Observable<Ficha> {
+  update(id: number, ficha: Ficha): Observable<Ficha> {
     return this.http.patch<Ficha>(`${this.apiUrl}/${id}`, ficha);
   }
 

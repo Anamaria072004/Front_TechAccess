@@ -8,8 +8,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Ficha, FichaService } from './services/ficha.service';
 import { FichaDialogComponent } from './components/ficha-dialog';
+import { FichaService } from './services/ficha.service';
+import { Ficha } from './models/ficha.model';
 
 @Component({
   selector: 'app-fichas',

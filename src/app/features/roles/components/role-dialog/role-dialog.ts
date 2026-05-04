@@ -10,7 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 // Importaciones corregidas con Paths y nombres limpios
 import { RolesService } from '../../services/roles.service';
-import { Role, Modulo } from '@models/user.model';
+import { Role } from '@features/roles/models/roles.model';
+import { Modulo } from '@features/modulo/models/modulo.model';
 
 @Component({
   selector: 'app-role-dialog',
@@ -36,7 +37,6 @@ export class RoleDialogComponent implements OnInit {
   isEdit = false;
   roleForm: FormGroup;
   
-  // Usamos el nombre limpio 'Modulo' y tipado estricto
   modules: Modulo[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: Role | null) {
