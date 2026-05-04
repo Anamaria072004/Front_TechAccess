@@ -1,4 +1,4 @@
-// admin-layout.ts - Añade el método para verificar si una ruta debe mostrarse
+
 import { Component, inject, computed } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';

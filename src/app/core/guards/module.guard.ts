@@ -1,4 +1,4 @@
-// src/app/core/guards/module.guard.ts
+
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { Auth } from '../services/auth';
@@ -51,7 +51,6 @@ export const moduleGuard: CanActivateFn = (route, state) => {
       if (!hasRole) {
         console.warn(`Acceso denegado por rol. Se requiere: ${requiredRoles.join(', ')}`);
         showAccessDenied(`Acceso denegado. Se requiere rol: ${requiredRoles.join(', ')}`);
-        // Redirigir a page-not-found en lugar de inicio
         router.navigate(['/page-not-found']);
         return false;
       }
@@ -65,7 +64,6 @@ export const moduleGuard: CanActivateFn = (route, state) => {
       if (!hasModule) {
         console.warn(`Acceso denegado por módulo. Se requiere: ${requiredModule}`);
         showAccessDenied(`No tienes acceso al módulo: ${requiredModule}`);
-        // Redirigir a page-not-found en lugar de inicio
         router.navigate(['/page-not-found']);
         return false;
       }

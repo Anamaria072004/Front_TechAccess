@@ -1,7 +1,7 @@
 @use "sass:color";
 
 // Variables
-$primary-color: #388e3c;   // Verde Material
+$primary-color: #388e3c;   
 $accent-color:  #66bb6a;
 $text-primary:  #333;
 $text-secondary: #757575;
@@ -28,8 +28,8 @@ h2[mat-dialog-title] {
 // ── Contenido con scroll ──────────────────────────────────────
 mat-dialog-content {
   padding: 20px 24px !important;
-  max-height: 60vh !important;   // 👈 evita que se corte
-  overflow-y: auto !important;   // 👈 scroll interno
+  max-height: 60vh !important;  
+  overflow-y: auto !important;   
   margin: 0 !important;
 }
 
