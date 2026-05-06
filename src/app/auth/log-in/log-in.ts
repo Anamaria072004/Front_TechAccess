@@ -47,7 +47,7 @@ export class LogIn {
       this.authService.login(rawForm).subscribe({
         next: (res) => {
           console.log('Usuario autenticado:', res);
-          this.router.navigate(['/users']);
+          this.router.navigate(['/inicio']);
         },
         error: (err) => {
           console.error('Error en login:', err.error.message);

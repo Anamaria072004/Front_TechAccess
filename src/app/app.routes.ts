@@ -10,7 +10,7 @@ import { InicioComponent } from './features/inicio/inicio';
 import { UsersComponent } from './features/users/users';
 import { RolesComponent } from './features/roles/roles';
 import { DispositivosComponent } from './features/dispositivos/dispositivos';
-import { PageNotFound } from './features/page-not-found/page-not-found'; // Importa el componente
+import { PageNotFound } from './features/page-not-found/page-not-found';
 
 export const routes: Routes = [
   {
@@ -20,31 +20,24 @@ export const routes: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard], // Verifica que el usuario esté logueado
     children: [
       { 
         path: 'inicio', 
-        component: InicioComponent,
-        canActivate: [moduleGuard],
-        data: { 
-          // Inicio accesible para todos los autenticados
-        }
+        component: InicioComponent 
+        // No necesita moduleGuard si es el home general del admin
       },
       { 
         path: 'vehiculos', 
         component: VehiculosComponent,
         canActivate: [moduleGuard],
-        data: { 
-          module: 'vehiculos'
-        }
+        data: { module: 'vehiculos' }
       },
       { 
         path: 'fichas', 
         component: FichasComponent,
         canActivate: [moduleGuard],
-        data: { 
-          module: 'fichas'
-        }
+        data: { module: 'fichas' }
       },
       { 
         path: 'users', 
@@ -52,7 +45,7 @@ export const routes: Routes = [
         canActivate: [moduleGuard],
         data: { 
           module: 'users',
-          roles: ['admin']
+          roles: ['admin',] 
         }
       },
       { 
@@ -68,20 +61,19 @@ export const routes: Routes = [
         path: 'dispositivos', 
         component: DispositivosComponent,
         canActivate: [moduleGuard],
-        data: { 
-          module: 'dispositivos'
-        }
+        data: { module: 'dispositivos' }
       },
-      // Redirección interna: si entras al admin sin ruta hija, se va a inicio
+      // Redirección interna: de / a /inicio
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]
   },
-  // Ruta para página no encontrada o sin permisos
+  
+  // Página de error/sin permisos
   { path: 'page-not-found', component: PageNotFound },
   
-  // Redirección global: Si la URL está totalmente vacía, mandamos a auth
+  // Redirección global inicial
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
   
-  // Comodín para rutas no encontradas
-  { path: '**', redirectTo: 'page-not-found' } // Cambiado de 'auth' a 'page-not-found'
+  // Comodín para cualquier ruta no definida
+  { path: '**', redirectTo: 'page-not-found' }
 ];
