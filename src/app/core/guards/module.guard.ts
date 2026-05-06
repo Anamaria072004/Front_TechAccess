@@ -1,16 +1,16 @@
-
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { Auth } from '../services/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { map, of } from 'rxjs';
 
 export const moduleGuard: CanActivateFn = (route, state) => {
   const authService = inject(Auth);
   const router = inject(Router);
   const snackBar = inject(MatSnackBar);
 
+  // Solo nos interesa el nombre del módulo definido en app.routes.ts
   const requiredModule = route.data['module'] as string | undefined;
-  const requiredRoles = route.data['roles'] as string[] | undefined;
 
   const showAccessDenied = (message: string) => {
     snackBar.open(message, 'Cerrar', { 
@@ -21,81 +21,47 @@ export const moduleGuard: CanActivateFn = (route, state) => {
 
   const validateAccess = (): boolean => {
     const user = authService.currentUser();
-
+    
     if (!user) {
-      console.warn('No hay datos de usuario');
       router.navigateByUrl('/auth/login');
       return false;
     }
 
-    const userRoleNames = user.roles.map(r => r.name.toLowerCase());
+    // Obtenemos los módulos que el ADMIN le asignó en la BD
     const userModuleNames = authService.userModules().map(m => m.toLowerCase());
 
-    console.log('Verificando acceso a:', state.url);
-    console.log('Módulos del usuario:', userModuleNames);
-    console.log('Roles del usuario:', userRoleNames);
-    console.log('Módulo requerido:', requiredModule);
-    console.log('Roles requeridos:', requiredRoles);
+    // LOG DE DEPURACIÓN: Aquí verás si el vigilante trae el módulo de la BD
+    console.log(`Ruta: ${state.url} | Requiere: ${requiredModule} | Usuario tiene:`, userModuleNames);
 
-    // Si no hay requisitos, acceso permitido
-    if (!requiredModule && (!requiredRoles || requiredRoles.length === 0)) {
-      console.log('Sin restricciones, acceso permitido');
-      return true;
+    // Si la ruta no pide un módulo específico, lo dejamos pasar (ej: inicio)
+    if (!requiredModule) return true;
+
+    // VALIDACIÓN DINÁMICA: ¿El módulo requerido está en la lista de la BD de este usuario?
+    const hasModule = userModuleNames.includes(requiredModule.toLowerCase());
+
+    if (!hasModule) {
+      showAccessDenied(`No tienes permiso asignado para el módulo: ${requiredModule}`);
+      router.navigate(['/page-not-found']);
+      return false;
     }
 
-    // Validar roles requeridos
-    if (requiredRoles && requiredRoles.length > 0) {
-      const requiredRolesLower = requiredRoles.map(r => r.toLowerCase());
-      const hasRole = requiredRolesLower.some(role => userRoleNames.includes(role));
-
-      if (!hasRole) {
-        console.warn(`Acceso denegado por rol. Se requiere: ${requiredRoles.join(', ')}`);
-        showAccessDenied(`Acceso denegado. Se requiere rol: ${requiredRoles.join(', ')}`);
-        router.navigate(['/page-not-found']);
-        return false;
-      }
-      console.log('Validación de rol exitosa');
-    }
-
-    // Validar módulo requerido
-    if (requiredModule) {
-      const hasModule = userModuleNames.includes(requiredModule.toLowerCase());
-
-      if (!hasModule) {
-        console.warn(`Acceso denegado por módulo. Se requiere: ${requiredModule}`);
-        showAccessDenied(`No tienes acceso al módulo: ${requiredModule}`);
-        router.navigate(['/page-not-found']);
-        return false;
-      }
-      console.log('Validación de módulo exitosa');
-    }
-
-    console.log('Acceso permitido');
     return true;
   };
 
-  // Si ya está autenticado, validamos directamente
+  // MANEJO DE ASINCRONÍA (Importante para evitar el 404 al refrescar)
   if (authService.isAuthenticated()) {
     return validateAccess();
   }
 
-  console.log('Sin sesión activa, verificando estado...');
-  
-  authService.checkAuthStatus().subscribe({
-    next: (isLoggedIn) => {
+  // Si no está autenticado (refresco de página), esperamos a que el servicio responda
+  return authService.checkAuthStatus().pipe(
+    map(isLoggedIn => {
       if (isLoggedIn) {
-        const isValid = validateAccess();
-        if (!isValid) {
-          router.navigate(['/page-not-found']);
-        }
+        return validateAccess();
       } else {
         router.navigateByUrl('/auth/login');
+        return false;
       }
-    },
-    error: () => {
-      router.navigateByUrl('/auth/login');
-    }
-  });
-  
-  return false;
+    })
+  );
 };

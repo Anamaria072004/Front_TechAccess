@@ -22,43 +22,41 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [authGuard], // Verifica que el usuario esté logueado
     children: [
-      { 
-        path: 'inicio', 
-        component: InicioComponent 
+      {
+        path: 'inicio',
+        component: InicioComponent
         // No necesita moduleGuard si es el home general del admin
       },
-      { 
-        path: 'vehiculos', 
+      {
+        path: 'vehiculos',
         component: VehiculosComponent,
         canActivate: [moduleGuard],
         data: { module: 'vehiculos' }
       },
-      { 
-        path: 'fichas', 
+      {
+        path: 'fichas',
         component: FichasComponent,
         canActivate: [moduleGuard],
         data: { module: 'fichas' }
       },
-      { 
-        path: 'users', 
+      {
+        path: 'users',
         component: UsersComponent,
         canActivate: [moduleGuard],
-        data: { 
+        data: {
           module: 'users',
-          roles: ['admin',] 
         }
       },
-      { 
-        path: 'roles', 
+      {
+        path: 'roles',
         component: RolesComponent,
         canActivate: [moduleGuard],
-        data: { 
+        data: {
           module: 'roles',
-          roles: ['admin']
         }
       },
-      { 
-        path: 'dispositivos', 
+      {
+        path: 'dispositivos',
         component: DispositivosComponent,
         canActivate: [moduleGuard],
         data: { module: 'dispositivos' }
@@ -67,13 +65,13 @@ export const routes: Routes = [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]
   },
-  
+
   // Página de error/sin permisos
   { path: 'page-not-found', component: PageNotFound },
-  
+
   // Redirección global inicial
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
-  
+
   // Comodín para cualquier ruta no definida
   { path: '**', redirectTo: 'page-not-found' }
 ];

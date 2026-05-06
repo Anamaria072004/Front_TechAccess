@@ -1,5 +1,4 @@
-
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -10,15 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { Auth } from '../../services/auth';
-
-interface MenuItem {
-  path: string;
-  name: string;
-  icon: string;
-  requiredRoles?: string[];
-  requiredModule?: string;
-}
+import { Auth } from '../../services/auth'; // Asegúrate de que la ruta sea correcta para tu servicio de autenticación
 
 @Component({
   selector: 'app-admin-layout',
@@ -38,43 +29,11 @@ interface MenuItem {
 })
 export class AdminLayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);
-  public authService = inject(Auth);
 
-  // Definir todos los items del menú con sus requisitos
-  private allMenuItems: MenuItem[] = [
-    { path: '/inicio', name: 'Inicio', icon: 'home' },
-    { path: '/vehiculos', name: 'Vehículos', icon: 'directions_car', requiredModule: 'vehiculos' },
-    { path: '/fichas', name: 'Fichas', icon: 'description', requiredModule: 'fichas' },
-    { path: '/users', name: 'Usuarios', icon: 'people', requiredModule: 'users', requiredRoles: ['admin'] },
-    { path: '/roles', name: 'Roles', icon: 'admin_panel_settings', requiredModule: 'roles', requiredRoles: ['admin'] },
-    { path: '/dispositivos', name: 'Dispositivos', icon: 'devices', requiredModule: 'dispositivos' }
-  ];
-
-  // Menú filtrado según los permisos del usuario (solo lo que puede ver)
-  public menuItems = computed(() => {
-    const user = this.authService.currentUser();
-    if (!user) return [];
-
-    const userRoleNames = user.roles.map(r => r.name.toLowerCase());
-    const userModuleNames = this.authService.userModules().map(m => m.toLowerCase());
-
-    return this.allMenuItems.filter(item => {
-      // Verificar módulo requerido
-      if (item.requiredModule && !userModuleNames.includes(item.requiredModule.toLowerCase())) {
-        return false;
-      }
-      
-      // Verificar roles requeridos
-      if (item.requiredRoles && item.requiredRoles.length > 0) {
-        const hasRequiredRole = item.requiredRoles.some(role => 
-          userRoleNames.includes(role.toLowerCase())
-        );
-        if (!hasRequiredRole) return false;
-      }
-      
-      return true;
-    });
-  });
+  public authService = inject(Auth); // Inyectamos tu servicio de Core
+  
+  // Obtenemos los módulos del usuario
+  public menuItems = this.authService.userModules;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
@@ -84,4 +43,5 @@ export class AdminLayoutComponent {
   logout() {
     this.authService.logout();
   }
+
 }
