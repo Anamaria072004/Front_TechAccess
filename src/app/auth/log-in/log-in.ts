@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
@@ -10,7 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginInterface } from '../interfaces/login';
-import { Auth } from '../services/auth';
+import { Auth } from '../../core/services/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
@@ -31,6 +32,7 @@ export class LogIn {
 
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
+  private router = inject(Router);
   hidePassword = true;
 
   loginForm = this.fb.group({
@@ -45,11 +47,9 @@ export class LogIn {
       this.authService.login(rawForm).subscribe({
         next: (res) => {
           console.log('Usuario autenticado:', res);
-          // Aquí podrías usar el Router para ir al home
-          // this.router.navigate(['/dashboard']);
+          this.router.navigate(['/inicio']);
         },
         error: (err) => {
-          // Aquí podrías mostrar un mensaje con MatSnackBar
           console.error('Error en login:', err.error.message);
         }
       });

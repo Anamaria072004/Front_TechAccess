@@ -1,50 +1,78 @@
-<!-- <p>log-in works!</p> -->
-<div class="login-card-container">
-    <mat-card class="modern-card">
-        <mat-card-header>
-            <div class="header-content">
-                <mat-card-title>Bienvenido de nuevo</mat-card-title>
-                <mat-card-subtitle>Ingresa tus credenciales para acceder</mat-card-subtitle>
+<div class="login-page-wrapper">
+    <!-- Left side: Form -->
+    <div class="form-side">
+        <div class="login-card-container">
+            <mat-card class="modern-card">
+                <mat-card-header>
+                    <div class="header-content">
+                        <mat-card-title>Bienvenido de nuevo</mat-card-title>
+                        <mat-card-subtitle>Ingresa tus credenciales para acceder</mat-card-subtitle>
+                    </div>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Correo electrónico</mat-label>
+                            <input matInput formControlName="email" type="email" placeholder="nombre@ejemplo.com">
+                            <mat-icon matPrefix>mail</mat-icon>
+                            @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
+                            <mat-error>Ingresa un correo válido</mat-error>
+                            }
+
+                            @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+                            <mat-error>El correo es obligatorio</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Contraseña</mat-label>
+                            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+                            <mat-icon matPrefix>lock</mat-icon>
+                            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                        </mat-form-field>
+
+                        <div class="form-options">
+                            <mat-checkbox color="primary">Recordarme</mat-checkbox>
+                            <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                        </div>
+
+                        <button matButton="filled" class="login-button" [disabled]="loginForm.invalid">
+                            Iniciar Sesión
+                        </button>
+                    </form>
+                </mat-card-content>
+
+                <mat-card-footer class="card-footer">
+                    <p>¿No tienes cuenta? <a routerLink="/auth/sign-in">Regístrate aquí</a></p>
+                </mat-card-footer>
+            </mat-card>
+        </div>
+    </div>
+
+    <!-- Right side: Illustration -->
+    <div class="illustration-side">
+        <div class="illustration-content">
+            <!-- 1. Título Arriba -->
+            <div class="illustration-text">
+                <h2>Inicia Sesión</h2>
+
             </div>
-        </mat-card-header>
 
-        <mat-card-content>
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+            <!-- 2. Imagen en la mitad -->
+            <img src="login-character.png" alt="Login Character" class="character-img">
+        </div>
 
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Correo electrónico</mat-label>
-                    <input matInput formControlName="email" type="email" placeholder="nombre@ejemplo.com">
-                    <mat-icon matPrefix>mail</mat-icon>
-                    @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-                    <mat-error>Ingresa un correo válido</mat-error>
-                    }
+        <!-- Animated Background Blobs -->
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
 
-                    @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-                    <mat-error>El correo es obligatorio</mat-error>
-                    }
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Contraseña</mat-label>
-                    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-                    <mat-icon matPrefix>lock</mat-icon>
-                    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
-                        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    </button>
-                </mat-form-field>
-
-                <div class="form-options">
-                    <mat-checkbox color="primary">Recordarme</mat-checkbox>
-                    <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-                </div>
-
-                <!-- <button matButton="filled">Basic</button> -->
-                <button matButton="filled" class="login-button" [disabled]="loginForm.invalid">Iniciar Sesión</button>
-            </form>
-        </mat-card-content>
-
-        <mat-card-footer class="card-footer">
-            <p>¿No tienes cuenta? <a routerLink="/auth/sign-in">Regístrate aquí</a></p>
-        </mat-card-footer>
-    </mat-card>
+        <!-- 3. Copy abajo -->
+        <div class="illustration-footer">
+            <p>© 2026 TechAccess - SENA. Todos los derechos reservados.</p>
+        </div>
+    </div>
 </div>

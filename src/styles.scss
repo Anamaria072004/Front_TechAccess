@@ -7,33 +7,29 @@
 
 html {
   height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$magenta-palette,
-        tertiary: mat.$violet-palette,
+  @include mat.theme((color: (primary: mat.$green-palette, // Cambiado a verde SENA
+        tertiary: mat.$blue-palette,
       ),
-      typography: Roboto,
+      typography: 'Plus Jakarta Sans',
       density: 0,
-    )
-  );
+    ));
 }
 
+html,
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f4f4f7;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+
+  /* Contenedor principal que ocupa toda la pantalla y centra la tarjeta */
+  width: 100%;
+  background-color: #f4f4f7; // Un gris muy claro para que resalte la tarjeta blanca
 }
-/* You can add global styles to this file, and also import other style files */
+
+/* Global styles and Material 3 overrides */
+mat-form-field {
+  width: 100%;
+}

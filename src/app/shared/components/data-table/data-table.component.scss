@@ -1,0 +1,144 @@
+// Variables locales para la tabla
+$table-hover-color: #f1f3f9;
+$header-bg: #f8f9fa;
+$border-color: #e0e0e0;
+$text-dim: #90949c;
+
+.table-container {
+  position: relative; // Necesario para el loading-overlay
+  min-height: 300px; // Evita saltos visuales al cargar
+  width: 100%;
+  overflow-x: auto; // Scroll horizontal si la tabla es muy ancha
+}
+
+// 1. Estilos de la Tabla (mat-table)
+table {
+  width: 100%;
+  border-collapse: separate; // Necesario para bordes redondeados internos si se desea
+  
+  // Cabecera
+  th.mat-header-cell {
+    background-color: $header-bg;
+    color: #555;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase; // Estilo profesional
+    letter-spacing: 0.5px;
+    padding: 16px;
+    border-bottom: 2px solid $border-color;
+    white-space: nowrap; // Evita que el título se corte
+  }
+
+  // Celdas de datos
+  td.mat-cell {
+    padding: 16px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid $border-color;
+    vertical-align: middle;
+  }
+
+  // Fila (efectos hover y transición)
+  tr.mat-row {
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: $table-hover-color;
+      cursor: pointer; // Opcional, si la fila es clickeable
+    }
+
+    &:last-child td.mat-cell {
+      border-bottom: none; // Quita el borde a la última fila
+    }
+  }
+}
+
+// 2. Estilos para el Loading Overlay
+.loading-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8); // Fondo semitransparente
+  z-index: 10; // Por encima de la tabla
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-radius: 12px;
+
+  span {
+    color: #3f51b5;
+    font-weight: 500;
+    font-size: 14px;
+  }
+}
+
+// 3. Estilos para "No hay datos"
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: $text-dim;
+  text-align: center;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  span {
+    font-size: 16px;
+    font-weight: 400;
+  }
+}
+
+// 4. Estilos para botones de Acción
+.actions {
+  display: flex;
+  gap: 8px; // Espacio entre botones
+  justify-content: center;
+
+  .btn-act {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    // Botón editar
+    &.edit {
+      color: #3f51b5;
+      &:hover {
+        background-color: rgba(#3f51b5, 0.1);
+      }
+    }
+
+    // Botón eliminar
+    &.del {
+      color: #f44336;
+      &:hover {
+        background-color: rgba(#f44336, 0.1);
+      }
+    }
+  }
+}

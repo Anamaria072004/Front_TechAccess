@@ -1,0 +1,22 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { VehiculosComponent } from './vehiculos';
+
+describe('Vehiculo', () => {
+  let component: VehiculosComponent;
+  let fixture: ComponentFixture<VehiculosComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [VehiculosComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(VehiculosComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

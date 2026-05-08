@@ -1,0 +1,22 @@
+<div class="roles-container">
+  <div class="header-section">
+    <div class="section-title">
+      <mat-icon>lock_person</mat-icon>
+      <h1>Gestión de Roles</h1>
+    </div>
+    <button class="btn-nuevo" (click)="abrirModalNuevo()">
+      <mat-icon>add</mat-icon>
+      Nuevo Rol
+    </button>
+  </div>
+
+  <div class="table-card">
+    <app-data-table 
+      [dataSource]="roles" 
+      [columns]="roleColumns" 
+      [loading]="loading"
+      (onEdit)="editarRol($event)"
+      (onDelete)="eliminarRol($event)">
+    </app-data-table>
+  </div>
+</div>

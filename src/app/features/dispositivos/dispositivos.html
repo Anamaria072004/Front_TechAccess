@@ -1,0 +1,22 @@
+<div class="dispositivos-container">
+  <div class="header-section">
+    <h2 class="section-title">
+      <mat-icon>devices</mat-icon>
+      Gestión de Dispositivos
+    </h2>
+    <button mat-raised-button class="btn-nuevo" (click)="openRegisterModal()">
+      <mat-icon>add_circle</mat-icon>
+      Registrar Dispositivo
+    </button>
+  </div>
+
+  <div class="table-card mat-elevation-z1">
+    <app-data-table 
+      [dataSource]="dispositivos"           
+      [columns]="dispositivoColumns" 
+      [loading]="loading"
+      (onEdit)="editarDispositivo($event)"   
+      (onDelete)="deleteDispositivo($event)"> 
+    </app-data-table>
+  </div>
+</div>

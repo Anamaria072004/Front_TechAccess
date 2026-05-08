@@ -1,0 +1,65 @@
+.dialog-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+
+  h2 { 
+    margin: 0; 
+    font-weight: 700; 
+    color: #1e293b; 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    font-size: 1.5rem; 
+  }
+}
+
+.dialog-content { 
+  padding-top: 10px !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+  max-height: none !important;
+}
+
+.form-grid { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 15px 25px; 
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.checkbox-wrapper {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+}
+
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+.col-span-4 { grid-column: span 4; }
+
+mat-form-field { 
+  width: 100%; 
+}
+
+.actions-row { 
+  margin-top: 30px; 
+  padding-top: 15px; 
+  border-top: 1px solid #f1f5f9; 
+
+  .btn-cancel {
+    color: #64748b; 
+    font-weight: 500;
+  }
+
+  .btn-save {
+    background: #39A900; 
+    color: white; 
+    border-radius: 10px; 
+    padding: 0 35px; 
+    height: 45px; 
+    font-weight: 600;
+  }
+}

@@ -1,0 +1,86 @@
+<div class="dashboard-wrapper">
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div class="hero-content">
+      <h1 class="welcome-title">Bienvenido nuevamente, {{ userName }}!</h1>
+      <p class="welcome-subtitle">Aquí tienes tu resumen de accesos institucionales en TechAccess.</p>
+      <div class="date-badge">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ currentDate | date:'fullDate':'':'es' }}</span>
+      </div>
+    </div>
+    <div class="hero-illustration">
+      <mat-icon class="bg-icon">dashboard</mat-icon>
+    </div>
+  </div>
+
+  <!-- KPI CARDS (STATISTICS) -->
+  <div class="kpi-grid">
+    
+    <div class="kpi-card" routerLink="/dashboard/users">
+      <div class="kpi-icon blue">
+        <mat-icon>people</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Usuarios Activos</span>
+        <span class="kpi-value">{{ totalUsuarios }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card" routerLink="/dashboard/vehiculos">
+      <div class="kpi-icon green">
+        <mat-icon>directions_car</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Vehículos Registrados</span>
+        <span class="kpi-value">{{ totalVehiculos }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon purple">
+        <mat-icon>how_to_reg</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Ingresos Históricos</span>
+        <span class="kpi-value">{{ totalIngresos }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card" routerLink="/dashboard/fichas">
+      <div class="kpi-icon orange">
+        <mat-icon>school</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Fichas en Curso</span>
+        <span class="kpi-value">{{ totalFichas }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RECENT ACTIVITY SECTION (GLASSMORPHISM) -->
+  <div class="activity-section">
+    <div class="section-header">
+      <h2><mat-icon>history_toggle_off</mat-icon> Feed de Actividad Reciente</h2>
+      <button mat-button color="primary">VER TODO</button>
+    </div>
+    
+    <div class="activity-list">
+      <div class="activity-item" *ngFor="let activity of recentActivity">
+        <div class="activity-icon" [ngClass]="activity.color">
+          <mat-icon>{{ activity.icon }}</mat-icon>
+        </div>
+        <div class="activity-details">
+          <span class="activity-message">{{ activity.message }}</span>
+          <span class="activity-time">{{ activity.time }}</span>
+        </div>
+        <button mat-icon-button class="action-btn">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
