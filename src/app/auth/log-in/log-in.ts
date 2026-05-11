@@ -11,10 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginInterface } from '../interfaces/login';
 import { Auth } from '../../core/services/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -23,7 +24,8 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    RouterLink
   ],
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',

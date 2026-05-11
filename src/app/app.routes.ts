@@ -11,6 +11,9 @@ import { UsersComponent } from './features/users/users';
 import { RolesComponent } from './features/roles/roles';
 import { DispositivosComponent } from './features/dispositivos/dispositivos';
 import { PageNotFound } from './features/page-not-found/page-not-found';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password';
+
 
 export const routes: Routes = [
   {
@@ -65,7 +68,9 @@ export const routes: Routes = [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]
   },
-
+  { path: 'reset-password', component: ResetPasswordComponent },
+  //recupercacion de contraseña
+  { path: 'forgot-password', component: ForgotPasswordComponent },
   // Página de error/sin permisos
   { path: 'page-not-found', component: PageNotFound },
 
@@ -73,5 +78,5 @@ export const routes: Routes = [
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
 
   // Comodín para cualquier ruta no definida
-  { path: '**', redirectTo: 'page-not-found' }
+  { path: '**', redirectTo: 'page-not-found' },
 ];

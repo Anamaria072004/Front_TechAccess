@@ -37,7 +37,7 @@
 
                         <div class="form-options">
                             <mat-checkbox color="primary">Recordarme</mat-checkbox>
-                            <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                            <a routerLink="/auth/forgot-password" class="forgot-password">¿Olvidaste tu contraseña?</a>
                         </div>
 
                         <button matButton="filled" class="login-button" [disabled]="loginForm.invalid">
@@ -45,10 +45,6 @@
                         </button>
                     </form>
                 </mat-card-content>
-
-                <mat-card-footer class="card-footer">
-                    <p>¿No tienes cuenta? <a routerLink="/auth/sign-in">Regístrate aquí</a></p>
-                </mat-card-footer>
             </mat-card>
         </div>
     </div>

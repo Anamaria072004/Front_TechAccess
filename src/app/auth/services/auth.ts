@@ -87,4 +87,18 @@ export class Auth {
   //     // ... Aqui es donde pienso darle un valor al signal que vamos a configurar
   //   });
   // }
+
+  /**
+   * Envía una solicitud al backend para iniciar el proceso de recuperación.
+   * @param email Correo electrónico del usuario.
+   */
+  // Método 1: Para pedir el correo (el que ya tenías casi listo)
+forgotPassword(email: string) {
+  return this.http.post(`${this.API_URL}/forgot-password`, { email });
+}
+
+// Método 2: Para guardar la nueva contraseña (NUEVO)
+resetPassword(token: string, newPassword: string) {
+  return this.http.post(`${this.API_URL}/reset-password`, { token, newPassword });
+}
 }
