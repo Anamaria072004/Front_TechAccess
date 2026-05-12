@@ -75,11 +75,31 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  // NUEVO: Verificar si un usuario es visitante
+  esVisitante(usuario: any): boolean {
+    return usuario.roles?.some((r: any) => r.name.toUpperCase() === 'VISITANTE') ?? false;
+  }
+
+  // NUEVO: Abrir diálogo en modo solo lectura
+  verUsuario(usuario: Usuario): void {
+    this.dialog.open(UsuarioDialogComponent, {
+      data: {
+        vigilanteMode: false,
+        user: usuario,
+        isAdmin: this.isAdmin,
+        readonly: true,
+        title: 'Ver Información de Usuario'
+      } satisfies DialogData,
+      width: '95vw',
+      maxWidth: '1200px'
+    });
+  }
+
   abrirModalNuevo(): void {
     const ref = this.dialog.open(UsuarioDialogComponent, {
       width: '95vw',
       maxWidth: '1200px',
-      data: { 
+      data: {
         vigilanteMode: false,
         isAdmin: this.isAdmin
       } satisfies DialogData
@@ -149,7 +169,26 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  // MODIFICADO: Si no es visitante, solo ver (no editar)
   editarUsuario(usuario: Usuario): void {
+    // ADMIN puede editar a TODOS
+    if (this.isAdmin) {
+      this.abrirModalEditar(usuario);
+      return;
+    }
+
+    // VIGILANTE solo puede editar VISITANTES
+    if (this.isVigilante && !this.esVisitante(usuario)) {
+      this.verUsuario(usuario); // No es visitante, solo ver
+      return;
+    }
+
+    // VIGILANTE + VISITANTE = editar
+    this.abrirModalEditar(usuario);
+  }
+
+  // NUEVO: Método separado para abrir el modal de edición
+  private abrirModalEditar(usuario: Usuario): void {
     const ref = this.dialog.open(UsuarioDialogComponent, {
       data: {
         vigilanteMode: false,
@@ -185,7 +224,15 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  // MODIFICADO: Solo permitir eliminar visitantes
   eliminarUsuario(usuario: Usuario): void {
+    // ADMIN puede eliminar a TODOS
+    // VIGILANTE solo puede eliminar VISITANTES
+    if (this.isVigilante && !this.esVisitante(usuario)) {
+      this.snackBar.open('Solo se pueden eliminar usuarios visitantes', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
     if (!usuario.id) {
       this.snackBar.open('Error: usuario sin ID válido', 'Cerrar', { duration: 3000 });
       return;

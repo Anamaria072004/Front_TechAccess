@@ -6,15 +6,12 @@
     </h2>
 
     <div class="header-actions">
-      <!-- Solo VIGILANTE ve este botón -->
       @if (isVigilante) {
       <button mat-raised-button class="btn-visitante" (click)="registrarVisitante()">
         <mat-icon>person_add</mat-icon>
         Registrar Visitante
       </button>
       }
-
-      <!-- Solo ADMIN ve este botón -->
 
       @if (isAdmin) {
       <button mat-raised-button class="btn-nuevo" (click)="abrirModalNuevo()">
@@ -26,8 +23,13 @@
   </div>
 
   <div class="table-card mat-elevation-z1">
-    <app-data-table [dataSource]="usuarios" [columns]="userColumns" [loading]="loading" (onEdit)="editarUsuario($event)"
-      (onDelete)="eliminarUsuario($event)">
+    <app-data-table 
+      [dataSource]="usuarios" 
+      [columns]="userColumns" 
+      [loading]="loading" 
+      (onEdit)="editarUsuario($event)"
+      (onDelete)="eliminarUsuario($event)"
+      (onView)="verUsuario($event)">
     </app-data-table>
   </div>
 </div>

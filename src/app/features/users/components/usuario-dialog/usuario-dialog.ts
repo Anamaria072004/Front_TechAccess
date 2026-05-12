@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { UsersService } from '../../services/users.service';
-import { DialogData, Role } from '../../models/dialog-config.model'; // ← CORREGIDO
+import { DialogData, Role } from '../../models/dialog-config.model';
 import { Observable, shareReplay } from 'rxjs';
 
 @Component({
@@ -40,16 +40,14 @@ export class UsuarioDialogComponent implements OnInit {
 
   isEdit = computed(() => !!this.data?.user?.id);
   isVigilanteMode = computed(() => this.data?.vigilanteMode === true);
-  
-isVisitanteUser = computed(() => {
-  return this.data?.user?.roles?.some((r: Role) => r.name.toUpperCase() === 'VISITANTE') ?? false;
-});
 
-  // Verificar si el usuario actual es admin (viene del componente padre)
+  isVisitanteUser = computed(() => {
+    return this.data?.user?.roles?.some((r: Role) => r.name.toUpperCase() === 'VISITANTE') ?? false;
+  });
+
   isCurrentUserAdmin = computed(() => {
     return this.data?.isAdmin ?? false;
   });
-
 
   isSimplifiedMode = computed(() => {
     const esCreacionVigilante = this.isVigilanteMode() && !this.isCurrentUserAdmin();
@@ -68,24 +66,24 @@ isVisitanteUser = computed(() => {
   });
 
   userForm: FormGroup;
-
   private rolesCache$?: Observable<Role[]>;
 
   constructor() {
     const user = this.data?.user;
+    const isReadonly = this.data?.readonly ?? false;
 
     this.userForm = this.fb.group({
-      name: [user?.name ?? '', Validators.required],
-      lastName: [user?.lastName ?? '', Validators.required],
-      docType: [user?.docType ?? 'CC', Validators.required],
-      docNumber: [user?.docNumber ?? '', Validators.required],
-      email: [user?.email ?? '', [Validators.required, Validators.email]],
-      password: [''],
-      telephone: [user?.telephone ?? ''],
-      FamTelephone: [user?.FamTelephone ?? ''],
-      state: [user?.state ?? 'activo'],
-      isActive: [user?.isActive !== false],
-      roleIds: [[]]
+      name: [{ value: user?.name ?? '', disabled: isReadonly }, Validators.required],
+      lastName: [{ value: user?.lastName ?? '', disabled: isReadonly }, Validators.required],
+      docType: [{ value: user?.docType ?? 'CC', disabled: isReadonly }, Validators.required],
+      docNumber: [{ value: user?.docNumber ?? '', disabled: isReadonly }, Validators.required],
+      email: [{ value: user?.email ?? '', disabled: isReadonly }, [Validators.required, Validators.email]],
+      password: [{ value: '', disabled: isReadonly }],
+      telephone: [{ value: user?.telephone ?? '', disabled: isReadonly }],
+      FamTelephone: [{ value: user?.FamTelephone ?? '', disabled: isReadonly }],
+      state: [{ value: user?.state ?? 'activo', disabled: isReadonly }],
+      isActive: [{ value: user?.isActive !== false, disabled: isReadonly }],
+      roleIds: [{ value: [], disabled: isReadonly }]
     });
 
     // Modo completo: admin o usuario normal
@@ -109,7 +107,6 @@ isVisitanteUser = computed(() => {
   }
 
   private loadRoles(): void {
-    // Solo cargar roles si NO es modo simplificado
     if (this.isSimplifiedMode()) {
       this.usersService.getRoles().pipe(shareReplay(1)).subscribe({
         next: (res: Role[]) => {
@@ -121,7 +118,6 @@ isVisitanteUser = computed(() => {
       return;
     }
 
-    // Modo completo: cargar todos los roles
     if (!this.rolesCache$) {
       this.rolesCache$ = this.usersService.getRoles().pipe(shareReplay(1));
     }
@@ -143,7 +139,7 @@ isVisitanteUser = computed(() => {
   save(): void {
     if (this.userForm.invalid) return;
 
-    const formValue = this.userForm.value;
+    const formValue = this.userForm.getRawValue();
 
     const payload: any = {
       name: formValue.name,
@@ -157,7 +153,6 @@ isVisitanteUser = computed(() => {
       roleIds: []
     };
 
-    // Modo completo: admin o usuario normal
     if (!this.isSimplifiedMode()) {
       payload.FamTelephone = formValue.FamTelephone;
       payload.state = formValue.state;
@@ -168,7 +163,6 @@ isVisitanteUser = computed(() => {
         payload.password = formValue.password;
       }
     } else {
-      // Modo simplificado: visitante
       payload.roleIds = [this.visitanteRoleId()!];
       payload.password = formValue.password || 'Visitante123!';
     }

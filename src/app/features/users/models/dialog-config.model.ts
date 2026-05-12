@@ -9,6 +9,7 @@ export interface DialogModeConfig {
   saveButtonText?: string;
   simplifiedMode?: boolean;
   isAdmin?: boolean; 
+  readonly?: boolean;
 }
 
 // Interfaz que coincide con tu Usuario real + campos opcionales del formulario
