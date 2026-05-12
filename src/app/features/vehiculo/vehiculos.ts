@@ -1,25 +1,22 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { VehiculoDialogComponent } from './components/vehiculo-dialog';
+import { AddVehiculoModalComponent } from './components/vehiculo-dialog';
 import { VehiculoService } from './services/vehiculo.service';
 import { Vehiculo } from './models/vehiculo.model';
+import { DataTableComponent } from '@shared/components/data-table/data-table.component';
 
 @Component({
   selector: 'app-vehiculo',
   standalone: true,
   imports: [
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatDialogModule,
+    MatButtonModule, 
+    MatIconModule, 
+    MatSnackBarModule, 
+    MatDialogModule, 
+    DataTableComponent // Importamos el componente de tabla genérico
   ],
   templateUrl: './vehiculo.html',
   styleUrl: './vehiculo.scss',
@@ -30,20 +27,35 @@ export class VehiculosComponent implements OnInit {
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  dataSource: Vehiculo[] = [];
+  vehiculos: any[] = []; // Cambiamos dataSource por vehiculos para mayor claridad
   loading = false;
-  displayedColumns: string[] = ['placa', 'info', 'usuario', 'acciones'];
+
+  // Definimos las columnas siguiendo el esquema del componente data-table
+  vehiculoColumns = [
+    { key: 'placa', label: 'Placa', type: 'text' },
+    { key: 'infoVehiculo', label: 'Información', type: 'text' }, // Marca + Modelo
+    { key: 'usuarioNombre', label: 'Propietario', type: 'text' },
+    { key: 'actions', label: 'Acciones', type: 'actions' },
+  ];
 
   ngOnInit(): void {
-    this.loadVehiculos();
+    // Pequeño timeout para asegurar que el ciclo de vida inicial de Angular se complete
+    setTimeout(() => {
+      this.loadVehiculos();
+    });
   }
 
   loadVehiculos(): void {
     this.loading = true;
-    this.cdr.detectChanges();
     this.vehiculoService.getAll().subscribe({
       next: (data) => {
-        this.dataSource = data;
+        // Mapeamos los datos para que coincidan con las 'keys' de las columnas
+        this.vehiculos = data.map((v: any) => ({
+          ...v,
+          infoVehiculo: `${v.marca} ${v.modelo || ''}`,
+          usuarioNombre: v.usuario?.nombre || v.usuario?.name || 'Sin asignar'
+        }));
+
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -56,10 +68,11 @@ export class VehiculosComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    const ref = this.dialog.open(VehiculoDialogComponent, {
+    const ref = this.dialog.open(AddVehiculoModalComponent, {
       width: '95vw',
-      maxWidth: '1200px',
+      maxWidth: '600px', // Ajustado para mantener consistencia con dispositivos
     });
+
     ref.afterClosed().subscribe((res) => {
       if (res) {
         this.vehiculoService.create(res).subscribe({
@@ -74,12 +87,13 @@ export class VehiculosComponent implements OnInit {
     });
   }
 
-  openEditDialog(vehiculo: Vehiculo): void {
-    const ref = this.dialog.open(VehiculoDialogComponent, {
+  editarVehiculo(vehiculo: any): void {
+    const ref = this.dialog.open(AddVehiculoModalComponent, {
       data: vehiculo,
       width: '95vw',
-      maxWidth: '1200px',
+      maxWidth: '600px',
     });
+
     ref.afterClosed().subscribe((res) => {
       if (res) {
         this.vehiculoService.update(vehiculo.id, res).subscribe({
@@ -94,8 +108,9 @@ export class VehiculosComponent implements OnInit {
     });
   }
 
-  deleteVehiculo(id: number): void {
-    if (confirm('¿Está seguro de querer eliminar este vehículo del sistema?')) {
+  deleteVehiculo(vehiculo: any): void {
+    const id = vehiculo.id;
+    if (confirm(`¿Está seguro de querer eliminar el vehículo con placa ${vehiculo.placa}?`)) {
       this.vehiculoService.delete(id).subscribe({
         next: () => {
           this.snackBar.open('Vehículo eliminado correctamente', 'Limpiar', { duration: 3000 });

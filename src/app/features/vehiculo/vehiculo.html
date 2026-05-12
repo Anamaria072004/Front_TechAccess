@@ -1,86 +1,22 @@
 <div class="vehiculos-container">
   <div class="header-section">
-    <div class="section-title">
+    <h2 class="section-title">
       <mat-icon>directions_car</mat-icon>
-      <h1>Control de Vehículos</h1>
-    </div>
-    <button class="btn-nuevo" (click)="openCreateDialog()">
-      <mat-icon>add</mat-icon>
+      Gestión de Vehículos
+    </h2>
+    <button mat-raised-button class="btn-nuevo" (click)="openCreateDialog()">
+      <mat-icon>add_circle</mat-icon>
       Registrar Vehículo
     </button>
   </div>
 
-  <div class="table-card">
-    <div class="table-container">
-      <!-- Spinner -->
-      @if (loading) {
-        <div class="loading-container">
-          <mat-spinner diameter="40"></mat-spinner>
-          <span>Cargando parqueadero virtual...</span>
-        </div>
-      }
-
-      <!-- Tabla -->
-      @if (!loading && dataSource.length > 0) {
-        <table mat-table [dataSource]="dataSource">
-          <!-- Placa -->
-          <ng-container matColumnDef="placa">
-            <th mat-header-cell *matHeaderCellDef>Placa</th>
-            <td mat-cell *matCellDef="let v">
-              <span class="placa-badge">{{ v.placa }}</span>
-            </td>
-          </ng-container>
-          <!-- Vehiculo Info -->
-          <ng-container matColumnDef="info">
-            <th mat-header-cell *matHeaderCellDef>Vehículo</th>
-            <td mat-cell *matCellDef="let v">
-              <div class="vehicle-info">
-                <strong>{{ v.marca }} - {{ v.modelo }}</strong>
-                <span>{{ v.tipoVehiculo }} ({{ v.color }})</span>
-              </div>
-            </td>
-          </ng-container>
-          <!-- Propietario -->
-          <ng-container matColumnDef="usuario">
-            <th mat-header-cell *matHeaderCellDef>Propietario / Dueño</th>
-            <td mat-cell *matCellDef="let v">
-              @if (v.usuario) {
-                <div class="owner-cell">
-                  <div class="avatar-owner">{{ v.usuario.name[0] }}{{ v.usuario.lastName[0] }}</div>
-                  <span>{{ v.usuario.name }} {{ v.usuario.lastName }}</span>
-                </div>
-              }
-              @if (!v.usuario) {
-                <span class="muted">Sin asignar</span>
-              }
-            </td>
-          </ng-container>
-          <!-- Acciones -->
-          <ng-container matColumnDef="acciones">
-            <th mat-header-cell *matHeaderCellDef class="center">Acciones</th>
-            <td mat-cell *matCellDef="let v">
-              <div class="actions">
-                <button class="btn-act edit" (click)="openEditDialog(v)" title="Editar">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button class="btn-act del" (click)="deleteVehiculo(v.id)" title="Eliminar">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
-      }
-
-      <!-- No Data -->
-      @if (!loading && dataSource.length === 0) {
-        <div class="no-data">
-          <mat-icon>no_traffic</mat-icon>
-          <span>No se han encontrado vehículos registrados en el sistema.</span>
-        </div>
-      }
-    </div>
+  <div class="table-card mat-elevation-z1">
+    <app-data-table 
+      [dataSource]="vehiculos"           
+      [columns]="vehiculoColumns" 
+      [loading]="loading"
+      (onEdit)="editarVehiculo($event)"   
+      (onDelete)="deleteVehiculo($event)"> 
+    </app-data-table>
   </div>
 </div>

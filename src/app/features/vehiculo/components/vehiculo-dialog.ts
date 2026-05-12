@@ -24,9 +24,9 @@ import { UsersService } from '@features/users/services/users.service';
   templateUrl: './vehiculo-dialog.html',
   styleUrls: ['./vehiculo-dialog.scss'],
 })
-export class VehiculoDialogComponent implements OnInit {
+export class AddVehiculoModalComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<VehiculoDialogComponent>);
+  private dialogRef = inject(MatDialogRef<AddVehiculoModalComponent>);
   private usersService = inject(UsersService);
 
   isEdit = false;

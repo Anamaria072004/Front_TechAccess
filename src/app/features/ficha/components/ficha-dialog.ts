@@ -1,6 +1,5 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
-
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -9,11 +8,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-ficha-dialog',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -22,35 +23,52 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
-    MatNativeDateModule,
+    MatNativeDateModule
   ],
   templateUrl: './ficha-dialog.html',
-  styleUrls: ['./ficha-dialog.scss'],
+  styleUrls: ['./ficha-dialog.scss']
 })
 export class FichaDialogComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<FichaDialogComponent>);
-
-  isEdit = false;
   fichaForm: FormGroup;
+  isEdit: boolean;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<FichaDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    // Si recibimos data, es una edición
     this.isEdit = !!data;
+    
     this.fichaForm = this.fb.group({
-      numficha: [data?.numficha || '', [Validators.required, Validators.maxLength(10)]],
-      programa: [data?.programa || '', [Validators.required, Validators.maxLength(100)]],
-      nivelFormacion: [data?.nivelFormacion || 'Tecnólogo', Validators.required],
-      jornada: [data?.jornada || 'Mañana', Validators.required],
-      estado: [data?.estado || 'Activo', Validators.required],
-      fechaInicio: [data?.fechaInicio ? new Date(data.fechaInicio) : '', Validators.required],
-      fechafin: [data?.fechafin ? new Date(data.fechafin) : '', Validators.required],
+      numficha: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      programa: ['', Validators.required],
+      nivelFormacion: ['', Validators.required],
+      jornada: ['', Validators.required],
+      estado: ['Activa', Validators.required],
+      fechaInicio: [null, Validators.required],
+      fechafin: [null, Validators.required]
     });
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    if (this.isEdit) {
+      // Cargamos los datos en el formulario
+      // Asegúrate de convertir las fechas a objetos Date si vienen como string
+      this.fichaForm.patchValue({
+        ...this.data,
+        fechaInicio: this.data.fechaInicio ? new Date(this.data.fechaInicio) : null,
+        fechafin: this.data.fechafin ? new Date(this.data.fechafin) : null
+      });
+    }
+  }
 
-  save() {
-    if (this.fichaForm.invalid) return;
-    this.dialogRef.close(this.fichaForm.value);
+  save(): void {
+    if (this.fichaForm.valid) {
+      const formValue = this.fichaForm.value;
+      
+      // Aquí puedes formatear las fechas antes de enviarlas si el backend lo requiere
+      this.dialogRef.close(formValue);
+    }
   }
 }
