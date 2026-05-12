@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { UsersService } from '../../services/users.service';
-import { DialogData, Role } from '../../models/dialog-config.model';
+import { DialogData, Role } from '../../models/dialog-config.model'; // ← CORREGIDO
 import { Observable, shareReplay } from 'rxjs';
 
 @Component({
@@ -41,15 +41,15 @@ export class UsuarioDialogComponent implements OnInit {
   isEdit = computed(() => !!this.data?.user?.id);
   isVigilanteMode = computed(() => this.data?.vigilanteMode === true);
   
-  // Detectar si el usuario editado es visitante
-  isVisitanteUser = computed(() => {
-    return this.data?.user?.roles?.some(r => r.name.toUpperCase() === 'VISITANTE') ?? false;
-  });
+isVisitanteUser = computed(() => {
+  return this.data?.user?.roles?.some((r: Role) => r.name.toUpperCase() === 'VISITANTE') ?? false;
+});
 
   // Verificar si el usuario actual es admin (viene del componente padre)
   isCurrentUserAdmin = computed(() => {
     return this.data?.isAdmin ?? false;
   });
+
 
   isSimplifiedMode = computed(() => {
     const esCreacionVigilante = this.isVigilanteMode() && !this.isCurrentUserAdmin();
