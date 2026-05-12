@@ -88,3 +88,26 @@ $text-secondary: #757575;
     .btn-nuevo { width: 100%; justify-content: center; }
   }
 }
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  .header-actions {
+    display: flex;
+    gap: 12px; // Espacio entre botones
+  }
+  
+  .btn-visitante {
+    background-color: #4caf50; // Verde para distinguir
+    color: white;
+    
+    &:hover {
+      background-color: #45a049;
+    }
+  }
+  
+  .btn-nuevo {
+    // Tu estilo actual
+  }
+}

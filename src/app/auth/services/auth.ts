@@ -2,16 +2,6 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { LoginInterface } from '../interfaces/login';
-// import { LoginInterface } from '../interfaces/login';
-
-// export interface AuthResponse {
-//   accessToken: string;
-//   user: {
-//     id: number;
-//     email: string;
-//     role: string; // Importante por tu RBAC
-//   };
-// }
 
 export interface Module {
   id: number;
@@ -23,7 +13,7 @@ export interface Role {
   id: number;
   name: string;
   description: string;
-  modules: Module[]; // Los módulos a los que este rol da acceso
+  modules: Module[];
 }
 
 export interface User {
@@ -34,44 +24,76 @@ export interface User {
   docNumber: string;
   email: string;
   isActive: boolean;
-  roles: Role[]; // Nota que es un array según tu JSON
+  roles: Role[];
 }
 
 export interface AuthResponse {
-  access_token: string; // Coincide con el snake_case de tu backend
+  access_token: string;
   user: User;
 }
-
 
 @Injectable({
   providedIn: 'root',
 })
 export class Auth {
-
   private http = inject(HttpClient);
   private readonly API_URL = 'http://localhost:3000/api/auth';
 
-  // 1. Estado privado (Signal) - Almacena el objeto completo del back
   private _authStatus = signal<AuthResponse | null>(null);
 
-  // 2. Selectores públicos (Computed) - Reaccionan automáticamente
   public currentUser = computed(() => this._authStatus()?.user);
   public isAuthenticated = computed(() => !!this._authStatus());
 
-  // Selector para obtener los permisos (módulos) de forma aplanada
   public userModules = computed(() => {
     const user = this._authStatus()?.user;
     return user ? user.roles.flatMap(r => r.modules.map(m => m.name)) : [];
   });
 
+  constructor() {
+    this.restoreAuth();
+  }
+
+  private restoreAuth(): void {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+
+    console.log('Restaurando auth:', { token: !!token, userStr: !!userStr });
+
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        console.log('Usuario restaurado:', user);
+        this._authStatus.set({
+          access_token: token,
+          user: user
+        });
+      } catch (e) {
+        console.error('Error restaurando auth', e);
+        this.logout();
+      }
+    }
+  }
+
+  // ← SOLO UN MÉTODO login()
   public login(credentials: LoginInterface): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap((response) => {
-        // Guardamos en la Signal el objeto que contiene access_token y user
+        console.log('LOGIN RESPONSE:', response);
+        console.log('USER:', response.user);
+
         this._authStatus.set(response);
-        // Persistencia básica para recargas de página
-        localStorage.setItem('token', response.access_token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+
+        if (response.access_token) {
+          localStorage.setItem('token', response.access_token);
+          console.log('Token guardado');
+        }
+
+        if (response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+          console.log('Usuario guardado en localStorage:', JSON.parse(localStorage.getItem('user')!));
+        } else {
+          console.error('NO HAY USUARIO EN LA RESPUESTA');
+        }
       })
     );
   }
@@ -82,23 +104,24 @@ export class Auth {
     localStorage.removeItem('user');
   }
 
-  // public login(user: LoginInterface){
-  //   this.http.post<LoginInterface>(`http://localhost:3000/users`, user).subscribe(data => {
-  //     // ... Aqui es donde pienso darle un valor al signal que vamos a configurar
-  //   });
-  // }
+  forgotPassword(email: string) {
+    return this.http.post(`${this.API_URL}/forgot-password`, { email });
+  }
 
-  /**
-   * Envía una solicitud al backend para iniciar el proceso de recuperación.
-   * @param email Correo electrónico del usuario.
-   */
-  // Método 1: Para pedir el correo (el que ya tenías casi listo)
-forgotPassword(email: string) {
-  return this.http.post(`${this.API_URL}/forgot-password`, { email });
-}
+  resetPassword(token: string, newPassword: string) {
+    return this.http.post(`${this.API_URL}/reset-password`, { token, newPassword });
+  }
 
-// Método 2: Para guardar la nueva contraseña (NUEVO)
-resetPassword(token: string, newPassword: string) {
-  return this.http.post(`${this.API_URL}/reset-password`, { token, newPassword });
-}
+  public userRoles = computed(() => {
+    const user = this._authStatus()?.user;
+    return user ? user.roles.map(r => r.name.toUpperCase()) : [];
+  });
+
+  public isVigilante = computed(() => {
+    return this.userRoles().includes('VIGILANTE');
+  });
+
+  public isAdmin = computed(() => {
+    return this.userRoles().includes('ADMIN');
+  });
 }

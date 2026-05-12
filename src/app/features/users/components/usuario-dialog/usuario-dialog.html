@@ -1,16 +1,17 @@
 <div class="dialog-header">
-  <h2 mat-dialog-title>{{ isEdit ? 'Editar Perfil de Usuario' : 'Registrar Nuevo Usuario' }}</h2>
+  <h2 mat-dialog-title>{{ dialogTitle() }}</h2>
   <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
 </div>
 
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="userForm" class="form-grid">
-    <!-- Fila 1 -->
+
+    <!-- Fila 1: SIEMPRE visible -->
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" required>
     </mat-form-field>
-    
+
     <mat-form-field appearance="outline">
       <mat-label>Apellido</mat-label>
       <input matInput formControlName="lastName" required>
@@ -30,59 +31,78 @@
       <input matInput formControlName="docNumber" required>
     </mat-form-field>
 
-    <!-- Fila 2 -->
+    <!-- Fila 2: Email SIEMPRE, Contraseña SOLO modo completo -->
     <mat-form-field appearance="outline" class="col-span-2">
       <mat-label>Email Electrónico</mat-label>
       <input matInput formControlName="email" type="email" required>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="col-span-2">
-      <mat-label>Contraseña de Acceso</mat-label>
-      <input matInput formControlName="password" type="password">
-      <mat-hint *ngIf="isEdit">Dejar en blanco para no cambiar</mat-hint>
-    </mat-form-field>
+    @if (!isSimplifiedMode()) {
+      <mat-form-field appearance="outline" class="col-span-2">
+        <mat-label>Contraseña de Acceso</mat-label>
+        <input matInput formControlName="password" type="password">
+        @if (isEdit()) {
+          <mat-hint>Dejar en blanco para no cambiar</mat-hint>
+        }
+      </mat-form-field>
+    } @else {
+      <div class="col-span-2"></div>
+    }
 
-    <!-- Fila 3 -->
+    <!-- Fila 3: Teléfono SIEMPRE, resto SOLO modo completo -->
     <mat-form-field appearance="outline">
       <mat-label>Teléfono Movil</mat-label>
       <input matInput formControlName="telephone">
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Tel. de Referencia</mat-label>
-      <input matInput formControlName="FamTelephone">
-    </mat-form-field>
+    @if (!isSimplifiedMode()) {
+      <mat-form-field appearance="outline">
+        <mat-label>Tel. de Referencia</mat-label>
+        <input matInput formControlName="FamTelephone">
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Estado de Cuenta</mat-label>
-      <mat-select formControlName="state" required>
-        <mat-option value="activo">Activo</mat-option>
-        <mat-option value="inactivo">Inactivo</mat-option>
-        <mat-option value="suspendido">Suspendido</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Estado de Cuenta</mat-label>
+        <mat-select formControlName="state">
+          <mat-option value="activo">Activo</mat-option>
+          <mat-option value="inactivo">Inactivo</mat-option>
+          <mat-option value="suspendido">Suspendido</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <div class="checkbox-wrapper">
-      <mat-checkbox formControlName="isActive" color="primary">Habilitar Usuario</mat-checkbox>
-    </div>
+      <div class="checkbox-wrapper">
+        <mat-checkbox formControlName="isActive" color="primary">Habilitar Usuario</mat-checkbox>
+      </div>
+    } @else {
+      <div></div>
+      <div></div>
+      <div></div>
+    }
 
-    <!-- Fila 4 -->
-    <mat-form-field appearance="outline" class="col-span-4">
-      <mat-label>Roles Asignados</mat-label>
-      <mat-select formControlName="roleIds" multiple required>
-        <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <!-- Fila 4: Roles SOLO modo completo -->
+    @if (!isSimplifiedMode()) {
+      <mat-form-field appearance="outline" class="col-span-4">
+        <mat-label>Roles Asignados</mat-label>
+        <mat-select formControlName="roleIds" multiple>
+          <mat-option *ngFor="let role of roles()" [value]="role.id">{{ role.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    } @else {
+      <div class="col-span-4 role-badge role-badge--forced">
+        <mat-icon>verified</mat-icon>
+        <div class="role-badge__content">
+          <span class="role-badge__label">Rol asignado automáticamente</span>
+          <span class="role-badge__value">Visitante</span>
+        </div>
+      </div>
+    }
 
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="actions-row">
   <button mat-button mat-dialog-close class="btn-cancel">Descartar</button>
-  <button mat-flat-button 
-          class="btn-save" 
-          [disabled]="userForm.invalid" 
-          (click)="save()">
-    {{ isEdit ? 'Confirmar Cambios' : 'Crear Usuario' }}
+  <button mat-flat-button class="btn-save" [disabled]="userForm.invalid" (click)="save()">
+    {{ saveButtonText() }}
   </button>
 </mat-dialog-actions>

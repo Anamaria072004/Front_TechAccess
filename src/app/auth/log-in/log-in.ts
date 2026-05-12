@@ -48,14 +48,21 @@ export class LogIn {
 
       this.authService.login(rawForm).subscribe({
         next: (res) => {
-          console.log('Usuario autenticado:', res);
+          console.log('RESPUESTA COMPLETA:', res);
+          console.log('USER:', res.user);
+
+          // ← GUARDAR MANUALMENTE SI NO SE GUARDÓ
+          if (res.user) {
+            localStorage.setItem('user', JSON.stringify(res.user));
+            console.log('Usuario guardado manualmente');
+          }
+
           this.router.navigate(['/inicio']);
         },
         error: (err) => {
-          console.error('Error en login:', err.error.message);
+          console.error('Error:', err);
         }
       });
     }
   }
-
 }
