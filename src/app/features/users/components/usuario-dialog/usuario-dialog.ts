@@ -51,7 +51,6 @@ export class UsuarioDialogComponent implements OnInit {
     return this.data?.isAdmin ?? false;
   });
 
-  // ✅ CORREGIDO: modo simplificado para vigilantes (crear o editar visitante)
   isSimplifiedMode = computed(() => {
     const esCreacionVigilante = this.isVigilanteMode() && !this.isCurrentUserAdmin();
     const esEdicionVisitanteNoAdmin = this.isEdit() && this.isVisitanteUser() && !this.isCurrentUserAdmin();
