@@ -5,13 +5,13 @@
       <span>Cargando información...</span>
     </div>
   } @else {
-    @if (dataSource.length === 0) {
+    @if (internalDataSource.data.length === 0) {
       <div class="no-data">
         <mat-icon>sentiment_neutral</mat-icon>
         <span>No se encontraron registros.</span>
       </div>
     } @else {
-      <table mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+      <table mat-table [dataSource]="internalDataSource" class="mat-elevation-z1">
         
         @for (col of columns; track col.key) {
           <ng-container [matColumnDef]="col.key">
@@ -24,10 +24,10 @@
                 }
                 @case ('actions') {
                   <div class="actions">
-                    <button class="btn-act edit" (click)="onEdit.emit(element)">
+                    <button class="btn-act edit" (click)="onEdit.emit(element)" title="Editar">
                       <mat-icon>edit</mat-icon>
                     </button>
-                    <button class="btn-act del" (click)="onDelete.emit(element)">
+                    <button class="btn-act del" (click)="onDelete.emit(element)" title="Eliminar">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
@@ -44,6 +44,12 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 20, 25, 30]" 
+        showFirstLastButtons 
+        aria-label="Selecciona registros por página">
+      </mat-paginator>
     }
   }
 </div>

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +14,6 @@ import { UsersService } from '../../services/users.service';
   selector: 'app-usuario-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -22,11 +21,12 @@ import { UsersService } from '../../services/users.service';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   templateUrl: './usuario-dialog.html',
-  styleUrls: ['./usuario-dialog.scss']
-})export class UsuarioDialogComponent implements OnInit {
+  styleUrls: ['./usuario-dialog.scss'],
+})
+export class UsuarioDialogComponent implements OnInit {
   isEdit = false;
   userForm: FormGroup;
   roles: any[] = [];
@@ -35,7 +35,7 @@ import { UsersService } from '../../services/users.service';
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<UsuarioDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private usersService: UsersService
+    private usersService: UsersService,
   ) {
     this.isEdit = !!data;
     this.userForm = this.fb.group({
@@ -49,7 +49,7 @@ import { UsersService } from '../../services/users.service';
       FamTelephone: [data?.FamTelephone || ''],
       state: [data?.state || 'activo', Validators.required],
       isActive: [data?.isActive !== false],
-      roleIds: [data?.roles?.map((r: any) => r.id) || [], Validators.required]
+      roleIds: [data?.roles?.map((r: any) => r.id) || [], Validators.required],
     });
 
     if (!this.isEdit) {
@@ -60,8 +60,8 @@ import { UsersService } from '../../services/users.service';
 
   ngOnInit() {
     this.usersService.getRoles().subscribe({
-      next: (res) => this.roles = res,
-      error: () => console.log('Error Loading roles')
+      next: (res) => (this.roles = res),
+      error: () => console.log('Error Loading roles'),
     });
   }
 

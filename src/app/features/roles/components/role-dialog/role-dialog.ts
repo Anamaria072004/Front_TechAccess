@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,17 +17,16 @@ import { Modulo } from '@features/modulo/models/modulo.model';
   selector: 'app-role-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './role-dialog.html',
-  styleUrls: ['./role-dialog.scss']
+  styleUrls: ['./role-dialog.scss'],
 })
 export class RoleDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -36,17 +35,17 @@ export class RoleDialogComponent implements OnInit {
 
   isEdit = false;
   roleForm: FormGroup;
-  
+
   modules: Modulo[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: Role | null) {
     this.isEdit = !!data;
-    
+
     this.roleForm = this.fb.group({
       name: [data?.name || '', [Validators.required]],
       description: [data?.description || '', [Validators.required]],
       // Mapeo de IDs de módulos asignados
-      moduleIds: [data?.modules?.map((m: Modulo) => m.id) || []]
+      moduleIds: [data?.modules?.map((m: Modulo) => m.id) || []],
     });
   }
 
@@ -62,7 +61,7 @@ export class RoleDialogComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading modules:', err);
-      }
+      },
     });
   }
 

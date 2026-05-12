@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +14,6 @@ import { MatNativeDateModule } from '@angular/material/core';
   selector: 'app-ficha-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -23,10 +22,10 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
   ],
   templateUrl: './ficha-dialog.html',
-  styleUrls: ['./ficha-dialog.scss']
+  styleUrls: ['./ficha-dialog.scss'],
 })
 export class FichaDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -44,7 +43,7 @@ export class FichaDialogComponent implements OnInit {
       jornada: [data?.jornada || 'Mañana', Validators.required],
       estado: [data?.estado || 'Activo', Validators.required],
       fechaInicio: [data?.fechaInicio ? new Date(data.fechaInicio) : '', Validators.required],
-      fechafin: [data?.fechafin ? new Date(data.fechafin) : '', Validators.required]
+      fechafin: [data?.fechafin ? new Date(data.fechafin) : '', Validators.required],
     });
   }
 

@@ -8,136 +8,122 @@ $text-secondary: #757575;
 $border-color:  #e0e0e0;
 
 // ── Dialog container ──────────────────────────────────────────
-.mat-mdc-dialog-container,
-.mdc-dialog__container,
-.mdc-dialog__surface {
+.mat-mdc-dialog-container {
+  max-width: 480px !important; // Hace el diálogo menos ancho y más elegante
   border-radius: 12px !important;
   overflow: hidden !important;
 }
 
 // ── Título ────────────────────────────────────────────────────
 h2[mat-dialog-title] {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: $text-primary;
-  padding: 24px 24px 12px;
+  padding: 20px 24px 12px;
   margin: 0;
   border-bottom: 1px solid $border-color;
 }
 
-// ── Contenido con scroll ──────────────────────────────────────
+// ── Contenido ─────────────────────────────────────────────────
 mat-dialog-content {
-  padding: 20px 24px !important;
+  padding: 16px 24px !important;
   max-height: 60vh !important;  
   overflow-y: auto !important;   
   margin: 0 !important;
 }
 
-// ── Formulario ────────────────────────────────────────────────
+// ── Formulario y Filas ────────────────────────────────────────
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+
+  mat-form-field {
+    flex: 1;
+  }
 }
 
 .full-width {
-  width: 100%;
+  width: 100%; 
 }
 
-// ── Autocomplete / campos verdes ──────────────────────────────
+// ── Estilo de Campos (Compactos) ──────────────────────────────
 .mat-mdc-form-field {
   width: 100%;
 
+  // Altura del contenedor principal
+  .mat-mdc-text-field-wrapper {
+    height: 48px !important; 
+    padding: 0 12px !important;
+  }
+
+  // Alineación del contenido interno
+  .mat-mdc-form-field-infix {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    min-height: 48px !important;
+  }
+
+  // Ajuste del Label Flotante
+  .mdc-floating-label {
+    top: 14px !important;
+    &--float-above {
+      transform: translateY(-28px) scale(0.75) !important;
+    }
+  }
+
+  // Foco en verde
   &.mat-focused .mdc-notched-outline__leading,
   &.mat-focused .mdc-notched-outline__notch,
   &.mat-focused .mdc-notched-outline__trailing {
     border-color: $primary-color !important;
     border-width: 2px !important;
   }
-
-  .mat-mdc-floating-label.mdc-floating-label--float-above {
-    color: $primary-color !important;
-  }
 }
 
-// ── Info usuario seleccionado ─────────────────────────────────
+// ── Usuario seleccionado ──────────────────────────────────────
 .selected-user-info {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  margin: -8px 0 8px;
+  padding: 6px 12px;
+  margin-bottom: 12px;
   background: color.adjust($primary-color, $lightness: 48%);
-  border-radius: 8px;
-  font-size: 13px;
-  color: color.adjust($primary-color, $lightness: -10%);
+  border-radius: 6px;
+  font-size: 12px;
+  color: color.adjust($primary-color, $lightness: -15%);
 
   mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
     color: $primary-color;
-  }
-}
-
-// ── Opciones del autocomplete ─────────────────────────────────
-.usuario-option {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.4;
-  padding: 4px 0;
-
-  .user-email {
-    font-size: 12px;
-    color: $text-secondary;
   }
 }
 
 // ── Acciones ──────────────────────────────────────────────────
 mat-dialog-actions {
   padding: 12px 24px 20px !important;
-  margin: 0 !important;
   border-top: 1px solid $border-color;
-  gap: 10px;
-
-  button[mat-button] {
-    color: $text-secondary;
-    border-radius: 8px;
-
-    &:hover { background: rgba(0,0,0,0.04); }
-  }
+  gap: 8px;
 
   button[mat-raised-button][color="primary"] {
     background-color: $primary-color !important;
-    color: white;
     border-radius: 8px;
-    padding: 0 20px;
-    height: 40px;
-    box-shadow: 0 2px 6px rgba($primary-color, 0.35);
-    transition: all 0.25s ease;
-
-    &:hover:not([disabled]) {
-      background-color: color.adjust($primary-color, $lightness: -6%) !important;
-      box-shadow: 0 4px 10px rgba($primary-color, 0.45);
-    }
-
-    &[disabled] {
-      background-color: #bdbdbd !important;
-      box-shadow: none;
-    }
+    height: 38px;
   }
 }
 
-// ── Responsivo ────────────────────────────────────────────────
-@media (max-width: 600px) {
-  mat-dialog-content {
-    max-height: 55vh !important;
-  }
-
-  mat-dialog-actions {
+// ── Responsivo Móvil ──────────────────────────────────────────
+@media (max-width: 480px) {
+  .form-row {
     flex-direction: column;
-    align-items: stretch;
-
-    button { width: 100%; justify-content: center; }
+    gap: 0;
   }
 }

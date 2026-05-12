@@ -1,5 +1,5 @@
 import { Component, inject, NgZone } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
 // Material 3 Imports
@@ -16,20 +16,18 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-log-in',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatCardModule,
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',
 })
 export class LogIn {
-
   private fb = inject(FormBuilder);
   private authService = inject(Auth);
   private router = inject(Router);
@@ -37,7 +35,7 @@ export class LogIn {
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   onSubmit() {
@@ -51,9 +49,8 @@ export class LogIn {
         },
         error: (err) => {
           console.error('Error en login:', err.error.message);
-        }
+        },
       });
     }
   }
-
 }

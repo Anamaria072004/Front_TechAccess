@@ -8,12 +8,12 @@
     <!-- Fila 1 -->
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" required>
+      <input matInput formControlName="name" required />
     </mat-form-field>
-    
+
     <mat-form-field appearance="outline">
       <mat-label>Apellido</mat-label>
-      <input matInput formControlName="lastName" required>
+      <input matInput formControlName="lastName" required />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -27,30 +27,32 @@
 
     <mat-form-field appearance="outline">
       <mat-label>N° Documento</mat-label>
-      <input matInput formControlName="docNumber" required>
+      <input matInput formControlName="docNumber" required />
     </mat-form-field>
 
     <!-- Fila 2 -->
     <mat-form-field appearance="outline" class="col-span-2">
       <mat-label>Email Electrónico</mat-label>
-      <input matInput formControlName="email" type="email" required>
+      <input matInput formControlName="email" type="email" required />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col-span-2">
       <mat-label>Contraseña de Acceso</mat-label>
-      <input matInput formControlName="password" type="password">
-      <mat-hint *ngIf="isEdit">Dejar en blanco para no cambiar</mat-hint>
+      <input matInput formControlName="password" type="password" />
+      @if (isEdit) {
+        <mat-hint>Dejar en blanco para no cambiar</mat-hint>
+      }
     </mat-form-field>
 
     <!-- Fila 3 -->
     <mat-form-field appearance="outline">
       <mat-label>Teléfono Movil</mat-label>
-      <input matInput formControlName="telephone">
+      <input matInput formControlName="telephone" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Tel. de Referencia</mat-label>
-      <input matInput formControlName="FamTelephone">
+      <input matInput formControlName="FamTelephone" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -70,19 +72,17 @@
     <mat-form-field appearance="outline" class="col-span-4">
       <mat-label>Roles Asignados</mat-label>
       <mat-select formControlName="roleIds" multiple required>
-        <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
+        @for (role of roles; track role) {
+          <mat-option [value]="role.id">{{ role.name }}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
-
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="actions-row">
   <button mat-button mat-dialog-close class="btn-cancel">Descartar</button>
-  <button mat-flat-button 
-          class="btn-save" 
-          [disabled]="userForm.invalid" 
-          (click)="save()">
+  <button mat-flat-button class="btn-save" [disabled]="userForm.invalid" (click)="save()">
     {{ isEdit ? 'Confirmar Cambios' : 'Crear Usuario' }}
   </button>
 </mat-dialog-actions>
