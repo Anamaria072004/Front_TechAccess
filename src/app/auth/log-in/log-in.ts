@@ -11,10 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LoginInterface } from '../interfaces/login';
 import { Auth } from '../../core/services/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatCardModule,
@@ -23,6 +24,7 @@ import { Router } from '@angular/router';
     MatFormFieldModule,
     MatIconModule,
     MatCheckboxModule,
+    RouterLink
   ],
   templateUrl: './log-in.html',
   styleUrl: './log-in.scss',
@@ -44,12 +46,20 @@ export class LogIn {
 
       this.authService.login(rawForm).subscribe({
         next: (res) => {
-          console.log('Usuario autenticado:', res);
+          console.log('RESPUESTA COMPLETA:', res);
+          console.log('USER:', res.user);
+
+          // ← GUARDAR MANUALMENTE SI NO SE GUARDÓ
+          if (res.user) {
+            localStorage.setItem('user', JSON.stringify(res.user));
+            console.log('Usuario guardado manualmente');
+          }
+
           this.router.navigate(['/inicio']);
         },
         error: (err) => {
-          console.error('Error en login:', err.error.message);
-        },
+          console.error('Error:', err);
+        }
       });
     }
   }

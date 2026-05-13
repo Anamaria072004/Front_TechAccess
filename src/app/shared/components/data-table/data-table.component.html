@@ -24,12 +24,27 @@
                 }
                 @case ('actions') {
                   <div class="actions">
-                    <button class="btn-act edit" (click)="onEdit.emit(element)" title="Editar">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <button class="btn-act del" (click)="onDelete.emit(element)" title="Eliminar">
-                      <mat-icon>delete</mat-icon>
-                    </button>
+                    @if (isCurrentUserVigilante()) {
+                      @if (esVisitante(element)) {
+                        <button class="btn-act edit" (click)="onEdit.emit(element)" title="Editar">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button class="btn-act del" (click)="onDelete.emit(element)" title="Eliminar">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      } @else {
+                        <button class="btn-act view" (click)="onView.emit(element)" title="Ver detalle">
+                          <mat-icon>visibility</mat-icon>
+                        </button>
+                      }
+                    } @else {
+                      <button class="btn-act edit" (click)="onEdit.emit(element)" title="Editar">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button class="btn-act del" (click)="onDelete.emit(element)" title="Eliminar">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    }
                   </div>
                 }
                 @default {

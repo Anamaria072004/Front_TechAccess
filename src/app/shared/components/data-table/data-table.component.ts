@@ -1,32 +1,40 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginator, MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator'; // Importa MatPaginatorIntl
+import { Auth } from '../../../auth/services/auth';
 
 @Component({
   selector: 'app-data-table',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatProgressSpinnerModule,
-    MatPaginatorModule 
+    CommonModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss']
 })
-export class DataTableComponent implements OnChanges, AfterViewInit {
-  @Input() dataSource: any[] = []; 
-  @Input() columns: any[] = [];    
+export class DataTableComponent {
+  @Input() dataSource: any[] = [];
+  @Input() columns: any[] = [];
   @Input() loading: boolean = false;
 
-  @Output() onEdit = new EventEmitter<any>();   
-  @Output() onDelete = new EventEmitter<any>(); 
+  @Output() onEdit = new EventEmitter<any>();
+  @Output() onDelete = new EventEmitter<any>();
+  @Output() onView = new EventEmitter<any>();
+
+  private auth = inject(Auth);
+
+  isCurrentUserVigilante = computed(() => this.auth.isVigilante());
+
+  esVisitante(element: any): boolean {
+    return element.roles?.some((r: any) => r.name?.toUpperCase() === 'VISITANTE') ?? false;
+  }
 
   internalDataSource = new MatTableDataSource<any>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;

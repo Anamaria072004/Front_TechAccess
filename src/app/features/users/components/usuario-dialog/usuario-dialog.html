@@ -1,11 +1,16 @@
 <div class="dialog-header">
-  <h2 mat-dialog-title>{{ isEdit ? 'Editar Perfil de Usuario' : 'Registrar Nuevo Usuario' }}</h2>
-  <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+  <div>
+    <h2 mat-dialog-title>{{ dialogTitle() }}</h2>
+    <p class="dialog-subtitle">Complete los datos del usuario</p>
+  </div>
+  <button mat-icon-button mat-dialog-close aria-label="Cerrar">
+    <mat-icon>close</mat-icon>
+  </button>
 </div>
 
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="userForm" class="form-grid">
-    <!-- Fila 1 -->
+
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" required />
@@ -30,26 +35,29 @@
       <input matInput formControlName="docNumber" required />
     </mat-form-field>
 
-    <!-- Fila 2 -->
     <mat-form-field appearance="outline" class="col-span-2">
       <mat-label>Email Electrónico</mat-label>
       <input matInput formControlName="email" type="email" required />
     </mat-form-field>
 
+
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono Móvil</mat-label>
+      <input matInput formControlName="telephone">
+    </mat-form-field>
+    @if (!isSimplifiedMode()) {
     <mat-form-field appearance="outline" class="col-span-2">
       <mat-label>Contraseña de Acceso</mat-label>
-      <input matInput formControlName="password" type="password" />
-      @if (isEdit) {
-        <mat-hint>Dejar en blanco para no cambiar</mat-hint>
+      <input matInput formControlName="password" type="password">
+      @if (isEdit()) {
+
       }
     </mat-form-field>
+    } @else {
+    <div class="col-span-2"></div>
+    }
 
-    <!-- Fila 3 -->
-    <mat-form-field appearance="outline">
-      <mat-label>Teléfono Movil</mat-label>
-      <input matInput formControlName="telephone" />
-    </mat-form-field>
-
+    @if (!isSimplifiedMode()) {
     <mat-form-field appearance="outline">
       <mat-label>Tel. de Referencia</mat-label>
       <input matInput formControlName="FamTelephone" />
@@ -57,7 +65,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Estado de Cuenta</mat-label>
-      <mat-select formControlName="state" required>
+      <mat-select formControlName="state">
         <mat-option value="activo">Activo</mat-option>
         <mat-option value="inactivo">Inactivo</mat-option>
         <mat-option value="suspendido">Suspendido</mat-option>
@@ -65,24 +73,48 @@
     </mat-form-field>
 
     <div class="checkbox-wrapper">
-      <mat-checkbox formControlName="isActive" color="primary">Habilitar Usuario</mat-checkbox>
+      <mat-checkbox formControlName="isActive" color="primary">
+        Habilitar Usuario
+      </mat-checkbox>
     </div>
+    } @else {
+    <div></div>
+    <div></div>
+    <div></div>
+    }
 
-    <!-- Fila 4 -->
+    @if (!isSimplifiedMode()) {
     <mat-form-field appearance="outline" class="col-span-4">
       <mat-label>Roles Asignados</mat-label>
-      <mat-select formControlName="roleIds" multiple required>
-        @for (role of roles; track role) {
-          <mat-option [value]="role.id">{{ role.name }}</mat-option>
-        }
+      <mat-select formControlName="roleIds" multiple>
+        <mat-option *ngFor="let role of roles()" [value]="role.id">
+          {{ role.name }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
+    } @else {
+    <!-- BADGE CORREGIDO -->
+    <div class="role-badge col-span-4">
+      <div class="role-badge__icon">
+        <mat-icon>verified_user</mat-icon>
+      </div>
+      <div class="role-badge__content">
+        <span class="role-badge__label">Rol asignado automáticamente</span>
+        <span class="role-badge__value">Visitante</span>
+      </div>
+    </div>
+    }
+
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="actions-row">
-  <button mat-button mat-dialog-close class="btn-cancel">Descartar</button>
-  <button mat-flat-button class="btn-save" [disabled]="userForm.invalid" (click)="save()">
-    {{ isEdit ? 'Confirmar Cambios' : 'Crear Usuario' }}
+  <button mat-button mat-dialog-close class="btn-cancel">
+    {{ data.readonly ? 'Cerrar' : 'Descartar' }}
   </button>
+  @if (!data.readonly) {
+  <button mat-flat-button class="btn-save" [disabled]="userForm.invalid" (click)="save()">
+    {{ saveButtonText() }}
+  </button>
+  }
 </mat-dialog-actions>
