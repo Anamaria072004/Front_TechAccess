@@ -1,370 +1,74 @@
-// ============================================
-// VARIABLES (ajústalas a tu paleta de colores)
-// ============================================
-$primary: #1976d2;
-$primary-light: #e3f2fd;
-$success: #4caf50;
-$warning: #ff9800;
-$danger: #f44336;
-$text-primary: #1a1a2e;
-$text-secondary: #6b7280;
-$border-color: #e5e7eb;
-$bg-surface: #ffffff;
-$bg-muted: #f8fafc;
-$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-$radius-sm: 8px;
-$radius-md: 12px;
-$radius-lg: 16px;
-
-// ============================================
-// DIALOG HEADER
-// ============================================
-.dialog-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 24px 24px 0;
-  margin-bottom: 8px;
-
-  h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: $text-primary;
-    line-height: 1.3;
-  }
-
-  .dialog-subtitle {
-    margin: 4px 0 0;
-    font-size: 0.875rem;
-    color: $text-secondary;
-    font-weight: 400;
-  }
-
-  button[mat-icon-button] {
-    margin: -8px -8px 0 0;
-    color: $text-secondary;
-    transition: all 0.2s ease;
-
-    &:hover {
-      color: $text-primary;
-      background: rgba(0, 0, 0, 0.04);
-    }
-
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
-  }
+/* Contenedor con ancho controlado para evitar que se estire */
+.dialog-container {
+  width: 500px;
+  max-width: 95vw;
+  margin: 0 auto;
 }
 
-// ============================================
-// DIALOG CONTENT
-// ============================================
-.dialog-content {
-  padding: 16px 24px 8px !important;
-  max-height: 70vh;
-  overflow-y: auto;
-
-  // Scrollbar elegante
-  &::-webkit-scrollbar {
-    width: 6px;
+::ng-deep {
+  /* 1. TEXTO DE LOS INPUTS: Un negro suave para que no vibre */
+  .mat-mdc-form-field-input-control {
+    color: #2c2c2c !important; /* Negro azulado muy oscuro */
+    -webkit-text-fill-color: #2c2c2c !important;
+    font-weight: 500 !important;
+    font-size: 14px;
   }
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
+  /* 2. TEXTO DE LOS SELECTS */
+  .mat-mdc-select-value-text {
+    color: #2c2c2c !important;
+    font-weight: 500 !important;
   }
 
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-  }
-}
-
-// ============================================
-// FORM GRID
-// ============================================
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  align-items: start;
-
-  // Responsive: en pantallas medianas, 2 columnas
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+  /* 3. LABELS: Un tono un poco más claro para jerarquía */
+  .mat-mdc-floating-label mat-label {
+    color: #555555 !important;
+    font-weight: 500 !important;
   }
 
-  // En móvil, 1 columna
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+  /* 4. FONDO DE LOS CAMPOS: Un blanco hueso muy sutil para que el texto resalte mejor */
+  .mat-mdc-text-field-wrapper {
+    background-color: #fcfcfc !important;
   }
 
-  .col-span-2 {
-    grid-column: span 2;
-
-    @media (max-width: 480px) {
-      grid-column: span 1;
-    }
-  }
-
-  .col-span-4 {
-    grid-column: span 4;
-
-    @media (max-width: 768px) {
-      grid-column: span 2;
-    }
-
-    @media (max-width: 480px) {
-      grid-column: span 1;
-    }
-  }
-}
-
-// ============================================
-// MATERIAL FORM FIELDS
-// ============================================
-mat-form-field {
-  width: 100%;
-
-  &.mat-mdc-form-field {
+  /* 5. ELIMINAR OPACIDAD EN MODO LECTURA (Imagen 17) */
+  .mat-mdc-form-field.mat-form-field-disabled {
+    opacity: 1 !important;
     .mat-mdc-text-field-wrapper {
-      background: $bg-surface;
-      border-radius: $radius-sm;
-    }
-
-    .mat-mdc-form-field-flex {
-      align-items: center;
-    }
-
-    .mdc-text-field--outlined {
-      --mdc-outlined-text-field-container-shape: #{$radius-sm};
-    }
-
-    .mat-mdc-form-field-subscript-wrapper {
-      height: auto;
-      min-height: 16px;
-    }
-  }
-
-  input,
-  mat-select {
-    font-size: 0.9375rem;
-    color: $text-primary;
-  }
-
-  mat-hint {
-    font-size: 0.75rem;
-    color: $text-secondary;
-    font-style: italic;
-  }
-}
-
-// ============================================
-// CHECKBOX WRAPPER
-// ============================================
-.checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  background: $bg-muted;
-  border-radius: $radius-sm;
-  border: 1px solid $border-color;
-  min-height: 56px; // Alinea con mat-form-field
-  box-sizing: border-box;
-
-  mat-checkbox {
-    --mdc-checkbox-selected-checkmark-color: white;
-    --mdc-checkbox-selected-focus-icon-color: #{$primary};
-    --mdc-checkbox-selected-hover-icon-color: #{$primary};
-    --mdc-checkbox-selected-icon-color: #{$primary};
-    --mdc-checkbox-selected-pressed-icon-color: #{$primary};
-
-    .mdc-label {
-      font-size: 0.9375rem;
-      color: $text-primary;
-      font-weight: 500;
+      background-color: #f9f9f9 !important;
     }
   }
 }
 
-// ============================================
-// ROLE BADGE (modo simplificado)
-// ============================================
-.role-badge {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, $primary-light 0%, #dbeafe 100%);
-  border: 1px solid rgba($primary, 0.2);
-  border-radius: $radius-md;
-  box-shadow: $shadow-sm;
-
-  &__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    background: $primary;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba($primary, 0.3);
-
-    mat-icon {
-      color: white;
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  &__content {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  &__label {
-    font-size: 0.8125rem;
-    color: $text-secondary;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-  }
-
-  &__value {
-    font-size: 1.125rem;
-    color: $primary;
-    font-weight: 700;
-  }
+/* 6. ETIQUETAS DE SECCIÓN (IDENTIDAD, CONTACTO) */
+.section-label {
+  margin: 18px 0 6px 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #666666; /* Gris medio para que no compita con los datos */
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
 }
 
-// ============================================
-// DIALOG ACTIONS
-// ============================================
-.actions-row {
+/* 7. BOTÓN VERDE (Para el modo Vigilante/Consulta) */
+.btn-cerrar {
+  background-color: #1b5e20 !important; /* Un verde bosque más sobrio */
+  color: #ffffff !important;
+  padding: 0 35px !important;
+  border-radius: 8px !important; /* Bordes menos redondeados para verse más moderno */
+  font-weight: 600 !important;
+  height: 40px;
+}
+
+.dialog-row {
   display: flex;
   gap: 12px;
-  padding: 16px 24px 24px !important;
-  margin: 0;
-  border-top: 1px solid $border-color;
-
-  button {
-    min-width: 120px;
-    height: 40px;
-    border-radius: $radius-sm;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0.01em;
-    transition: all 0.2s ease;
-
-    &.btn-cancel {
-      color: $text-secondary;
-      background: transparent;
-      border: 1px solid $border-color;
-
-      &:hover {
-        background: $bg-muted;
-        color: $text-primary;
-        border-color: $text-secondary;
-      }
-    }
-
-    &.btn-save {
-      background: $primary;
-      color: white;
-      box-shadow: 0 2px 4px rgba($primary, 0.2);
-
-      &:hover:not(:disabled) {
-        box-shadow: 0 4px 12px rgba($primary, 0.3);
-        transform: translateY(-1px);
-      }
-
-      &:disabled {
-        background: #e5e7eb;
-        color: #9ca3af;
-        box-shadow: none;
-        cursor: not-allowed;
-      }
-    }
-  }
+  margin-bottom: 6px;
+  mat-form-field { flex: 1; }
 }
 
-// ============================================
-// ANIMACIONES
-// ============================================
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-mat-dialog-content {
-  animation: fadeIn 0.3s ease-out;
-}
-
-// ============================================
-// RESPONSIVE ADJUSTMENTS
-// ============================================
-@media (max-width: 600px) {
-  .dialog-header {
-    padding: 16px 16px 0;
-
-    h2 {
-      font-size: 1.25rem;
-    }
-  }
-
-  .dialog-content {
-    padding: 12px 16px 4px !important;
-  }
-
-  .actions-row {
-    padding: 12px 16px 16px !important;
-    flex-direction: column-reverse;
-
-    button {
-      width: 100%;
-      min-width: unset;
-    }
-  }
-
-  .form-grid {
-    gap: 12px;
-  }
-}
-
-// ============================================
-// MODO SOLO LECTURA - Mejorar apariencia
-// ============================================
-:host {
-  .mat-mdc-form-field {
-    &.mat-form-field-disabled,
-    &.mat-mdc-form-field-disabled {
-      .mat-mdc-text-field-wrapper {
-        background: #f8fafc;
-      }
-
-      .mat-mdc-input-element,
-      .mat-mdc-select-value {
-        color: #334155 !important;
-        -webkit-text-fill-color: #334155 !important;
-      }
-    }
-  }
-
-  // Si usas [readonly] en inputs
-  input[readonly],
-  mat-select[readonly] {
-    color: #334155 !important;
-  }
+mat-dialog-actions {
+  padding: 16px 24px !important;
+  border-top: 1px solid #eeeeee;
+  &.justify-center { justify-content: center; }
 }

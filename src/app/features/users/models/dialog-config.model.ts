@@ -12,20 +12,22 @@ export interface DialogModeConfig {
   readonly?: boolean;
 }
 
-// Interfaz que coincide con tu Usuario real + campos opcionales del formulario
+export interface UserData {
+  id?: number;
+  name: string;
+  lastName: string;
+  docType: string;
+  docNumber: string;
+  email: string;
+  telephone?: string | null;
+  FamTelephone?: string | null;
+  state: string;
+  isActive?: boolean;
+  password?: string;
+  roles?: Role[];      // Lo que recibes del backend (objetos)
+  roleIds?: number[];  // Lo que envías al backend (IDs)
+}
+
 export interface DialogData extends DialogModeConfig {
-  user?: {
-    id?: number;
-    name: string;
-    lastName: string;
-    docType: string;
-    docNumber: string;
-    email: string;
-    telephone?: string | null;
-    FamTelephone?: string | null;
-    state: string;
-    isActive?: boolean;
-    password?: string;
-    roles?: Role[];
-  };
+  user?: UserData;
 }

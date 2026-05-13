@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -7,23 +7,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { UsersService } from '../../services/users.service';
 import { DialogData, Role } from '../../models/dialog-config.model';
-import { Observable, shareReplay } from 'rxjs';
 
 @Component({
   selector: 'app-usuario-dialog',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCheckboxModule,
+    CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule,
+    MatInputModule, MatSelectModule, MatButtonModule, MatIconModule
   ],
   templateUrl: './usuario-dialog.html',
   styleUrls: ['./usuario-dialog.scss']
@@ -35,137 +27,77 @@ export class UsuarioDialogComponent implements OnInit {
   data: DialogData = inject(MAT_DIALOG_DATA);
 
   roles = signal<Role[]>([]);
-  visitanteRoleId = signal<number | null>(null);
-
-  isEdit = computed(() => !!this.data?.user?.id);
-  isVigilanteMode = computed(() => this.data?.vigilanteMode === true);
-
-  isVisitanteUser = computed(() => {
-    return this.data?.user?.roles?.some((r: Role) => r.name.toUpperCase() === 'VISITANTE') ?? false;
-  });
-
-  isCurrentUserAdmin = computed(() => {
-    return this.data?.isAdmin ?? false;
-  });
-
-  isSimplifiedMode = computed(() => {
-    const esCreacionVigilante = this.isVigilanteMode() && !this.isCurrentUserAdmin();
-    const esEdicionVisitanteNoAdmin = this.isEdit() && this.isVisitanteUser() && !this.isCurrentUserAdmin();
-    return esCreacionVigilante || esEdicionVisitanteNoAdmin;
-  });
-
-  dialogTitle = computed(() => {
-    if (this.data?.title) return this.data.title;
-    return this.isEdit() ? 'Editar Perfil de Usuario' : 'Registrar Nuevo Usuario';
-  });
-
-  saveButtonText = computed(() => {
-    if (this.data?.saveButtonText) return this.data.saveButtonText;
-    return this.isEdit() ? 'Confirmar Cambios' : 'Crear Usuario';
-  });
-
   userForm: FormGroup;
-  private rolesCache$?: Observable<Role[]>;
 
   constructor() {
     const user = this.data?.user;
-    const isReadonly = this.data?.readonly ?? false;
+    const isVig = this.data?.vigilanteMode;
+    const isReadOnly = this.data?.readonly;
 
     this.userForm = this.fb.group({
-      name: [{ value: user?.name ?? '', disabled: isReadonly }, Validators.required],
-      lastName: [{ value: user?.lastName ?? '', disabled: isReadonly }, Validators.required],
-      docType: [{ value: user?.docType ?? 'CC', disabled: isReadonly }, Validators.required],
-      docNumber: [{ value: user?.docNumber ?? '', disabled: isReadonly }, Validators.required],
-      email: [{ value: user?.email ?? '', disabled: isReadonly }, [Validators.required, Validators.email]],
-      password: [{ value: '', disabled: isReadonly }],
-      telephone: [{ value: user?.telephone ?? '', disabled: isReadonly }],
-      FamTelephone: [{ value: user?.FamTelephone ?? '', disabled: isReadonly }],
-      state: [{ value: user?.state ?? 'activo', disabled: isReadonly }],
-      isActive: [{ value: user?.isActive !== false, disabled: isReadonly }],
-      roleIds: [{ value: [], disabled: isReadonly }]
+      name: [user?.name ?? '', Validators.required],
+      lastName: [user?.lastName ?? '', Validators.required],
+      docType: [user?.docType ?? 'CC', Validators.required],
+      docNumber: [user?.docNumber ?? '', Validators.required],
+      email: [user?.email ?? '', [Validators.required, Validators.email]],
+      telephone: [user?.telephone ?? ''],
+      password: [''],
+      roleIds: [user?.roles?.map((r: any) => r.id) ?? [], isVig ? [] : [Validators.required]]
     });
 
-    // Modo completo: admin o usuario normal
-    const isFullMode = !this.isSimplifiedMode();
+    // BLOQUEO TOTAL SI ES SOLO LECTURA (MODO OJO)
+    if (isReadOnly) {
+      this.userForm.disable();
+    }
 
-    if (isFullMode) {
-      this.userForm.get('state')?.setValidators(Validators.required);
-      this.userForm.get('roleIds')?.setValidators(Validators.required);
-      this.userForm.get('state')?.updateValueAndValidity();
-      this.userForm.get('roleIds')?.updateValueAndValidity();
-      
-      if (!this.isEdit()) {
-        this.userForm.get('password')?.setValidators(Validators.required);
-        this.userForm.get('password')?.updateValueAndValidity();
-      }
+    if (!isVig && !user?.id && !isReadOnly) {
+      this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
     }
   }
 
   ngOnInit(): void {
-    this.loadRoles();
-  }
-
-  private loadRoles(): void {
-    if (this.isSimplifiedMode()) {
-      this.usersService.getRoles().pipe(shareReplay(1)).subscribe({
-        next: (res: Role[]) => {
-          const visitante = res.find(r => r.name.toUpperCase() === 'VISITANTE');
-          this.visitanteRoleId.set(visitante?.id ?? null);
-        },
-        error: () => console.error('Error loading roles')
-      });
-      return;
-    }
-
-    if (!this.rolesCache$) {
-      this.rolesCache$ = this.usersService.getRoles().pipe(shareReplay(1));
-    }
-
-    this.rolesCache$.subscribe({
-      next: (res: Role[]) => {
+    this.usersService.getRoles().subscribe({
+      next: (res) => {
         this.roles.set(res);
-        
-        if (this.isEdit() && this.data.user?.roles) {
-          this.userForm.patchValue({
-            roleIds: this.data.user!.roles!.map((r: Role) => r.id)
-          });
+        // Si es modo vigilante y no es solo lectura, asignamos el rol automáticamente
+        if (this.data.vigilanteMode && !this.data.user?.id && !this.data.readonly) {
+          const vRole = res.find(r => r.name.toUpperCase().includes('VIGILANTE'));
+          if (vRole) {
+            this.userForm.get('roleIds')?.setValue([vRole.id]);
+          }
         }
-      },
-      error: () => console.error('Error loading roles')
+      }
     });
   }
 
   save(): void {
-    if (this.userForm.invalid) return;
+    // Si es solo lectura, esta función no debería ejecutarse, pero añadimos protección
+    if (this.data.readonly) return;
 
-    const formValue = this.userForm.getRawValue();
+    if (this.userForm.valid) {
+      const formValue = this.userForm.getRawValue();
+      let rolesFinales = formValue.roleIds;
 
-    const payload: any = {
-      name: formValue.name,
-      lastName: formValue.lastName,
-      docType: formValue.docType,
-      docNumber: formValue.docNumber,
-      email: formValue.email,
-      telephone: formValue.telephone || '',
-      state: 'activo',
-      isActive: true,
-      roleIds: []
-    };
-
-    if (!this.isSimplifiedMode()) {
-      payload.FamTelephone = formValue.FamTelephone;
-      payload.state = formValue.state;
-      payload.isActive = formValue.isActive;
-      payload.roleIds = formValue.roleIds || [];
-      
-      if (formValue.password) {
-        payload.password = formValue.password;
+      if (this.data.vigilanteMode && (!rolesFinales || rolesFinales.length === 0)) {
+        const vRole = this.roles().find(r => r.name.toUpperCase().includes('VIGILANTE'));
+        if (vRole) rolesFinales = [vRole.id];
       }
-    } else {
-      payload.roleIds = [this.visitanteRoleId()!];
-      payload.password = formValue.password || 'Visitante123!';
-    }
 
-    this.dialogRef.close(payload);
+      const payload = {
+        ...formValue,
+        roleIds: rolesFinales.map(Number),
+        isActive: true,
+        state: 'activo'
+      };
+
+      if (this.data.vigilanteMode && !this.data.user?.id) {
+        payload.password = 'Visitante123!';
+      }
+
+      if (!payload.password) delete payload.password;
+      this.dialogRef.close(payload);
+    }
   }
+
+  close() { this.dialogRef.close(); }
 }

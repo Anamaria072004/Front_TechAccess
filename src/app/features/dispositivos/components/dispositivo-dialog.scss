@@ -1,129 +1,68 @@
 @use "sass:color";
 
-// Variables
-$primary-color: #388e3c;   
-$accent-color:  #66bb6a;
-$text-primary:  #333;
-$text-secondary: #757575;
-$border-color:  #e0e0e0;
+$primary-color: #39a900; // Verde SENA
+$text-primary: #1e293b;
+$border-color: #e2e8f0;
 
-// ── Dialog container ──────────────────────────────────────────
 .mat-mdc-dialog-container {
-  max-width: 480px !important; // Hace el diálogo menos ancho y más elegante
-  border-radius: 12px !important;
-  overflow: hidden !important;
+  border-radius: 16px !important;
+  overflow: hidden;
 }
 
-// ── Título ────────────────────────────────────────────────────
 h2[mat-dialog-title] {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   color: $text-primary;
-  padding: 20px 24px 12px;
-  margin: 0;
   border-bottom: 1px solid $border-color;
+  padding: 20px 24px;
+  margin: 0;
 }
 
-// ── Contenido ─────────────────────────────────────────────────
 mat-dialog-content {
-  padding: 16px 24px !important;
-  max-height: 60vh !important;  
-  overflow-y: auto !important;   
-  margin: 0 !important;
-}
-
-// ── Formulario y Filas ────────────────────────────────────────
-.form-container {
+  padding: 24px !important;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
 }
 
 .form-row {
   display: flex;
   gap: 12px;
-  width: 100%;
-
-  mat-form-field {
-    flex: 1;
-  }
+  margin-top: 8px;
+  
+  mat-form-field { flex: 1; }
 }
 
-.full-width {
-  width: 100%; 
-}
-
-// ── Estilo de Campos (Compactos) ──────────────────────────────
-.mat-mdc-form-field {
-  width: 100%;
-
-  // Altura del contenedor principal
-  .mat-mdc-text-field-wrapper {
-    height: 48px !important; 
-    padding: 0 12px !important;
-  }
-
-  // Alineación del contenido interno
-  .mat-mdc-form-field-infix {
-    padding-top: 12px !important;
-    padding-bottom: 12px !important;
-    min-height: 48px !important;
-  }
-
-  // Ajuste del Label Flotante
-  .mdc-floating-label {
-    top: 14px !important;
-    &--float-above {
-      transform: translateY(-28px) scale(0.75) !important;
-    }
-  }
-
-  // Foco en verde
-  &.mat-focused .mdc-notched-outline__leading,
-  &.mat-focused .mdc-notched-outline__notch,
-  &.mat-focused .mdc-notched-outline__trailing {
-    border-color: $primary-color !important;
-    border-width: 2px !important;
-  }
-}
-
-// ── Usuario seleccionado ──────────────────────────────────────
 .selected-user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  margin-bottom: 12px;
-  background: color.adjust($primary-color, $lightness: 48%);
-  border-radius: 6px;
-  font-size: 12px;
-  color: color.adjust($primary-color, $lightness: -15%);
+  gap: 10px;
+  padding: 12px;
+  background: rgba(57, 169, 0, 0.05);
+  border: 1px solid rgba(57, 169, 0, 0.2);
+  border-radius: 8px;
+  color: #166534;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
 
-  mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    color: $primary-color;
-  }
+  mat-icon { color: $primary-color; font-size: 20px; }
 }
 
-// ── Acciones ──────────────────────────────────────────────────
 mat-dialog-actions {
-  padding: 12px 24px 20px !important;
+  padding: 16px 24px !important;
   border-top: 1px solid $border-color;
-  gap: 8px;
-
-  button[mat-raised-button][color="primary"] {
+  
+  button[color="primary"] {
     background-color: $primary-color !important;
+    color: white !important;
     border-radius: 8px;
-    height: 38px;
+    height: 40px;
+    padding: 0 24px;
+    font-weight: 500;
   }
 }
 
-// ── Responsivo Móvil ──────────────────────────────────────────
-@media (max-width: 480px) {
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
+// Ajuste para que los errores sean visibles
+.mat-mdc-form-field-subscript-wrapper {
+  font-size: 11px !important;
 }

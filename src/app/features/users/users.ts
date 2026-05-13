@@ -11,6 +11,7 @@ import { UsersService } from './services/users.service';
 import { UsuarioDialogComponent } from './components/usuario-dialog/usuario-dialog';
 import { Usuario } from './models/users.model';
 import { Auth } from '../../auth/services/auth';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-usuarios',
@@ -91,14 +92,14 @@ export class UsersComponent implements OnInit {
         title: 'Ver Información de Usuario'
       } satisfies DialogData,
       width: '95vw',
-      maxWidth: '1200px'
+      maxWidth: '620px'
     });
   }
 
   abrirModalNuevo(): void {
     const ref = this.dialog.open(UsuarioDialogComponent, {
-      width: '95vw',
-      maxWidth: '1200px',
+      width: '100%',
+      maxWidth: '620px',
       data: {
         vigilanteMode: false,
         isAdmin: this.isAdmin
@@ -133,7 +134,7 @@ export class UsersComponent implements OnInit {
   registrarVisitante(): void {
     const ref = this.dialog.open(UsuarioDialogComponent, {
       width: '95vw',
-      maxWidth: '1200px',
+        maxWidth: '620px',
       data: {
         vigilanteMode: true,
         title: 'Registrar Visitante',
@@ -196,7 +197,7 @@ export class UsersComponent implements OnInit {
         isAdmin: this.isAdmin
       } satisfies DialogData,
       width: '95vw',
-      maxWidth: '1200px'
+      maxWidth: '620px'
     });
 
     ref.afterClosed().subscribe(result => {
