@@ -1,6 +1,6 @@
 @use "sass:color";
 
-$primary-color: #3f51b5;
+$primary-color: #0c67ef;
 $accent-color: #ff4081;
 $bg-color: #f5f7fa;
 $text-primary: #333;
@@ -41,7 +41,7 @@ $text-secondary: #757575;
     }
 
     .btn-nuevo {
-      background-color: $primary-color;
+      background-color:#ff4081;
       color: white;
       border-radius: 8px;
       padding: 0 20px;

@@ -53,6 +53,43 @@ table {
   }
 }
 
+.table-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+mat-paginator {
+  border-top: 1px solid rgba(0,0,0,0.08);
+  background-color: #fafafa;
+}
+
+// Ajuste para el espaciado de las etiquetas en español
+::ng-deep .mat-mdc-paginator-page-size-label {
+  margin-right: 12px !important;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  
+  .btn-act {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+
+    mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+    &.edit { color: #1976d2; &:hover { background: #e3f2fd; } }
+    &.del { color: #d32f2f; &:hover { background: #ffebee; } }
+  }
+}
 // 2. Estilos para el Loading Overlay
 .loading-container {
   position: absolute;

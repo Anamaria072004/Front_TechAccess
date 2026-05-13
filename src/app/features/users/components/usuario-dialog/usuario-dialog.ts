@@ -16,7 +16,6 @@ import { Observable, shareReplay } from 'rxjs';
   selector: 'app-usuario-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -24,7 +23,7 @@ import { Observable, shareReplay } from 'rxjs';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   templateUrl: './usuario-dialog.html',
   styleUrls: ['./usuario-dialog.scss']

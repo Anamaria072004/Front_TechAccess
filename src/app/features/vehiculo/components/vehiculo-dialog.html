@@ -1,5 +1,7 @@
 <div class="dialog-header">
-  <h2 mat-dialog-title>{{ isEdit ? 'Editar Información del Vehículo' : 'Registrar Nuevo Vehículo' }}</h2>
+  <h2 mat-dialog-title>
+    {{ isEdit ? 'Editar Información del Vehículo' : 'Registrar Nuevo Vehículo' }}
+  </h2>
   <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
 </div>
 
@@ -8,7 +10,7 @@
     <!-- Placa -->
     <mat-form-field appearance="outline" class="col-span-1">
       <mat-label>Número de Placa</mat-label>
-      <input matInput formControlName="placa" placeholder="Ej. ABC123" required>
+      <input matInput formControlName="placa" placeholder="Ej. ABC123" required />
     </mat-form-field>
 
     <!-- Tipo -->
@@ -25,39 +27,38 @@
     <!-- Marca -->
     <mat-form-field appearance="outline" class="col-span-1">
       <mat-label>Marca</mat-label>
-      <input matInput formControlName="marca" placeholder="Ej. Yamaha, Mazda" required>
+      <input matInput formControlName="marca" placeholder="Ej. Yamaha, Mazda" required />
     </mat-form-field>
 
     <!-- Modelo -->
     <mat-form-field appearance="outline" class="col-span-1">
       <mat-label>Modelo / Línea</mat-label>
-      <input matInput formControlName="modelo" placeholder="Ej. 2024, MT-03" required>
+      <input matInput formControlName="modelo" placeholder="Ej. 2024, MT-03" required />
     </mat-form-field>
 
     <!-- Propietario -->
     <mat-form-field appearance="outline" class="col-span-3">
       <mat-label>Propietario / Conductor</mat-label>
       <mat-select formControlName="usuarioId" required>
-        <mat-option *ngFor="let u of usuarios" [value]="u.id">
-          {{ u.name }} {{ u.lastName }} ({{ u.docNumber }})
-        </mat-option>
+        @for (u of usuarios; track u) {
+          <mat-option [value]="u.id">
+            {{ u.name }} {{ u.lastName }} ({{ u.docNumber }})
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
     <!-- Color -->
     <mat-form-field appearance="outline" class="col-span-1">
       <mat-label>Color</mat-label>
-      <input matInput formControlName="color" placeholder="Ej. Azul" required>
+      <input matInput formControlName="color" placeholder="Ej. Azul" required />
     </mat-form-field>
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="actions-row">
   <button mat-button mat-dialog-close class="btn-cancel">Descartar</button>
-  <button mat-flat-button 
-          class="btn-save"
-          [disabled]="vehiForm.invalid" 
-          (click)="save()">
+  <button mat-flat-button class="btn-save" [disabled]="vehiForm.invalid" (click)="save()">
     {{ isEdit ? 'Actualizar Registro' : 'Inscribir Vehículo' }}
   </button>
 </mat-dialog-actions>

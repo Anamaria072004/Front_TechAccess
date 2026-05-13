@@ -1,39 +1,29 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { FichaDialogComponent } from './components/ficha-dialog';
+
+// Componentes y Servicios
 import { FichaService } from './services/ficha.service';
-import { Ficha } from './models/ficha.model';
+import { FichaDialogComponent } from './components/ficha-dialog';
+import { DataTableComponent } from '@shared/components/data-table/data-table.component';
+import { AprendicesModalComponent } from './components/aprendices-modal/aprendices-modal'; // Crea este para el modal
 
 @Component({
   selector: 'app-fichas',
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatTooltipModule
-  ],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed,void', style({ height: '0px', minHeight: '0', display: 'none' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
+    DataTableComponent
   ],
   templateUrl: './ficha.html',
-  styleUrls: ['./ficha.scss'],
+  styleUrl: './ficha.scss'
 })
 export class FichasComponent implements OnInit {
   private fichaService = inject(FichaService);
@@ -41,113 +31,106 @@ export class FichasComponent implements OnInit {
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
 
-  fichas: Ficha[] = [];
+  fichas: any[] = [];
   loading = false;
-  displayedColumns: string[] = ['numficha', 'programa', 'jornada', 'estado', 'fechas', 'acciones'];
-  
-  // Expansión
-  expandedElement: Ficha | null = null;
-  aprendicesPorFicha: { [key: number]: any[] } = {};
-  loadingAprendices: { [key: number]: boolean } = {};
 
-  ngOnInit() {
+  // Configuración de columnas para la tabla genérica
+  fichaColumns = [
+    { key: 'numficha', label: 'Nº Ficha', type: 'text' },
+    { key: 'programaInfo', label: 'Programa / Especialidad', type: 'text' },
+    { key: 'jornada', label: 'Jornada', type: 'text' },
+    { key: 'estado', label: 'Estado', type: 'text' },
+    { key: 'vigencia', label: 'Vigencia', type: 'text' },
+    { key: 'actions', label: 'Gestión', type: 'actions' },
+  ];
+
+  ngOnInit(): void {
     this.cargarFichas();
   }
 
-  toggleRow(element: Ficha) {
-    if (this.expandedElement === element) {
-      this.expandedElement = null;
-    } else {
-      this.expandedElement = element;
-      // Cargar aprendices si no están ya en memoria local
-      if (!this.aprendicesPorFicha[element.id]) {
-        this.cargarAprendicesDeFicha(element.id);
-      }
-    }
-  }
-
-  cargarAprendicesDeFicha(fichaId: number) {
-    this.loadingAprendices[fichaId] = true;
-    this.fichaService.getAprendices(fichaId).subscribe({
-      next: (res) => {
-        this.aprendicesPorFicha[fichaId] = res;
-        this.loadingAprendices[fichaId] = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.snackBar.open('Error al cargar la lista de aprendices', 'OK', { duration: 3000 });
-        this.loadingAprendices[fichaId] = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  cargarFichas() {
+  cargarFichas(): void {
     this.loading = true;
     this.fichaService.getAll().subscribe({
-      next: (res) => {
-        // El backend devuelve paginación, extraemos la data
-        this.fichas = res.data || res; 
+      next: (res: any) => {
+        // CORRECCIÓN CRÍTICA: Accedemos a res.data porque el API devuelve un objeto paginado
+        const listaFichas = res.data || [];
+
+        this.fichas = listaFichas.map((f: any) => ({
+          ...f,
+          // Mapeo para mostrar Programa y Nivel en una sola celda
+          programaInfo: `${f.programa} (${f.nivelFormacion || 'N/A'})`,
+          // Mapeo para mostrar el rango de fechas formateado
+          vigencia: `${new Date(f.fechaInicio).toLocaleDateString()} - ${new Date(f.fechafin).toLocaleDateString()}`
+        }));
+
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.snackBar.open('Error al conectar con el servidor', 'Cerrar', { duration: 3000 });
+      error: (err) => {
+        console.error('Error en API:', err);
+        this.snackBar.open('Error al obtener la lista de fichas', 'Cerrar', { duration: 3000 });
         this.loading = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  abrirModalNueva() {
-    const ref = this.dialog.open(FichaDialogComponent, { 
+  abrirModalNueva(): void {
+    const ref = this.dialog.open(FichaDialogComponent, {
       width: '95vw',
-      maxWidth: '1200px',
-      maxHeight: 'none',
-      panelClass: 'custom-dialog-container'
+      maxWidth: '800px',
     });
-    ref.afterClosed().subscribe(res => {
+
+    ref.afterClosed().subscribe((res) => {
       if (res) {
         this.fichaService.create(res).subscribe({
           next: () => {
-            this.snackBar.open('Ficha creada correctamente', 'OK', { duration: 3000 });
+            this.snackBar.open('Ficha registrada con éxito', 'OK', { duration: 3000 });
             this.cargarFichas();
           },
-          error: () => this.snackBar.open('Error al crear ficha', 'OK', { duration: 3000 })
+          error: () => this.snackBar.open('Error al registrar la ficha', 'Cerrar')
         });
       }
     });
   }
 
-  editarFicha(ficha: Ficha) {
-    const ref = this.dialog.open(FichaDialogComponent, { 
-      data: ficha, 
+  verAprendices(ficha: any): void {
+    // Aquí abres el modal con la lista de aprendices
+    this.dialog.open(AprendicesModalComponent, {
       width: '95vw',
-      maxWidth: '1200px',
-      maxHeight: 'none',
-      panelClass: 'custom-dialog-container'
+      maxWidth: '900px',
+      data: { fichaId: ficha.id, numficha: ficha.numficha }
     });
-    ref.afterClosed().subscribe(res => {
+  }
+
+  editarFicha(ficha: any): void {
+    const ref = this.dialog.open(FichaDialogComponent, {
+      data: ficha,
+      width: '95vw',
+      maxWidth: '800px',
+    });
+
+    ref.afterClosed().subscribe((res) => {
       if (res) {
         this.fichaService.update(ficha.id, res).subscribe({
           next: () => {
-            this.snackBar.open('Ficha actualizada correctamente', 'OK', { duration: 3000 });
+            this.snackBar.open('Datos actualizados correctamente', 'OK', { duration: 3000 });
             this.cargarFichas();
           },
-          error: () => this.snackBar.open('Error al actualizar ficha', 'OK', { duration: 3000 })
+          error: () => this.snackBar.open('Error al actualizar datos', 'Cerrar')
         });
       }
     });
   }
 
-  eliminarFicha(ficha: Ficha) {
-    if (confirm(`¿Eliminar la ficha ${ficha.numficha}?`)) {
+  eliminarFicha(ficha: any): void {
+    if (confirm(`¿Está seguro de eliminar la ficha ${ficha.numficha}?`)) {
       this.fichaService.delete(ficha.id).subscribe({
         next: () => {
           this.snackBar.open('Ficha eliminada', 'OK', { duration: 3000 });
           this.cargarFichas();
         },
-        error: () => this.snackBar.open('Error al eliminar', 'OK', { duration: 3000 })
+        error: () => this.snackBar.open('No se pudo eliminar la ficha', 'Cerrar')
       });
     }
   }

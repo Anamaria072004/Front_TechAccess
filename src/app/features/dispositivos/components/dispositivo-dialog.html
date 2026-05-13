@@ -3,9 +3,8 @@
 <mat-dialog-content>
   <form [formGroup]="deviceForm" class="form-container">
 
-    <!-- Autocomplete para Usuario -->
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Responsable (N° Documento o Nombre)</mat-label>
+      <mat-label>Propietario (N° Documento o Nombre)</mat-label>
       <input type="text" 
              matInput 
              placeholder="Buscar por documento o nombre..." 
@@ -17,55 +16,60 @@
       <mat-autocomplete #autoUsuario="matAutocomplete" 
                         [displayWith]="displayUsuarioFn"
                         (optionSelected)="onUsuarioSelected($event)">
-        <mat-option *ngFor="let user of filteredUsuarios" [value]="user">
-          <div class="usuario-option">
-            <strong>{{ user.docNumber }}</strong> - {{ user.name }} {{ user.lastName }}
-            <span class="user-email" *ngIf="user.email"> ({{ user.email }})</span>
-          </div>
-        </mat-option>
+        @for (user of filteredUsuarios; track user.id) {
+          <mat-option [value]="user">
+            <div class="usuario-option">
+              <strong>{{ user.docNumber }}</strong> - {{ user.name }} {{ user.lastName }}
+              @if (user.email) {
+                <span class="user-email"> ({{ user.email }})</span>
+              }
+            </div>
+          </mat-option>
+        } @empty {
+          <mat-option disabled>No se encontraron usuarios</mat-option>
+        }
       </mat-autocomplete>
 
-      <mat-error *ngIf="deviceForm.get('usuario')?.invalid && deviceForm.get('usuario')?.touched">
-        Debe seleccionar un usuario válido
-      </mat-error>
+      @if (deviceForm.get('usuario')?.invalid && deviceForm.get('usuario')?.touched) {
+        <mat-error>Seleccione un usuario válido</mat-error>
+      }
     </mat-form-field>
 
-    <!-- Usuario seleccionado (opcional) -->
-    <div *ngIf="deviceForm.get('usuario')?.value" class="selected-user-info">
-      <mat-icon>person</mat-icon>
-      <span>Usuario seleccionado:
-        {{ deviceForm.get('usuario')?.value?.docNumber }} -
-        {{ deviceForm.get('usuario')?.value?.name }}
-        {{ deviceForm.get('usuario')?.value?.lastName }}
-      </span>
-    </div>
+    @if (deviceForm.get('usuario')?.value) {
+      <div class="selected-user-info">
+        <mat-icon>person</mat-icon>
+        <span>
+          {{ deviceForm.get('usuario')?.value?.docNumber }} -
+          {{ deviceForm.get('usuario')?.value?.name }} {{ deviceForm.get('usuario')?.value?.lastName }}
+        </span>
+      </div>
+    }
 
-    <!-- Tipo de Dispositivo -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Tipo de Dispositivo</mat-label>
       <input matInput formControlName="tipoDispositivo" placeholder="Ej: Portátil, Celular">
-      <mat-error *ngIf="deviceForm.get('tipoDispositivo')?.invalid">
-        El tipo es obligatorio
-      </mat-error>
+      @if (deviceForm.get('tipoDispositivo')?.invalid) {
+        <mat-error>El tipo es obligatorio</mat-error>
+      }
     </mat-form-field>
 
-    <!-- Marca -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Marca</mat-label>
-      <input matInput formControlName="marca" placeholder="Ej: Dell, Lenovo">
-      <mat-error *ngIf="deviceForm.get('marca')?.invalid">
-        La marca es obligatoria
-      </mat-error>
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Marca</mat-label>
+        <input matInput formControlName="marca" placeholder="Ej: Dell">
+        @if (deviceForm.get('marca')?.invalid) {
+          <mat-error>Obligatorio</mat-error>
+        }
+      </mat-form-field>
 
-    <!-- Color -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Color</mat-label>
-      <input matInput formControlName="color" placeholder="Ej: Gris, Negro">
-      <mat-error *ngIf="deviceForm.get('color')?.invalid">
-        El color es obligatorio
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Color</mat-label>
+        <input matInput formControlName="color" placeholder="Ej: Gris">
+        @if (deviceForm.get('color')?.invalid) {
+          <mat-error>Obligatorio</mat-error>
+        }
+      </mat-form-field>
+    </div>
 
   </form>
 </mat-dialog-content>
@@ -73,6 +77,6 @@
 <mat-dialog-actions align="end">
   <button mat-button (click)="close()">Cancelar</button>
   <button mat-raised-button color="primary" (click)="save()" [disabled]="deviceForm.invalid">
-    {{ data ? 'Actualizar' : 'Guardar' }} Dispositivo
+    {{ data ? 'Actualizar' : 'Guardar' }}
   </button>
 </mat-dialog-actions>

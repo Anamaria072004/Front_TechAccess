@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -59,10 +59,10 @@ export class UsersComponent implements OnInit {
     this.usersService.getAll().subscribe({
       next: (data) => {
         this.usuarios = data
-          .filter((u: Usuario) => !u.roles?.some(r => r.name.toUpperCase() === 'APRENDIZ'))
+          .filter((u: Usuario) => !u.roles?.some((r) => r.name.toUpperCase() === 'APRENDIZ'))
           .map((u: Usuario) => ({
             ...u,
-            nombreCompleto: `${u.name} ${u.lastName || ''}`
+            nombreCompleto: `${u.name} ${u.lastName || ''}`,
           }));
         this.loading = false;
         this.cdr.detectChanges();
@@ -71,7 +71,7 @@ export class UsersComponent implements OnInit {
         this.snackBar.open('Error al cargar usuarios', 'Cerrar', { duration: 3000 });
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
