@@ -56,8 +56,13 @@ export class RoleDialogComponent implements OnInit {
   cargarModulos(): void {
     // Asegúrate de que el método en el servicio se llame 'getModules' o 'getModulosDisponibles'
     this.rolesService.getModules().subscribe({
-      next: (res: Modulo[]) => {
-        this.modules = res;
+      next: (res: any) => {
+        const data = Array.isArray(res) ? res : (res.data || []);
+        
+        // El setTimeout previene el error ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => {
+          this.modules = data;
+        });
       },
       error: (err) => {
         console.error('Error loading modules:', err);
@@ -71,7 +76,7 @@ export class RoleDialogComponent implements OnInit {
     }
   }
 
-  cancel(): void {
+  close(): void {
     this.dialogRef.close();
   }
 }

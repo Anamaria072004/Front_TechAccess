@@ -13,6 +13,7 @@ import { DispositivosComponent } from './features/dispositivos/dispositivos';
 import { PageNotFound } from './features/page-not-found/page-not-found';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
+import { VigilanteComponent } from './features/users/components/vigilante/vigilante';
 
 
 export const routes: Routes = [
@@ -63,6 +64,11 @@ export const routes: Routes = [
         component: DispositivosComponent,
         canActivate: [moduleGuard],
         data: { module: 'dispositivos' }
+      },
+      {
+        path: 'vigilante',
+        component: VigilanteComponent,
+        canActivate: [authGuard]
       },
       // Redirección interna: de / a /inicio
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }

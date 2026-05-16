@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
-import { Auth } from '../services/auth'; // Verifica que la ruta a tu servicio sea esta
+import { Auth } from '../../core/services/auth'; // Verifica que la ruta a tu servicio sea esta
 
 @Component({
   selector: 'app-reset-password',

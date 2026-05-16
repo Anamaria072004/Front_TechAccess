@@ -12,8 +12,8 @@ export class RolesService {
   private apiUrl = 'http://localhost:3000/api/roles';
   private modulesUrl = 'http://localhost:3000/api/modules';
 
-  getAll(): Observable<Role[]> {
-    return this.http.get<Role[]>(this.apiUrl);
+  getAll(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
   getOne(id: number): Observable<Role> {

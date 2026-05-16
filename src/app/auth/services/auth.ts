@@ -118,10 +118,10 @@ export class Auth {
   });
 
   public isVigilante = computed(() => {
-    return this.userRoles().includes('VIGILANTE');
+    return this.userRoles().some(r => r.includes('VIGILANTE'));
   });
 
   public isAdmin = computed(() => {
-    return this.userRoles().includes('ADMIN');
+    return this.userRoles().some(r => r.includes('ADMIN'));
   });
 }

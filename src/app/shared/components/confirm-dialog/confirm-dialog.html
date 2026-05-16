@@ -1,0 +1,29 @@
+<div class="confirm-dialog">
+  <!-- Zona del ícono -->
+  <div class="confirm-icon-zone">
+    <div class="icon-circle">
+      <mat-icon>{{ data.icon ?? 'delete_forever' }}</mat-icon>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="confirm-content">
+    <h2 class="confirm-title">{{ data.title }}</h2>
+    <p class="confirm-message">{{ data.message }}</p>
+    @if (data.detail) {
+      <p class="confirm-detail">{{ data.detail }}</p>
+    }
+  </div>
+
+  <!-- Acciones -->
+  <div class="confirm-actions">
+    <button mat-button class="btn-cancel" (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+      {{ data.cancelText ?? 'Cancelar' }}
+    </button>
+    <button mat-flat-button class="btn-confirm" (click)="onConfirm()">
+      <mat-icon>{{ data.icon ?? 'delete_forever' }}</mat-icon>
+      {{ data.confirmText ?? 'Eliminar' }}
+    </button>
+  </div>
+</div>

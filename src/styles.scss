@@ -5,14 +5,31 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+// ============================================
+// Variables globales del sistema de colores
+// ============================================
+:root {
+  --color-primary:       #1a3a8f;   // Azul rey - color principal
+  --color-primary-dark:  #0d2160;   // Azul rey oscuro
+  --color-primary-light: #2a52c9;   // Azul rey claro
+  --color-accent:        #D81B60;   // Fuxia plano
+  --color-accent-dark:   #AD1457;   // Fuxia oscuro
+  --color-sidebar-bg:    #0f1f5c;   // Fondo sidebar
+  --color-text-white:    #ffffff;
+  --color-text-muted:    #64748b;
+  --color-bg-page:       #f0f4ff;   // Fondo suave azulado para el contenido
+}
+
 html {
   height: 100%;
-  @include mat.theme((color: (primary: mat.$green-palette, // Cambiado a verde SENA
-        tertiary: mat.$blue-palette,
-      ),
-      typography: 'Plus Jakarta Sans',
-      density: 0,
-    ));
+  @include mat.theme((
+    color: (
+      primary: mat.$blue-palette,
+      tertiary: mat.$green-palette,
+    ),
+    typography: 'Plus Jakarta Sans',
+    density: 0,
+  ));
 }
 
 html,
@@ -21,15 +38,36 @@ body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
-  background-color: #f4f4f7;
+  background-color: var(--color-bg-page);
   font-family: 'Plus Jakarta Sans', sans-serif;
-
-  /* Contenedor principal que ocupa toda la pantalla y centra la tarjeta */
-  width: 100%;
-  background-color: #f4f4f7; // Un gris muy claro para que resalte la tarjeta blanca
 }
 
 /* Global styles and Material 3 overrides */
 mat-form-field {
   width: 100%;
+}
+
+/* --- Scrollbar Global Sutil --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35); /* Gris azulado sutil */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.55);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
 }

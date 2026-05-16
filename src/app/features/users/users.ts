@@ -1,17 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
-
+import { Component, OnInit, ChangeDetectorRef, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DialogData } from './models/dialog-config.model';
-import { DataTableComponent } from '../../shared/components/data-table/data-table.component';
-
+import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { UsersService } from './services/users.service';
 import { UsuarioDialogComponent } from './components/usuario-dialog/usuario-dialog';
 import { Usuario } from './models/users.model';
-import { Auth } from '../../auth/services/auth';
-import { CommonModule } from '@angular/common';
+import { Auth } from '../../core/services/auth';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-usuarios',
@@ -28,237 +28,189 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./users.scss'],
 })
 export class UsersComponent implements OnInit {
-  private snackBar = inject(MatSnackBar);
-  private dialog = inject(MatDialog);
+  private snackBar     = inject(MatSnackBar);
+  private dialog       = inject(MatDialog);
   private usersService = inject(UsersService);
-  private cdr = inject(ChangeDetectorRef);
-  private auth = inject(Auth);
+  private cdr          = inject(ChangeDetectorRef);
+  private auth         = inject(Auth);
+  private router       = inject(Router);
 
-  isVigilante = this.auth.isVigilante();
-  isAdmin = this.auth.isAdmin();
+  isAdmin      = signal(this.auth.isAdmin());
+  isVigilante  = signal(this.auth.isVigilante());
+  usuariosRaw  = signal<Usuario[]>([]);
+  usuarios     = signal<any[]>([]);
+  loading      = signal(true); // Inicia en true para evitar el parpadeo inicial "Tabla vacía -> Spinner"
 
-  usuarios: any[] = [];
-  loading = false;
+  // Columnas estáticas (Como en Vigilante) para máxima estabilidad
+  userColumns = [
+    { key: 'rolesTexto',     label: 'Rol / Roles',      type: 'text'    },
+    { key: 'nombreCompleto', label: 'Nombre completo',  type: 'text'    },
+    { key: 'docType',        label: 'Tipo doc.',         type: 'text'    },
+    { key: 'docNumber',      label: 'N° documento',      type: 'text'    },
+    { key: 'email',          label: 'Email',             type: 'text'    },
+    { key: 'ficha',          label: 'Ficha',             type: 'text'    },
+    { key: 'state',          label: 'Estado',            type: 'text'    },
+    { key: 'actions',        label: 'Acciones',          type: 'actions' }
+  ];
 
   ngOnInit(): void {
     this.cargarUsuarios();
   }
 
-  userColumns = [
-    { key: 'nombreCompleto', label: 'Nombre completo', type: 'text' },
-    { key: 'docType', label: 'Tipo doc.', type: 'text' },
-    { key: 'docNumber', label: 'N° documento', type: 'text' },
-    { key: 'email', label: 'Email', type: 'text' },
-    { key: 'state', label: 'Estado', type: 'text' },
-    { key: 'actions', label: 'Acciones', type: 'actions' }
-  ];
-
   cargarUsuarios(): void {
-    this.loading = true;
-    this.cdr.detectChanges();
+    this.loading.set(true);
 
     this.usersService.getAll().subscribe({
-      next: (data) => {
-        this.usuarios = data
-          .filter((u: Usuario) => !u.roles?.some((r) => r.name.toUpperCase() === 'APRENDIZ'))
-          .map((u: Usuario) => ({
-            ...u,
-            nombreCompleto: `${u.name} ${u.lastName || ''}`,
-          }));
-        this.loading = false;
-        this.cdr.detectChanges();
+      next: (res: any) => {
+        const allUsers = res.data || res;
+        const filtrados = allUsers; 
+
+        this.usuariosRaw.set(filtrados);
+
+        this.usuarios.set(filtrados.map((u: Usuario) => ({
+          ...u,
+          nombreCompleto: `${u.name} ${u.lastName || ''}`.trim(),
+          rolesTexto:     u.roles?.map(r => r.name).join(', ') || 'Sin Rol',
+          ficha:          u.fichas?.numficha ?? 'Sin ficha'
+        })));
+
+        this.loading.set(false);
       },
-      error: () => {
-        this.snackBar.open('Error al cargar usuarios', 'Cerrar', { duration: 3000 });
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
+      error: (err: any) => {
+        this.snackBar.open(
+          err.error?.message || 'Error al cargar usuarios',
+          'Cerrar',
+          { duration: 3000 }
+        );
+        this.loading.set(false);
+      }
     });
   }
 
-  // NUEVO: Verificar si un usuario es visitante
-  esVisitante(usuario: any): boolean {
-    return usuario.roles?.some((r: any) => r.name.toUpperCase() === 'VISITANTE') ?? false;
-  }
+  verUsuario(usuario: any): void {
+    const original = this.usuariosRaw().find(u => u.id === usuario.id);
+    if (!original) return;
 
-  // NUEVO: Abrir diálogo en modo solo lectura
-  verUsuario(usuario: Usuario): void {
     this.dialog.open(UsuarioDialogComponent, {
       data: {
-        vigilanteMode: false,
-        user: usuario,
-        isAdmin: this.isAdmin,
+        user:     original,
+        isAdmin:  this.isAdmin(),
         readonly: true,
-        title: 'Ver Información de Usuario'
-      } satisfies DialogData,
-      width: '95vw',
-      maxWidth: '620px'
+        title:    'Ver Información de Usuario'
+      } as DialogData,
+      width:    '95vw',
+      maxWidth: '460px'
     });
   }
 
   abrirModalNuevo(): void {
     const ref = this.dialog.open(UsuarioDialogComponent, {
-      width: '100%',
-      maxWidth: '620px',
+      width:    '100%',
+      maxWidth: '460px',
       data: {
-        vigilanteMode: false,
-        isAdmin: this.isAdmin
-      } satisfies DialogData
+        isAdmin: this.isAdmin(),
+        vigilanteMode: this.isVigilante(),
+        title: this.isVigilante() ? 'Registrar Visitante' : 'Nuevo Usuario'
+      } as DialogData
     });
 
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().subscribe((result: any) => {
       if (!result) return;
 
-      this.loading = true;
-      this.cdr.detectChanges();
+      this.loading.set(true);
 
       this.usersService.create(result).subscribe({
         next: () => {
           this.snackBar.open('Usuario creado', 'Cerrar', { duration: 3000 });
           this.cargarUsuarios();
         },
-        error: (err) => {
+        error: (err: any) => {
           this.snackBar.open(
             err.error?.message || 'Error al crear usuario',
             'Cerrar',
             { duration: 3000 }
           );
-          this.loading = false;
-          this.cdr.detectChanges();
+          this.loading.set(false);
           console.error(err);
         }
       });
     });
   }
 
-  registrarVisitante(): void {
-    const ref = this.dialog.open(UsuarioDialogComponent, {
-      width: '95vw',
-        maxWidth: '620px',
-      data: {
-        vigilanteMode: true,
-        title: 'Registrar Visitante',
-        saveButtonText: 'Registrar Visitante',
-        isAdmin: this.isAdmin
-      } satisfies DialogData
-    });
+  editarUsuario(usuario: any): void {
+    const original = this.usuariosRaw().find(u => u.id === usuario.id);
+    if (!original) return;
 
-    ref.afterClosed().subscribe(result => {
-      if (!result) return;
-
-      this.loading = true;
-      this.cdr.detectChanges();
-
-      this.usersService.create(result).subscribe({
-        next: () => {
-          this.snackBar.open('Visitante registrado correctamente', 'Cerrar', {
-            duration: 3000
-          });
-          this.cargarUsuarios();
-        },
-        error: (err) => {
-          this.snackBar.open(
-            err.error?.message || 'Error al registrar visitante',
-            'Cerrar',
-            { duration: 3000 }
-          );
-          this.loading = false;
-          this.cdr.detectChanges();
-          console.error(err);
-        }
-      });
-    });
-  }
-
-  // MODIFICADO: Si no es visitante, solo ver (no editar)
-  editarUsuario(usuario: Usuario): void {
-    // ADMIN puede editar a TODOS
-    if (this.isAdmin) {
-      this.abrirModalEditar(usuario);
-      return;
-    }
-
-    // VIGILANTE solo puede editar VISITANTES
-    if (this.isVigilante && !this.esVisitante(usuario)) {
-      this.verUsuario(usuario); // No es visitante, solo ver
-      return;
-    }
-
-    // VIGILANTE + VISITANTE = editar
-    this.abrirModalEditar(usuario);
-  }
-
-  // NUEVO: Método separado para abrir el modal de edición
-  private abrirModalEditar(usuario: Usuario): void {
     const ref = this.dialog.open(UsuarioDialogComponent, {
       data: {
-        vigilanteMode: false,
-        user: usuario,
-        isAdmin: this.isAdmin
-      } satisfies DialogData,
-      width: '95vw',
-      maxWidth: '620px'
+        user:    original,
+        isAdmin: this.isAdmin()
+      } as DialogData,
+      width:    '95vw',
+      maxWidth: '460px'
     });
 
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().subscribe((result: any) => {
       if (!result) return;
 
-      this.loading = true;
-      this.cdr.detectChanges();
+      this.loading.set(true);
 
-      this.usersService.update(usuario.id, result).subscribe({
+      this.usersService.update(original.id, result).subscribe({
         next: () => {
           this.snackBar.open('Usuario actualizado', 'Cerrar', { duration: 3000 });
           this.cargarUsuarios();
         },
-        error: (err) => {
+        error: (err: any) => {
           this.snackBar.open(
             err.error?.message || 'Error al actualizar usuario',
             'Cerrar',
             { duration: 3000 }
           );
-          this.loading = false;
-          this.cdr.detectChanges();
+          this.loading.set(false);
           console.error(err);
         }
       });
     });
   }
 
-  // MODIFICADO: Solo permitir eliminar visitantes
-  eliminarUsuario(usuario: Usuario): void {
-    // ADMIN puede eliminar a TODOS
-    // VIGILANTE solo puede eliminar VISITANTES
-    if (this.isVigilante && !this.esVisitante(usuario)) {
-      this.snackBar.open('Solo se pueden eliminar usuarios visitantes', 'Cerrar', { duration: 3000 });
-      return;
-    }
-
+  eliminarUsuario(usuario: any): void {
     if (!usuario.id) {
       this.snackBar.open('Error: usuario sin ID válido', 'Cerrar', { duration: 3000 });
       return;
     }
 
-    if (confirm(`¿Eliminar a ${usuario.name}?`)) {
-      this.loading = true;
-      this.cdr.detectChanges();
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '95vw',
+      maxWidth: '420px',
+      data: {
+        title:       'Eliminar Usuario',
+        message:     `¿Estás seguro de que deseas eliminar a ${usuario.nombreCompleto ?? usuario.name}?`,
+        detail:      'Esta acción no se puede deshacer.',
+        confirmText: 'Sí, eliminar',
+        cancelText:  'Cancelar',
+      }
+    });
+
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this.loading.set(true);
 
       this.usersService.delete(usuario.id).subscribe({
         next: () => {
           this.snackBar.open('Usuario eliminado', 'Cerrar', { duration: 3000 });
           this.cargarUsuarios();
         },
-        error: (err) => {
+        error: (err: any) => {
           this.snackBar.open(
             err.error?.message || 'Error al eliminar usuario',
             'Cerrar',
             { duration: 3000 }
           );
-          this.loading = false;
-          this.cdr.detectChanges();
+          this.loading.set(false);
           console.error(err);
         }
       });
-    }
+    });
   }
 }

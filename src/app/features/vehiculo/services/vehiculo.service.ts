@@ -11,8 +11,8 @@ export class VehiculoService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/api/vehiculos';
 
-  getAll(): Observable<Vehiculo[]> {
-    return this.http.get<Vehiculo[]>(this.apiUrl);
+  getAll(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
   getOne(id: number): Observable<Vehiculo> {

@@ -5,10 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { DataTableComponent } from '../../shared/components/data-table/data-table.component';
+import { DataTableComponent } from '../../shared/components/data-table/data-table';
 import { RolesService } from './services/roles.service';
 import { RoleDialogComponent } from './components/role-dialog/role-dialog';
 import { Role } from './models/roles.model';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-roles',
@@ -40,8 +41,9 @@ export class RolesComponent implements OnInit {
   cargarRoles(): void {
     this.loading = true;
     this.rolesService.getAll().subscribe({
-      next: (res: Role[]) => {
-        this.roles = res ? [...res] : [];
+      next: (res: any) => {
+        const data = res.data || res;
+        this.roles = data ? [...data] : [];
         this.loading = false; // Detiene el spinner
         this.cdr.detectChanges(); // Asegura que Angular note que loading ya es false
       },
@@ -67,7 +69,10 @@ export class RolesComponent implements OnInit {
             this.snackBar.open('Rol creado con éxito', 'Cerrar', { duration: 2000 });
             this.cargarRoles();
           },
-          error: (err) => this.snackBar.open('Error al crear', 'Cerrar', { duration: 3000 }),
+          error: (err) => {
+            const msg = err.error?.message || 'Error al crear';
+            this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
+          },
         });
       }
     });
@@ -94,14 +99,28 @@ export class RolesComponent implements OnInit {
   }
 
   eliminarRol(rol: Role): void {
-    if (confirm(`¿Estás seguro de que deseas eliminar el rol "${rol.name}"?`)) {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '95vw',
+      maxWidth: '420px',
+      data: {
+        title:       'Eliminar Rol',
+        message:     `¿Estás seguro de que deseas eliminar el rol "${rol.name}"?`,
+        detail:      'Esta acción no se puede deshacer.',
+        confirmText: 'Sí, eliminar',
+        cancelText:  'Cancelar',
+      }
+    });
+
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
       this.rolesService.delete(rol.id).subscribe({
         next: () => {
           this.snackBar.open('Rol eliminado', 'Cerrar', { duration: 2000 });
           this.cargarRoles();
         },
-        error: (err) => this.snackBar.open('Error al eliminar', 'Cerrar', { duration: 3000 }),
+        error: () => this.snackBar.open('Error al eliminar', 'Cerrar', { duration: 3000 }),
       });
-    }
+    });
   }
 }

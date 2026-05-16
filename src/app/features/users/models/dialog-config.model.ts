@@ -4,11 +4,11 @@ export interface Role {
 }
 
 export interface DialogModeConfig {
-  vigilanteMode: boolean;
+  vigilanteMode?: boolean;
   title?: string;
   saveButtonText?: string;
   simplifiedMode?: boolean;
-  isAdmin?: boolean; 
+  isAdmin?: boolean;
   readonly?: boolean;
 }
 
@@ -24,8 +24,8 @@ export interface UserData {
   state: string;
   isActive?: boolean;
   password?: string;
-  roles?: Role[];      // Lo que recibes del backend (objetos)
-  roleIds?: number[];  // Lo que envías al backend (IDs)
+  roles?: Role[];
+  roleIds?: number[];
 }
 
 export interface DialogData extends DialogModeConfig {

@@ -6,7 +6,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddVehiculoModalComponent } from './components/vehiculo-dialog';
 import { VehiculoService } from './services/vehiculo.service';
 import { Vehiculo } from './models/vehiculo.model';
-import { DataTableComponent } from '@shared/components/data-table/data-table.component';
+import { DataTableComponent } from '@shared/components/data-table/data-table';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-vehiculo',
@@ -48,7 +49,8 @@ export class VehiculosComponent implements OnInit {
   loadVehiculos(): void {
     this.loading = true;
     this.vehiculoService.getAll().subscribe({
-      next: (data) => {
+      next: (res) => {
+        const data = res.data || res;
         // Mapeamos los datos para que coincidan con las 'keys' de las columnas
         this.vehiculos = data.map((v: any) => ({
           ...v,
@@ -69,8 +71,8 @@ export class VehiculosComponent implements OnInit {
 
   openCreateDialog(): void {
     const ref = this.dialog.open(AddVehiculoModalComponent, {
-      width: '95vw',
-      maxWidth: '600px', // Ajustado para mantener consistencia con dispositivos
+      width: '650px',
+      maxWidth: '95vw',
     });
 
     ref.afterClosed().subscribe((res) => {
@@ -90,8 +92,8 @@ export class VehiculosComponent implements OnInit {
   editarVehiculo(vehiculo: any): void {
     const ref = this.dialog.open(AddVehiculoModalComponent, {
       data: vehiculo,
-      width: '95vw',
-      maxWidth: '600px',
+      width: '650px',
+      maxWidth: '95vw',
     });
 
     ref.afterClosed().subscribe((res) => {
@@ -109,18 +111,30 @@ export class VehiculosComponent implements OnInit {
   }
 
   deleteVehiculo(vehiculo: any): void {
-    const id = vehiculo.id;
-    if (confirm(`¿Está seguro de querer eliminar el vehículo con placa ${vehiculo.placa}?`)) {
-      this.vehiculoService.delete(id).subscribe({
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '95vw',
+      maxWidth: '420px',
+      data: {
+        title:       'Eliminar Vehículo',
+        message:     `¿Deseas eliminar el vehículo con placa ${vehiculo.placa}?`,
+        detail:      'Esta acción no se puede deshacer.',
+        icon:        'directions_car',
+        confirmText: 'Sí, eliminar',
+        cancelText:  'Cancelar',
+      }
+    });
+
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this.vehiculoService.delete(vehiculo.id).subscribe({
         next: () => {
           this.snackBar.open('Vehículo eliminado correctamente', 'Limpiar', { duration: 3000 });
           this.loadVehiculos();
         },
         error: () =>
-          this.snackBar.open('Error al intentar eliminar el vehículo', 'Cerrar', {
-            duration: 3000,
-          }),
+          this.snackBar.open('Error al intentar eliminar el vehículo', 'Cerrar', { duration: 3000 }),
       });
-    }
+    });
   }
 }

@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { Component, Inject, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -11,12 +11,17 @@ import { FichaService } from '../../services/ficha.service';
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatTableModule, MatIconModule],
   templateUrl: './aprendices-modal.html',
-  styleUrl: './aprendices-modal.scss'
+  styleUrl: './aprendices-modal.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AprendicesModalComponent implements OnInit {
   private fichaService = inject(FichaService);
+  private dialogRef = inject(MatDialogRef<AprendicesModalComponent>);
+  private cdr = inject(ChangeDetectorRef);
+  
   aprendices: any[] = [];
   loading = true;
+  displayedColumns = ['nombre', 'docType', 'documento', 'email', 'telefono'];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { fichaId: number, numficha: string }) {}
 
@@ -27,12 +32,14 @@ export class AprendicesModalComponent implements OnInit {
   cargarAprendices(): void {
     this.fichaService.getAprendices(this.data.fichaId).subscribe({
       next: (res: any) => {
-        // Ajusta según si tu API devuelve res o res.data
         this.aprendices = res.data || res;
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
+        this.aprendices = [];
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }

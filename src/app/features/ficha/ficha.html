@@ -1,25 +1,29 @@
 <div class="fichas-container">
-  <!-- Cabecera igual a Vehículos y Dispositivos -->
-  <div class="header-section">
-    <div class="section-title">
-      <mat-icon>school</mat-icon>
+
+  <div class="page-header">
+    <div class="header-info">
       <h1>Gestión de Fichas</h1>
+      <p>Administra las fichas de formación y sus aprendices asociados.</p>
     </div>
-    <button mat-raised-button class="btn-nuevo" (click)="abrirModalNueva()">
-      <mat-icon>add</mat-icon>
-      Nueva Ficha
-    </button>
+    <div class="header-actions" *ngIf="!isVigilante()">
+      <button mat-flat-button (click)="abrirModalNueva()">
+        <mat-icon>add</mat-icon>
+        Nueva Ficha
+      </button>
+    </div>
   </div>
 
-  <!-- Contenedor de la Tabla Genérica -->
-  <div class="table-card mat-elevation-z1">
+  <div class="table-card">
     <app-data-table 
-      [dataSource]="fichas"           
-      [columns]="fichaColumns" 
-      [loading]="loading"
+      [dataSource]="fichas" 
+      [columns]="fichaColumns()" 
+      [loading]="loading()" 
+      [showEdit]="!isVigilante()"
+      [showDelete]="!isVigilante()"
       (onView)="verAprendices($event)"
-      (onEdit)="editarFicha($event)"   
-      (onDelete)="eliminarFicha($event)"> 
+      (onEdit)="editarFicha($event)" 
+      (onDelete)="eliminarFicha($event)">
     </app-data-table>
   </div>
+
 </div>

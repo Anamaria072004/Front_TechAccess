@@ -1,68 +1,145 @@
-@use "sass:color";
-
-$primary-color: #39a900; // Verde SENA
-$text-primary: #1e293b;
-$border-color: #e2e8f0;
-
-.mat-mdc-dialog-container {
-  border-radius: 16px !important;
-  overflow: hidden;
+.dialog-container {
+  width: 460px;
+  max-width: 95vw;
+  margin: 0 auto;
 }
 
-h2[mat-dialog-title] {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: $text-primary;
-  border-bottom: 1px solid $border-color;
-  padding: 20px 24px;
-  margin: 0;
-}
-
-mat-dialog-content {
-  padding: 24px !important;
+// ─── Header ───────────────────────────────────────────────
+.dialog-header {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid #eeeeee;
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 0.2px;
+  }
+
+  button {
+    color: #999999;
+    transition: color 0.2s;
+    &:hover { color: #333333; }
+  }
 }
 
-.form-row {
+// ─── Secciones ────────────────────────────────────────────
+.section-label {
+  margin: 20px 0 8px 2px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #1565c0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  &:first-of-type { margin-top: 8px; }
+}
+
+// ─── Filas de campos ──────────────────────────────────────
+.dialog-row {
   display: flex;
   gap: 12px;
-  margin-top: 8px;
-  
+  margin-bottom: 4px;
+
   mat-form-field { flex: 1; }
 }
 
+.full-width {
+  width: 100%;
+}
+
+// ─── Info usuario seleccionado ────────────────────────────
 .selected-user-info {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 12px;
-  background: rgba(57, 169, 0, 0.05);
-  border: 1px solid rgba(57, 169, 0, 0.2);
+  background: rgba(21, 101, 192, 0.05);
+  border: 1px solid rgba(21, 101, 192, 0.2);
   border-radius: 8px;
-  color: #166534;
+  color: #1565c0;
   font-size: 0.85rem;
+  font-weight: 500;
   margin-bottom: 8px;
 
-  mat-icon { color: $primary-color; font-size: 20px; }
+  mat-icon { color: #1565c0; font-size: 20px; }
 }
 
+// ─── Acciones ─────────────────────────────────────────────
 mat-dialog-actions {
-  padding: 16px 24px !important;
-  border-top: 1px solid $border-color;
-  
-  button[color="primary"] {
-    background-color: $primary-color !important;
-    color: white !important;
-    border-radius: 8px;
-    height: 40px;
-    padding: 0 24px;
-    font-weight: 500;
-  }
+  padding: 12px 24px 20px !important;
+  border-top: 1px solid #eeeeee;
+  gap: 8px;
 }
 
-// Ajuste para que los errores sean visibles
-.mat-mdc-form-field-subscript-wrapper {
-  font-size: 11px !important;
+// ─── Overrides Material ───────────────────────────────────
+::ng-deep {
+  .mat-mdc-form-field-input-control {
+    color: #1a1a2e !important;
+    -webkit-text-fill-color: #1a1a2e !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+  }
+
+  .mat-mdc-select-value-text {
+    color: #1a1a2e !important;
+    font-weight: 500 !important;
+  }
+
+  .mat-mdc-floating-label mat-label {
+    color: #666666 !important;
+    font-weight: 500 !important;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background-color: #f8faff !important;
+    border-radius: 8px !important;
+  }
+
+  .mat-mdc-form-field.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #1565c0 !important;
+      border-width: 2px !important;
+    }
+  }
+
+  .mat-mdc-form-field-hint {
+    color: #888888 !important;
+    font-size: 11px !important;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    font-size: 11px !important;
+  }
+
+  .mat-mdc-option {
+    font-size: 14px !important;
+    color: #1a1a2e !important;
+
+    &.mdc-list-item--selected {
+      background-color: #e3f0ff !important;
+      color: #1565c0 !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  .mat-mdc-button {
+    color: #666666 !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.3px;
+  }
+
+  .mat-mdc-raised-button,
+  .mat-mdc-unelevated-button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    height: 40px !important;
+  }
 }

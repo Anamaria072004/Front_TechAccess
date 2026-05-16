@@ -1,74 +1,165 @@
-/* Contenedor con ancho controlado para evitar que se estire */
 .dialog-container {
-  width: 500px;
+  width: 460px;
   max-width: 95vw;
   margin: 0 auto;
 }
+// ─── Header ───────────────────────────────────────────────
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid #eeeeee;
 
-::ng-deep {
-  /* 1. TEXTO DE LOS INPUTS: Un negro suave para que no vibre */
-  .mat-mdc-form-field-input-control {
-    color: #2c2c2c !important; /* Negro azulado muy oscuro */
-    -webkit-text-fill-color: #2c2c2c !important;
-    font-weight: 500 !important;
-    font-size: 14px;
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 0.2px;
   }
 
-  /* 2. TEXTO DE LOS SELECTS */
-  .mat-mdc-select-value-text {
-    color: #2c2c2c !important;
-    font-weight: 500 !important;
-  }
-
-  /* 3. LABELS: Un tono un poco más claro para jerarquía */
-  .mat-mdc-floating-label mat-label {
-    color: #555555 !important;
-    font-weight: 500 !important;
-  }
-
-  /* 4. FONDO DE LOS CAMPOS: Un blanco hueso muy sutil para que el texto resalte mejor */
-  .mat-mdc-text-field-wrapper {
-    background-color: #fcfcfc !important;
-  }
-
-  /* 5. ELIMINAR OPACIDAD EN MODO LECTURA (Imagen 17) */
-  .mat-mdc-form-field.mat-form-field-disabled {
-    opacity: 1 !important;
-    .mat-mdc-text-field-wrapper {
-      background-color: #f9f9f9 !important;
-    }
+  button {
+    color: #999999;
+    transition: color 0.2s;
+    &:hover { color: #333333; }
   }
 }
 
-/* 6. ETIQUETAS DE SECCIÓN (IDENTIDAD, CONTACTO) */
+// ─── Secciones ────────────────────────────────────────────
 .section-label {
-  margin: 18px 0 6px 0;
-  font-size: 0.7rem;
+  margin: 20px 0 8px 2px;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: #666666; /* Gris medio para que no compita con los datos */
+  color: #1565c0;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
+
+  &:first-of-type { margin-top: 8px; }
 }
 
-/* 7. BOTÓN VERDE (Para el modo Vigilante/Consulta) */
-.btn-cerrar {
-  background-color: #1b5e20 !important; /* Un verde bosque más sobrio */
-  color: #ffffff !important;
-  padding: 0 35px !important;
-  border-radius: 8px !important; /* Bordes menos redondeados para verse más moderno */
-  font-weight: 600 !important;
-  height: 40px;
-}
-
+// ─── Filas de campos ──────────────────────────────────────
 .dialog-row {
   display: flex;
   gap: 12px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+
   mat-form-field { flex: 1; }
 }
 
+.full-width {
+  width: 100%;
+}
+
+// ─── Acciones ─────────────────────────────────────────────
 mat-dialog-actions {
-  padding: 16px 24px !important;
+  padding: 12px 24px 20px !important;
   border-top: 1px solid #eeeeee;
-  &.justify-center { justify-content: center; }
+  gap: 8px;
+
+  &.justify-center {
+    justify-content: center;
+  }
+}
+
+.btn-close-readonly {
+  background-color: #2e7d32;
+  color: #ffffff;
+  padding: 0 40px;
+  border-radius: 8px;
+  font-weight: 600;
+  height: 40px;
+  letter-spacing: 0.3px;
+  transition: background-color 0.2s;
+
+  &:hover { background-color: #1b5e20; }
+}
+
+// ─── Overrides Material ───────────────────────────────────
+::ng-deep {
+
+  // Texto inputs
+  .mat-mdc-form-field-input-control {
+    color: #1a1a2e !important;
+    -webkit-text-fill-color: #1a1a2e !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+  }
+
+  // Texto selects
+  .mat-mdc-select-value-text {
+    color: #1a1a2e !important;
+    font-weight: 500 !important;
+  }
+
+  // Labels flotantes
+  .mat-mdc-floating-label mat-label {
+    color: #666666 !important;
+    font-weight: 500 !important;
+  }
+
+  // Fondo campos
+  .mat-mdc-text-field-wrapper {
+    background-color: #f8faff !important;
+    border-radius: 8px !important;
+  }
+
+  // Borde activo
+  .mat-mdc-form-field.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #1565c0 !important;
+      border-width: 2px !important;
+    }
+  }
+
+  // Modo lectura
+  .mat-mdc-form-field.mat-form-field-disabled {
+    opacity: 1 !important;
+
+    .mat-mdc-text-field-wrapper {
+      background-color: #f0f4f8 !important;
+    }
+
+    .mat-mdc-form-field-input-control,
+    .mat-mdc-select-value-text {
+      color: #444444 !important;
+      -webkit-text-fill-color: #444444 !important;
+    }
+  }
+
+  // Hint
+  .mat-mdc-form-field-hint {
+    color: #888888 !important;
+    font-size: 11px !important;
+  }
+
+  // Opciones del select
+  .mat-mdc-option {
+    font-size: 14px !important;
+    color: #1a1a2e !important;
+
+    &.mdc-list-item--selected {
+      background-color: #e3f0ff !important;
+      color: #1565c0 !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  // Botón cancelar
+  .mat-mdc-button {
+    color: #666666 !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.3px;
+  }
+
+  // Botón guardar
+  .mat-mdc-raised-button,
+  .mat-mdc-unelevated-button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    height: 40px !important;
+  }
 }

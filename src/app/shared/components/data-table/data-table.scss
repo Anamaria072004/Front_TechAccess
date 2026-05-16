@@ -1,0 +1,237 @@
+// ─── CONTENEDOR PRINCIPAL ─────────────────────────
+.table-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative; // Necesario para el overlay absoluto
+  min-height: 240px;  // Altura mínima para que el loader no colapse el contenedor
+}
+
+// ─── ESTADO CARGANDO (OVERLAY) ───────────────────
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.75); // Fondo semi-transparente
+  backdrop-filter: blur(2px);            // Efecto premium
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  .loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .loading-text {
+    font-size: 0.95rem;
+    color: #1a3a8f;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─── TABLA RESPONSIVA ─────────────────────────────
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 10px;
+
+    &:hover {
+      background: rgba(148, 163, 184, 0.6);
+    }
+  }
+}
+
+// Opacidad reducida durante la carga
+.is-loading .table-responsive {
+  opacity: 0.4;
+  filter: grayscale(0.5);
+  pointer-events: none; // Evitar clics durante la carga
+}
+
+table {
+  width: 100%;
+  box-shadow: none !important;
+}
+
+// ─── ENCABEZADO DE COLUMNAS ───────────────────────
+.mat-mdc-header-row {
+  background: #ffffff;
+  border-bottom: 2px solid #e8edf8;
+}
+
+.mat-mdc-header-cell {
+  color: #475569 !important;
+  font-weight: 700 !important;
+  font-size: 0.73rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 12px 14px !important;
+  border-bottom: none !important;
+  white-space: nowrap;
+}
+
+// ─── FILAS DE DATOS ───────────────────────────────
+.mat-mdc-row {
+  height: 52px;
+  border-bottom: 1px solid #eef2ff !important;
+  transition: background 0.15s ease;
+
+  &:last-child {
+    border-bottom: none !important;
+  }
+
+  &:hover {
+    background-color: #f5f8ff !important;
+  }
+
+  &:nth-child(even) {
+    background-color: #fafbff;
+
+    &:hover {
+      background-color: #f0f4ff !important;
+    }
+  }
+}
+
+// ─── CELDAS ───────────────────────────────────────
+.mat-mdc-cell {
+  padding: 0 14px !important;
+  border-bottom: none !important;
+}
+
+.cell-text {
+  color: #1e293b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+// ─── BOTONES DE ACCIÓN ────────────────────────────
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+button.view-btn {
+  color: #1a3a8f !important;
+  transition: background 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    background: rgba(26, 58, 143, 0.1) !important;
+    transform: scale(1.1);
+  }
+
+  mat-icon { font-size: 20px; }
+}
+
+button.edit-btn {
+  color: var(--color-accent) !important;
+  transition: background 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    background: rgba(142, 36, 170, 0.12) !important;
+    transform: scale(1.1);
+  }
+
+  mat-icon { font-size: 20px; }
+}
+
+button.delete-btn {
+  color: #ef4444 !important;
+  transition: background 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    transform: scale(1.1);
+  }
+
+  mat-icon { font-size: 20px; }
+}
+
+// ─── ESTADO VACÍO ─────────────────────────────────
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  color: #94a3b8;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #cbd5e1;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #64748b;
+  }
+}
+
+// ─── PAGINADOR ────────────────────────────────────
+::ng-deep .mat-mdc-paginator {
+  background: #f8faff !important;
+  border-top: 1px solid #e8edf8 !important;
+  font-size: 0.85rem !important;
+
+  .mat-mdc-paginator-container {
+    justify-content: flex-end;
+    padding: 4px 16px;
+    min-height: 52px;
+  }
+
+  .mat-mdc-paginator-page-size-label,
+  .mat-mdc-select-value,
+  .mat-mdc-paginator-range-label {
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+  }
+
+  .mat-mdc-paginator-page-size-select {
+    margin: 0 8px !important;
+  }
+
+  .mat-mdc-icon-button {
+    color: #1a3a8f !important;
+  }
+}

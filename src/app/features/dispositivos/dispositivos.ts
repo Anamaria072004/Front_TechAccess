@@ -7,7 +7,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DispositivoService } from './services/dispositivo.service';
 import { AddDispositivoModalComponent } from './components/dispositivo-dialog';
 import { Dispositivo } from './models/dispositivos.model';
-import { DataTableComponent } from '@shared/components/data-table/data-table.component';
+import { DataTableComponent } from '@shared/components/data-table/data-table';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-dispositivos',
@@ -45,7 +46,8 @@ export class DispositivosComponent implements OnInit {
   cargarDispositivos(): void {
     this.loading = true;
     this.dispositivoService.getAll().subscribe({
-      next: (data) => {
+      next: (res) => {
+        const data = res.data || res;
         console.log('Datos del backend:', JSON.stringify(data, null, 2));
 
         this.dispositivos = data.map((d: any) => {
@@ -75,11 +77,24 @@ export class DispositivosComponent implements OnInit {
   }
 
   deleteDispositivo(dispositivo: any): void {
-    // Usamos el ID del dispositivo que emite la tabla
-    const id = dispositivo.id;
+    const id    = dispositivo.id;
     const marca = dispositivo.marca;
 
-    if (confirm(`¿Estás seguro de que deseas eliminar el dispositivo ${marca}?`)) {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '95vw',
+      maxWidth: '420px',
+      data: {
+        title:       'Eliminar Dispositivo',
+        message:     `¿Deseas eliminar el dispositivo ${marca}?`,
+        detail:      'Esta acción no se puede deshacer.',
+        confirmText: 'Sí, eliminar',
+        cancelText:  'Cancelar',
+      }
+    });
+
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
       this.dispositivoService.delete(id).subscribe({
         next: () => {
           this.snackBar.open('Dispositivo eliminado correctamente', 'Cerrar', { duration: 3000 });
@@ -90,7 +105,7 @@ export class DispositivosComponent implements OnInit {
           this.snackBar.open('No se pudo eliminar el dispositivo', 'Cerrar');
         },
       });
-    }
+    });
   }
 
   editarDispositivo(dispositivo: any): void {
@@ -114,8 +129,8 @@ export class DispositivosComponent implements OnInit {
     console.log('Datos enviados al diálogo:', dataParaDialogo);
 
     const ref = this.dialog.open(AddDispositivoModalComponent, {
-      width: '95vw',
-      maxWidth: '600px',
+      width: '500px',
+      maxWidth: '95vw',
       data: dataParaDialogo,
     });
 
@@ -144,8 +159,8 @@ export class DispositivosComponent implements OnInit {
 
   openRegisterModal(): void {
     const ref = this.dialog.open(AddDispositivoModalComponent, {
-      width: '95vw',
-      maxWidth: '600px',
+      width: '500px',
+      maxWidth: '95vw',
     });
 
     ref.afterClosed().subscribe((result) => {

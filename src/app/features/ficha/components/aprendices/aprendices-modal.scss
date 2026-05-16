@@ -1,0 +1,142 @@
+.dialog-container {
+  width: 700px;
+  max-width: 95vw;
+  margin: 0 auto;
+}
+
+// ─── Header ───────────────────────────────────────────────
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid #eeeeee;
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 0.2px;
+  }
+
+  button {
+    color: #999999;
+    transition: color 0.2s;
+    &:hover { color: #333333; }
+  }
+}
+
+// ─── Secciones ────────────────────────────────────────────
+.section-label {
+  margin: 12px 0 8px 2px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #1565c0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+// ─── Tabla de aprendices ──────────────────────────────────
+.aprendices-table {
+  width: 100%;
+  box-shadow: none !important;
+
+  th {
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    background: #f8faff !important;
+    padding: 10px 14px !important;
+  }
+
+  td {
+    padding: 8px 14px !important;
+    color: #1e293b;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  tr:hover {
+    background: #f0f4ff !important;
+  }
+
+  tr:nth-child(even) {
+    background: #fafbff;
+  }
+}
+
+// ─── Estados ──────────────────────────────────────────────
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 12px;
+  color: #64748b;
+
+  mat-icon {
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: #94a3b8;
+    animation: spin 1.5s linear infinite;
+  }
+
+  span {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 12px;
+  color: #64748b;
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #cbd5e1;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+  }
+}
+
+// ─── Acciones ─────────────────────────────────────────────
+mat-dialog-actions {
+  padding: 12px 24px 20px !important;
+  border-top: 1px solid #eeeeee;
+  justify-content: center;
+}
+
+.btn-close {
+  background-color: #1565c0 !important;
+  color: #ffffff !important;
+  padding: 0 40px;
+  border-radius: 8px;
+  font-weight: 600;
+  height: 40px;
+  letter-spacing: 0.3px;
+  transition: background-color 0.2s;
+
+  &:hover { background-color: #0d47a1 !important; }
+}

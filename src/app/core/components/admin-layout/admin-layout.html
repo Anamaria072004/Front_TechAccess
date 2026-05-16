@@ -1,48 +1,98 @@
 <mat-sidenav-container class="sidenav-container">
+
+  <!-- ===================== SIDEBAR ===================== -->
   <mat-sidenav
     #drawer
     class="sidenav"
     fixedInViewport
-    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'"
-    [opened]="(isHandset$ | async) === false"
+    [attr.role]="isHandset() ? 'dialog' : 'navigation'"
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="isHandset() === false"
   >
-    <mat-toolbar>SENA TechAccess</mat-toolbar>
-    
-    @if (authService.isAuthenticated()) {
-      <mat-nav-list>
-        <!-- menuItems() si es un Signal, o menuItems si es un array simple -->
-        @for (moduleName of menuItems(); track moduleName) {
-          <a mat-list-item 
-             [routerLink]="'/' + moduleName.toLowerCase()" 
-             routerLinkActive="active-link">
-             <mat-icon matListItemIcon>{{ getIcon(moduleName) }}</mat-icon>
-             <span matListItemTitle>{{ moduleName }}</span>
-          </a>
-        }
+    <!-- Cabecera del sidebar -->
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="logosena.png" alt="Logo SENA" class="logo-img" fetchpriority="high" loading="eager">
+        <div class="logo-text">
+          <span class="logo-title">TechAccess</span>
+        </div>
+      </div>
+    </div>
 
-        <!-- Botón de logout con estilo -->
-        <a mat-list-item (click)="logout()" class="logout-item">
-          <mat-icon matListItemIcon>logout</mat-icon>
-          <span matListItemTitle>Cerrar Sesión</span>
-        </a>
-      </mat-nav-list>
+    <!-- Menú de navegación -->
+    @if (authService.isAuthenticated()) {
+      <nav class="sidebar-nav">
+        <p class="nav-section-label">Navegación</p>
+        <mat-nav-list>
+          @for (moduleName of menuItems(); track moduleName) {
+            <a mat-list-item
+               [routerLink]="'/' + moduleName.toLowerCase()"
+               routerLinkActive="active-link">
+              <mat-icon matListItemIcon>{{ getIcon(moduleName) }}</mat-icon>
+              <span matListItemTitle>{{ moduleName }}</span>
+            </a>
+          }
+        </mat-nav-list>
+
+        <!-- Botón cerrar sesión -->
+        <div class="sidebar-footer">
+          <a mat-list-item class="logout-item" (click)="logout()">
+            <mat-icon matListItemIcon>logout</mat-icon>
+            <span matListItemTitle>Cerrar Sesión</span>
+          </a>
+          <div class="sidebar-copyright">
+            <span>&copy; 2026 TechAccess - SENA.</span>
+            <span>Todos los derechos reservados.</span>
+          </div>
+        </div>
+      </nav>
     }
   </mat-sidenav>
 
+  <!-- ===================== CONTENIDO PRINCIPAL ===================== -->
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      @if (isHandset$ | async) {
-        <button type="button" mat-icon-button (click)="drawer.toggle()">
+
+    <!-- Toolbar superior -->
+    <header class="top-toolbar">
+      <!-- Botón hamburguesa en móvil -->
+      @if (isHandset()) {
+        <button type="button" mat-icon-button class="menu-toggle" (click)="drawer.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
       }
-      <span>Panel Administrativo</span>
-    </mat-toolbar>
-    
-    <!-- Contenedor con la animación que definimos en el SCSS -->
+
+      <!-- Título del panel -->
+      <div class="toolbar-greeting">
+        <span class="greeting-name">
+          @if (authService.isVigilante()) {
+            Panel Vigilante
+          } @else {
+            Panel Administrativo
+          }
+        </span>
+      </div>
+
+      <span class="toolbar-spacer"></span>
+
+      <!-- Info del usuario + estado -->
+
+      <div class="toolbar-user-info">
+        <div class="user-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <div class="user-details">
+          <span class="user-fullname">
+            {{ currentUser()?.name }} {{ currentUser()?.lastName }}
+          </span>
+          <span class="user-email">{{ currentUser()?.email }}</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido de la vista activa (router-outlet) -->
     <main class="main-content-wrapper">
       <router-outlet></router-outlet>
     </main>
+
   </mat-sidenav-content>
 </mat-sidenav-container>

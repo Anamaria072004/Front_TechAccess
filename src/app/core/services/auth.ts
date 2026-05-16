@@ -85,9 +85,7 @@ export class Auth {
   public logout(): void {
     localStorage.clear();
     this._authStatus.set(null);
-    this.router.navigateByUrl('/auth').then(() => {
-      window.location.reload();
-    });
+    window.location.href = '/auth/login';
   }
 
   public checkAuthStatus(): Observable<boolean> {
@@ -107,4 +105,28 @@ export class Auth {
       })
     );
   }
+
+  forgotPassword(email: string) {
+    return this.http.post(`${this.API_URL}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string) {
+    return this.http.post(`${this.API_URL}/reset-password`, { token, newPassword });
+  }
+
+  public userRoles = computed(() => {
+    const user = this._authStatus()?.user;
+    const roles = user ? user.roles.map(r => r.name.toUpperCase()) : [];
+    console.log('Auth - Roles detectados:', roles);
+    return roles;
+  });
+
+  public isVigilante = computed(() => {
+    const roles = this.userRoles();
+    return roles.some(r => r.includes('VIGILAN') || r.includes('VISITANTE'));
+  });
+
+  public isAdmin = computed(() => {
+    return this.userRoles().some(r => r.includes('ADMIN'));
+  });
 }

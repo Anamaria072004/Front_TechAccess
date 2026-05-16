@@ -1,22 +1,27 @@
 <div class="vehiculos-container">
-  <div class="header-section">
-    <h2 class="section-title">
-      <mat-icon>directions_car</mat-icon>
-      Gestión de Vehículos
-    </h2>
-    <button mat-raised-button class="btn-nuevo" (click)="openCreateDialog()">
-      <mat-icon>add_circle</mat-icon>
-      Registrar Vehículo
-    </button>
+
+  <div class="page-header">
+    <div class="header-info">
+      <h1>Gestión de Vehículos</h1>
+      <p>Registra y consulta los vehículos autorizados en el sistema.</p>
+    </div>
+
+    <div class="header-actions">
+      <button mat-flat-button (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Registrar Vehículo
+      </button>
+    </div>
   </div>
 
-  <div class="table-card mat-elevation-z1">
-    <app-data-table 
-      [dataSource]="vehiculos"           
-      [columns]="vehiculoColumns" 
+  <div class="table-card">
+    <app-data-table
+      [dataSource]="vehiculos"
+      [columns]="vehiculoColumns"
       [loading]="loading"
-      (onEdit)="editarVehiculo($event)"   
-      (onDelete)="deleteVehiculo($event)"> 
+      (onEdit)="editarVehiculo($event)"
+      (onDelete)="deleteVehiculo($event)">
     </app-data-table>
   </div>
+
 </div>

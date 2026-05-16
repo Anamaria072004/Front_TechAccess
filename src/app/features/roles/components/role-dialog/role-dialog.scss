@@ -1,57 +1,124 @@
+.dialog-container {
+  width: 460px;
+  max-width: 95vw;
+  margin: 0 auto;
+}
+
+// ─── Header ───────────────────────────────────────────────
 .dialog-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 10px;
+  justify-content: space-between;
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid #eeeeee;
 
   h2 {
     margin: 0;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: #1e293b;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1a1a2e;
+    letter-spacing: 0.2px;
+  }
+
+  button {
+    color: #999999;
+    transition: color 0.2s;
+    &:hover { color: #333333; }
   }
 }
 
-.dialog-content {
-  padding-top: 10px !important;
-  overflow-x: hidden;
+// ─── Secciones ────────────────────────────────────────────
+.section-label {
+  margin: 20px 0 8px 2px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #1565c0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  &:first-of-type { margin-top: 8px; }
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+// ─── Filas de campos ──────────────────────────────────────
+.dialog-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 4px;
+
+  mat-form-field { flex: 1; }
 }
 
-.col-span-2 {
-  grid-column: span 2;
-}
-
-.col-span-4 {
-  grid-column: span 4;
-}
-
-mat-form-field {
+.full-width {
   width: 100%;
 }
 
-.actions-row {
-  margin-top: 25px;
-  padding-top: 15px;
-  border-top: 1px solid #f1f5f9;
-
-  .btn-cancel {
-    color: #64748b;
-  }
+// ─── Acciones ─────────────────────────────────────────────
+mat-dialog-actions {
+  padding: 12px 24px 20px !important;
+  border-top: 1px solid #eeeeee;
+  gap: 8px;
 }
 
-.btn-save {
-  background: #39A900;
-  color: white;
-  border-radius: 10px;
-  padding: 0 35px;
-  height: 45px;
-  font-weight: 600;
+// ─── Overrides Material ───────────────────────────────────
+::ng-deep {
+  .mat-mdc-form-field-input-control {
+    color: #1a1a2e !important;
+    -webkit-text-fill-color: #1a1a2e !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+  }
+
+  .mat-mdc-select-value-text {
+    color: #1a1a2e !important;
+    font-weight: 500 !important;
+  }
+
+  .mat-mdc-floating-label mat-label {
+    color: #666666 !important;
+    font-weight: 500 !important;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background-color: #f8faff !important;
+    border-radius: 8px !important;
+  }
+
+  .mat-mdc-form-field.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #1565c0 !important;
+      border-width: 2px !important;
+    }
+  }
+
+  .mat-mdc-form-field-hint {
+    color: #888888 !important;
+    font-size: 11px !important;
+  }
+
+  .mat-mdc-option {
+    font-size: 14px !important;
+    color: #1a1a2e !important;
+
+    &.mdc-list-item--selected {
+      background-color: #e3f0ff !important;
+      color: #1565c0 !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  .mat-mdc-button {
+    color: #666666 !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.3px;
+  }
+
+  .mat-mdc-raised-button,
+  .mat-mdc-unelevated-button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    height: 40px !important;
+  }
 }

@@ -14,7 +14,7 @@ export class FichaService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString())
-      .set('includeInactivas', 'true');
+      .set('includeInactivas', 'false'); // Ocultamos las inactivas por defecto
     return this.http.get<any>(this.apiUrl, { params });
   }
 
@@ -30,7 +30,11 @@ export class FichaService {
     return this.http.patch<Ficha>(`${this.apiUrl}/${id}`, ficha);
   }
 
-  delete(id: number, soft: boolean = true): Observable<any> {
+  /**
+   * Elimina una ficha. 
+   * Por defecto es borrado físico (soft=false) para que el usuario vea que desaparece.
+   */
+  delete(id: number, soft: boolean = false): Observable<any> {
     const params = new HttpParams().set('soft', soft.toString());
     return this.http.delete(`${this.apiUrl}/${id}`, { params });
   }

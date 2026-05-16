@@ -1,78 +1,79 @@
-<div class="dialog-header">
-  <h2 mat-dialog-title>{{ isEdit ? 'Editar Ficha' : 'Nueva Ficha' }}</h2>
-  <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2>{{ isEdit ? 'Editar Ficha' : 'Nueva Ficha' }}</h2>
+    <button mat-icon-button (click)="close()" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <form [formGroup]="fichaForm">
+
+      <p class="section-label">Información General</p>
+      <div class="dialog-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Número de Ficha</mat-label>
+          <input matInput formControlName="numficha" placeholder="Ej. 267324" required>
+        </mat-form-field>
+        <mat-form-field appearance="outline" style="flex: 2">
+          <mat-label>Programa de Formación</mat-label>
+          <input matInput formControlName="programa" placeholder="Nombre completo del programa" required>
+        </mat-form-field>
+      </div>
+
+      <p class="section-label">Configuración</p>
+      <div class="dialog-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Nivel</mat-label>
+          <mat-select formControlName="nivelFormacion" required>
+            <mat-option value="Técnico">Técnico</mat-option>
+            <mat-option value="Tecnólogo">Tecnólogo</mat-option>
+            <mat-option value="Especialización">Especialización</mat-option>
+            <mat-option value="Curso Corto">Curso Corto</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Jornada</mat-label>
+          <mat-select formControlName="jornada" required>
+            <mat-option value="Mañana">Mañana</mat-option>
+            <mat-option value="Tarde">Tarde</mat-option>
+            <mat-option value="Noche">Noche</mat-option>
+            <mat-option value="Mixta">Mixta</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado" required>
+            <mat-option value="Activa">Activa</mat-option>
+            <mat-option value="Inactiva">Inactiva</mat-option>
+            <mat-option value="Terminada">Terminada</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <p class="section-label">Vigencia</p>
+      <div class="dialog-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de Inicio</mat-label>
+          <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio" required>
+          <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de Finalización</mat-label>
+          <input matInput [matDatepicker]="pickerFin" formControlName="fechafin" required>
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="close()">Cancelar</button>
+    <button mat-flat-button color="primary" [disabled]="fichaForm.invalid" (click)="save()">
+      {{ isEdit ? 'Guardar Cambios' : 'Crear Ficha' }}
+    </button>
+  </mat-dialog-actions>
 </div>
-
-<mat-dialog-content class="dialog-content">
-  <form [formGroup]="fichaForm" class="form-grid">
-    <!-- Número de Ficha -->
-    <mat-form-field appearance="outline" class="col-span-1">
-      <mat-label>Número de Ficha</mat-label>
-      <input matInput formControlName="numficha" placeholder="Ej. 267324" required>
-    </mat-form-field>
-
-    <!-- Programa -->
-    <mat-form-field appearance="outline" class="col-span-3">
-      <mat-label>Programa de Formación</mat-label>
-      <input matInput formControlName="programa" placeholder="Nombre completo del programa" required>
-    </mat-form-field>
-
-    <!-- Nivel de Formación -->
-    <mat-form-field appearance="outline" class="col-span-1">
-      <mat-label>Nivel</mat-label>
-      <mat-select formControlName="nivelFormacion" required>
-        <mat-option value="Técnico">Técnico</mat-option>
-        <mat-option value="Tecnólogo">Tecnólogo</mat-option>
-        <mat-option value="Especialización">Especialización</mat-option>
-        <mat-option value="Curso Corto">Curso Corto</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Jornada -->
-    <mat-form-field appearance="outline" class="col-span-1">
-      <mat-label>Jornada</mat-label>
-      <mat-select formControlName="jornada" required>
-        <mat-option value="Mañana">Mañana</mat-option>
-        <mat-option value="Tarde">Tarde</mat-option>
-        <mat-option value="Noche">Noche</mat-option>
-        <mat-option value="Mixta">Mixta</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Estado -->
-    <mat-form-field appearance="outline" class="col-span-1">
-      <mat-label>Estado</mat-label>
-      <mat-select formControlName="estado" required>
-        <mat-option value="Activa">Activa</mat-option>
-        <mat-option value="Inactiva">Inactiva</mat-option>
-        <mat-option value="Terminada">Terminada</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Fecha Inicio -->
-    <mat-form-field appearance="outline" class="col-span-2">
-      <mat-label>Fecha de Inicio</mat-label>
-      <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio" required>
-      <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
-      <mat-datepicker #pickerInicio></mat-datepicker>
-    </mat-form-field>
-
-    <!-- Fecha Fin -->
-    <mat-form-field appearance="outline" class="col-span-2">
-      <mat-label>Fecha de Finalización</mat-label>
-      <input matInput [matDatepicker]="pickerFin" formControlName="fechafin" required>
-      <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
-      <mat-datepicker #pickerFin></mat-datepicker>
-    </mat-form-field>
-  </form>
-</mat-dialog-content>
-
-<mat-dialog-actions align="end" class="actions-row">
-  <button mat-button mat-dialog-close class="btn-cancel">Cancelar</button>
-  <button mat-flat-button 
-          class="btn-save"
-          [disabled]="fichaForm.invalid" 
-          (click)="save()">
-    {{ isEdit ? 'Guardar Cambios' : 'Crear Ficha' }}
-  </button>
-</mat-dialog-actions>

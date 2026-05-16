@@ -18,7 +18,7 @@
 
   <!-- KPI CARDS (STATISTICS) -->
   <div class="kpi-grid">
-    <div class="kpi-card" routerLink="/dashboard/users">
+    <div class="kpi-card" routerLink="/users">
       <div class="kpi-icon blue">
         <mat-icon>people</mat-icon>
       </div>
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <div class="kpi-card" routerLink="/dashboard/vehiculos">
+    <div class="kpi-card" routerLink="/vehiculos">
       <div class="kpi-icon green">
         <mat-icon>directions_car</mat-icon>
       </div>
@@ -38,17 +38,17 @@
       </div>
     </div>
 
-    <div class="kpi-card">
+    <div class="kpi-card" routerLink="/dispositivos">
       <div class="kpi-icon purple">
-        <mat-icon>how_to_reg</mat-icon>
+        <mat-icon>devices</mat-icon>
       </div>
       <div class="kpi-info">
-        <span class="kpi-title">Ingresos Históricos</span>
-        <span class="kpi-value">{{ totalIngresos }}</span>
+        <span class="kpi-title">Dispositivos</span>
+        <span class="kpi-value">{{ totalDispositivos }}</span>
       </div>
     </div>
 
-    <div class="kpi-card" routerLink="/dashboard/fichas">
+    <div class="kpi-card" routerLink="/fichas">
       <div class="kpi-icon orange">
         <mat-icon>school</mat-icon>
       </div>

@@ -1,35 +1,36 @@
-<div class="usuarios-container">
-  <div class="header-section">
-    <h2 class="section-title">
-      <mat-icon>group</mat-icon>
-      Gestión de Usuarios
-    </h2>
+<div class="users-container">
 
-    <div class="header-actions">
-      @if (isVigilante) {
-      <button mat-raised-button class="btn-visitante" (click)="registrarVisitante()">
-        <mat-icon>person_add</mat-icon>
-        Registrar Visitante
-      </button>
-      }
-
-      @if (isAdmin) {
-      <button mat-raised-button class="btn-nuevo" (click)="abrirModalNuevo()">
-        <mat-icon>add_circle</mat-icon>
-        Nuevo Usuario
-      </button>
-      }
+  <div class="page-header">
+    <div class="header-info">
+      <h1>
+        <mat-icon>manage_accounts</mat-icon>
+        Gestión de Usuarios
+      </h1>
+      <p>Administra los usuarios del sistema, sus roles y accesos.</p>
     </div>
+
+    @if (isAdmin() || isVigilante()) {
+      <div class="header-actions">
+        <button
+          mat-flat-button
+          (click)="abrirModalNuevo()"
+          [disabled]="loading()">
+          <mat-icon>{{ isVigilante() ? 'person_add' : 'add' }}</mat-icon>
+          {{ isVigilante() ? 'Nuevo Visitante' : 'Nuevo Usuario' }}
+        </button>
+      </div>
+    }
   </div>
 
-  <div class="table-card mat-elevation-z1">
-    <app-data-table 
-      [dataSource]="usuarios" 
-      [columns]="userColumns" 
-      [loading]="loading" 
+  <div class="table-card">
+    <app-data-table
+      [columns]="userColumns"
+      [dataSource]="usuarios()"
+      [loading]="loading()"
       (onEdit)="editarUsuario($event)"
       (onDelete)="eliminarUsuario($event)"
       (onView)="verUsuario($event)">
     </app-data-table>
   </div>
+
 </div>

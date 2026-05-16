@@ -1,16 +1,17 @@
-// ==================================================
-//  ROLES - Gestión de Roles
-//  Usa el layout estándar de módulo
-// ==================================================
+// ============================================================
+//  VIGILANTE — Panel de control de visitantes
+//  Reutiliza app-data-table, solo define cabecera y contenedor
+// ============================================================
 
-.roles-container {
-  padding: 24px;
-  max-width: 1200px;
+.vigilante-container {
+  padding: 28px 32px;
+  max-width: 1400px;
   margin: 0 auto;
 
   @media (max-width: 768px) { padding: 16px; }
 }
 
+// ─── CABECERA ─────────────────────────────────────────────
 .page-header {
   display: flex;
   align-items: center;
@@ -36,13 +37,11 @@
     align-items: center;
     gap: 10px;
 
-    &::before {
-      content: '';
-      display: inline-block;
-      width: 4px;
-      height: 24px;
-      background: var(--color-accent);
-      border-radius: 4px;
+    .shield-icon {
+      color: #1a3a8f;
+      font-size: 1.8rem;
+      width: 1.8rem;
+      height: 1.8rem;
     }
   }
 
@@ -59,8 +58,7 @@
 
   @media (max-width: 640px) { width: 100%; }
 
-  button[mat-flat-button],
-  button[mat-raised-button] {
+  .btn-nuevo {
     height: 44px;
     padding: 0 22px;
     border-radius: 10px;
@@ -71,13 +69,13 @@
     gap: 8px;
     background: var(--color-accent) !important;
     color: white !important;
-    box-shadow: 0 4px 12px rgba(216, 27, 96, 0.25);
+    box-shadow: 0 4px 14px rgba(216, 27, 96, 0.25);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: none;
 
     &:hover:not([disabled]) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(216, 27, 96, 0.35);
+      box-shadow: 0 8px 22px rgba(26, 58, 143, 0.45);
     }
 
     mat-icon { font-size: 18px; width: 18px; height: 18px; }
@@ -86,6 +84,7 @@
   }
 }
 
+// ─── TARJETA DE TABLA ─────────────────────────────────────
 .table-card {
   background: white;
   border-radius: 16px;
@@ -99,7 +98,4 @@
   }
 }
 
-@keyframes moduleFadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+

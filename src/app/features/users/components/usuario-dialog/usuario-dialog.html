@@ -8,13 +8,39 @@
 
   <mat-dialog-content>
     <form [formGroup]="userForm">
+
+      @if (data.isAdmin || data.readonly) {
+        <p class="section-label">Rol</p>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Roles</mat-label>
+          <mat-select formControlName="roleIds" multiple>
+            @for (role of roles(); track role.id) {
+              <mat-option [value]="role.id">{{ role.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (esAprendiz) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ficha</mat-label>
+            <mat-select formControlName="fichaId">
+              @for (ficha of fichas(); track ficha.id) {
+                <mat-option [value]="ficha.id">
+                  {{ ficha.numficha }} — {{ ficha.programa }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+      }
+
       <p class="section-label">Identidad</p>
       <div class="dialog-row">
         <mat-form-field appearance="outline">
           <mat-label>Tipo Doc</mat-label>
           <mat-select formControlName="docType">
             <mat-option value="CC">Cédula Ciudadanía</mat-option>
-            <mat-option value="CE">Cédula Extranjería</mat-option>
+            <mat-option value="TI">Tarjeta de Identidad</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">
@@ -46,26 +72,23 @@
         </mat-form-field>
       </div>
 
-      <!-- El campo de Roles solo aparece si es Admin o Lectura -->
-      @if (data.isAdmin || data.readonly) {
+      @if (!data.readonly && !esAprendiz && !data.vigilanteMode) {
+        <p class="section-label">Seguridad</p>
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Roles</mat-label>
-          <mat-select formControlName="roleIds" multiple>
-            @for (role of roles(); track role.id) {
-              <mat-option [value]="role.id">{{ role.name }}</mat-option>
-            }
-          </mat-select>
+          <mat-label>{{ data.user?.id ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</mat-label>
+          <input matInput formControlName="password" type="password">
+          @if (!data.user?.id) {
+            <mat-hint>Mínimo 6 caracteres</mat-hint>
+          }
         </mat-form-field>
       }
+
     </form>
   </mat-dialog-content>
 
-  <!-- Usamos una clase condicional para centrar el botón en modo lectura -->
   <mat-dialog-actions [class.justify-center]="data.readonly">
     @if (data.readonly) {
-      <button mat-flat-button 
-              style="background-color: green; color: white; padding: 0 40px; border-radius: 20px;" 
-              (click)="close()">
+      <button mat-flat-button class="btn-close-readonly" (click)="close()">
         Cerrar Consulta
       </button>
     } @else {

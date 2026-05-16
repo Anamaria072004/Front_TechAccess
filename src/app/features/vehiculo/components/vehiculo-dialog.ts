@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -23,11 +23,13 @@ import { UsersService } from '@features/users/services/users.service';
   ],
   templateUrl: './vehiculo-dialog.html',
   styleUrls: ['./vehiculo-dialog.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddVehiculoModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<AddVehiculoModalComponent>);
   private usersService = inject(UsersService);
+  private cdr = inject(ChangeDetectorRef);
 
   isEdit = false;
   vehiForm: FormGroup;
@@ -47,12 +49,17 @@ export class AddVehiculoModalComponent implements OnInit {
 
   ngOnInit() {
     this.usersService.getAll().subscribe((res) => {
-      this.usuarios = res;
+      this.usuarios = res.data || res;
+      this.cdr.markForCheck();
     });
   }
 
   save() {
     if (this.vehiForm.invalid) return;
     this.dialogRef.close(this.vehiForm.value);
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 }

@@ -1,82 +1,91 @@
-<h2 mat-dialog-title>{{ data ? 'Editar Dispositivo' : 'Agregar Nuevo Dispositivo' }}</h2>
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2>{{ data ? 'Editar Dispositivo' : 'Agregar Nuevo Dispositivo' }}</h2>
+    <button mat-icon-button (click)="close()" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-<mat-dialog-content>
-  <form [formGroup]="deviceForm" class="form-container">
+  <mat-dialog-content>
+    <form [formGroup]="deviceForm">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Propietario (N° Documento o Nombre)</mat-label>
-      <input type="text" 
-             matInput 
-             placeholder="Buscar por documento o nombre..." 
-             [formControl]="usuarioSearchControl"
-             [matAutocomplete]="autoUsuario"
-             (focus)="onInputFocus()"
-             (blur)="onInputBlur()">
+      <p class="section-label">Propietario</p>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Propietario (N° Documento o Nombre)</mat-label>
+        <input type="text" 
+               matInput 
+               placeholder="Buscar por documento o nombre..." 
+               [formControl]="usuarioSearchControl"
+               [matAutocomplete]="autoUsuario"
+               (focus)="onInputFocus()"
+               (blur)="onInputBlur()">
 
-      <mat-autocomplete #autoUsuario="matAutocomplete" 
-                        [displayWith]="displayUsuarioFn"
-                        (optionSelected)="onUsuarioSelected($event)">
-        @for (user of filteredUsuarios; track user.id) {
-          <mat-option [value]="user">
-            <div class="usuario-option">
-              <strong>{{ user.docNumber }}</strong> - {{ user.name }} {{ user.lastName }}
-              @if (user.email) {
-                <span class="user-email"> ({{ user.email }})</span>
-              }
-            </div>
-          </mat-option>
-        } @empty {
-          <mat-option disabled>No se encontraron usuarios</mat-option>
+        <mat-autocomplete #autoUsuario="matAutocomplete" 
+                          [displayWith]="displayUsuarioFn"
+                          (optionSelected)="onUsuarioSelected($event)">
+          @for (user of filteredUsuarios; track user.id) {
+            <mat-option [value]="user">
+              <div class="usuario-option">
+                <strong>{{ user.docNumber }}</strong> - {{ user.name }} {{ user.lastName }}
+                @if (user.email) {
+                  <span class="user-email"> ({{ user.email }})</span>
+                }
+              </div>
+            </mat-option>
+          } @empty {
+            <mat-option disabled>No se encontraron usuarios</mat-option>
+          }
+        </mat-autocomplete>
+
+        @if (deviceForm.get('usuario')?.invalid && deviceForm.get('usuario')?.touched) {
+          <mat-error>Seleccione un usuario válido</mat-error>
         }
-      </mat-autocomplete>
+      </mat-form-field>
 
-      @if (deviceForm.get('usuario')?.invalid && deviceForm.get('usuario')?.touched) {
-        <mat-error>Seleccione un usuario válido</mat-error>
+      @if (deviceForm.get('usuario')?.value) {
+        <div class="selected-user-info">
+          <mat-icon>person</mat-icon>
+          <span>
+            {{ deviceForm.get('usuario')?.value?.docNumber }} -
+            {{ deviceForm.get('usuario')?.value?.name }} {{ deviceForm.get('usuario')?.value?.lastName }}
+          </span>
+        </div>
       }
-    </mat-form-field>
 
-    @if (deviceForm.get('usuario')?.value) {
-      <div class="selected-user-info">
-        <mat-icon>person</mat-icon>
-        <span>
-          {{ deviceForm.get('usuario')?.value?.docNumber }} -
-          {{ deviceForm.get('usuario')?.value?.name }} {{ deviceForm.get('usuario')?.value?.lastName }}
-        </span>
+      <p class="section-label">Información del Dispositivo</p>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tipo de Dispositivo</mat-label>
+        <input matInput formControlName="tipoDispositivo" placeholder="Ej: Portátil, Celular">
+        @if (deviceForm.get('tipoDispositivo')?.invalid) {
+          <mat-error>El tipo es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="dialog-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Marca</mat-label>
+          <input matInput formControlName="marca" placeholder="Ej: Dell">
+          @if (deviceForm.get('marca')?.invalid) {
+            <mat-error>Obligatorio</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Color</mat-label>
+          <input matInput formControlName="color" placeholder="Ej: Gris">
+          @if (deviceForm.get('color')?.invalid) {
+            <mat-error>Obligatorio</mat-error>
+          }
+        </mat-form-field>
       </div>
-    }
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Tipo de Dispositivo</mat-label>
-      <input matInput formControlName="tipoDispositivo" placeholder="Ej: Portátil, Celular">
-      @if (deviceForm.get('tipoDispositivo')?.invalid) {
-        <mat-error>El tipo es obligatorio</mat-error>
-      }
-    </mat-form-field>
+    </form>
+  </mat-dialog-content>
 
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Marca</mat-label>
-        <input matInput formControlName="marca" placeholder="Ej: Dell">
-        @if (deviceForm.get('marca')?.invalid) {
-          <mat-error>Obligatorio</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Color</mat-label>
-        <input matInput formControlName="color" placeholder="Ej: Gris">
-        @if (deviceForm.get('color')?.invalid) {
-          <mat-error>Obligatorio</mat-error>
-        }
-      </mat-form-field>
-    </div>
-
-  </form>
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="save()" [disabled]="deviceForm.invalid">
-    {{ data ? 'Actualizar' : 'Guardar' }}
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions>
+    <button mat-button (click)="close()">Cancelar</button>
+    <button mat-flat-button color="primary" (click)="save()" [disabled]="deviceForm.invalid">
+      {{ data ? 'Actualizar' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+</div>

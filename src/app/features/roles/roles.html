@@ -1,22 +1,27 @@
 <div class="roles-container">
-  <div class="header-section">
-    <div class="section-title">
-      <mat-icon>lock_person</mat-icon>
+
+  <div class="page-header">
+    <div class="header-info">
       <h1>Gestión de Roles</h1>
+      <p>Define los roles del sistema y los módulos a los que cada uno tiene acceso.</p>
     </div>
-    <button class="btn-nuevo" (click)="abrirModalNuevo()">
-      <mat-icon>add</mat-icon>
-      Nuevo Rol
-    </button>
+
+    <div class="header-actions">
+      <button mat-flat-button (click)="abrirModalNuevo()">
+        <mat-icon>add</mat-icon>
+        Nuevo Rol
+      </button>
+    </div>
   </div>
 
   <div class="table-card">
-    <app-data-table 
-      [dataSource]="roles" 
-      [columns]="roleColumns" 
+    <app-data-table
+      [dataSource]="roles"
+      [columns]="roleColumns"
       [loading]="loading"
       (onEdit)="editarRol($event)"
       (onDelete)="eliminarRol($event)">
     </app-data-table>
   </div>
+
 </div>

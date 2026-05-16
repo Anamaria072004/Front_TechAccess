@@ -101,8 +101,8 @@ export class AddDispositivoModalComponent implements OnInit, AfterViewInit {
 
   cargarUsuarios(): void {
     this.usersService.getAll().subscribe({
-      next: (data: Usuario[]) => {
-        this.usuarios = data;
+      next: (res: any) => {
+        this.usuarios = res.data || res;
         this.filteredUsuarios = [];
         this.datosCargados = true;
 

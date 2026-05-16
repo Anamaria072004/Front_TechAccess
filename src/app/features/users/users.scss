@@ -1,48 +1,26 @@
-// ============================================
-// VARIABLES
-// ============================================
-$primary: #1976d2;
-$primary-dark: #1565c0;
-$success: #10b981;
-$success-dark: #059669;
-$text-primary: #1e293b;
-$text-secondary: #64748b;
-$bg-page: #f1f5f9;
-$bg-card: #ffffff;
-$border-color: #e2e8f0;
-$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-$radius-sm: 8px;
-$radius-md: 12px;
-$radius-lg: 16px;
-$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+// ==================================================
+//  USERS - Gestión de Usuarios
+//  Usa el layout estándar de módulo
+// ==================================================
 
-// ============================================
-// CONTAINER
-// ============================================
-.usuarios-container {
-  padding: 24px 32px;
+// ─── CONTENEDOR ───────────────────────────────────
+.users-container {
+  padding: 28px 32px;
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 64px);
-  background: $bg-page;
 
-  @media (max-width: 768px) {
-    padding: 16px;
-  }
+  @media (max-width: 768px) { padding: 16px; }
 }
 
-// ============================================
-// HEADER SECTION
-// ============================================
-.header-section {
+// ─── CABECERA DE MÓDULO ───────────────────────────
+.page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
   flex-wrap: wrap;
   gap: 16px;
+  min-height: 64px; // Evita saltos cuando aparece el botón de Admin
 
   @media (max-width: 640px) {
     flex-direction: column;
@@ -50,44 +28,36 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: $text-primary;
-  letter-spacing: -0.025em;
-
-  mat-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 32px;
-    color: $primary;
-    background: rgba($primary, 0.1);
-    border-radius: 10px;
-    padding: 4px;
-  }
-
-  @media (max-width: 640px) {
-    font-size: 1.5rem;
-    justify-content: center;
+.header-info {
+  h1 {
+    margin: 0 0 4px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a3a8f;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
     mat-icon {
-      width: 28px;
-      height: 28px;
-      font-size: 28px;
+      font-size: 1.8rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      color: var(--color-accent); // Lila/Fuxia para el ícono
     }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #64748b;
+    font-weight: 400;
   }
 }
 
-// ============================================
-// HEADER ACTIONS (BOTONES)
-// ============================================
 .header-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 
   @media (max-width: 640px) {
@@ -95,131 +65,60 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
   }
 
-  button {
+  button[mat-flat-button],
+  button[mat-raised-button] {
+    height: 44px;
+    padding: 0 22px;
+    font-weight: 600;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 20px;
-    height: 44px;
-    border-radius: $radius-sm;
-    font-size: 0.9375rem;
+    background: var(--color-accent) !important;
+    color: white !important;
     font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0.01em;
-    transition: $transition;
+    padding: 0 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(216, 27, 96, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: none;
-    cursor: pointer;
+
+    &:hover:not([disabled]) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(142, 36, 170, 0.4);
+    }
+
+    &[disabled] {
+      background: #e2e8f0 !important;
+      color: #94a3b8 !important;
+      box-shadow: none;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
 
     @media (max-width: 640px) {
       width: 100%;
       justify-content: center;
     }
-
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
-
-    // Botón Registrar Visitante
-    &.btn-visitante {
-      background: linear-gradient(135deg, $success 0%, $success-dark 100%);
-      color: white;
-      box-shadow: 0 4px 6px rgba($success, 0.2);
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba($success, 0.3);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
-
-    // Botón Nuevo Usuario
-    &.btn-nuevo {
-      background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
-      color: white;
-      box-shadow: 0 4px 6px rgba($primary, 0.2);
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba($primary, 0.3);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
   }
 }
 
-// ============================================
-// TABLE CARD
-// ============================================
+// ─── TARJETA DE TABLA ─────────────────────────────
 .table-card {
-  background: $bg-card;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-lg;
+  background: white;
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid $border-color;
-  transition: $transition;
+  border: 1px solid #e8edf8;
+  box-shadow: 0 4px 20px rgba(26, 58, 143, 0.08);
+  transition: box-shadow 0.25s ease;
 
   &:hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  }
-
-  // Si usas mat-elevation-z1, puedes quitar el box-shadow de arriba
-  &.mat-elevation-z1 {
-    box-shadow: $shadow-md;
+    box-shadow: 0 8px 32px rgba(26, 58, 143, 0.12);
   }
 }
 
-// ============================================
-// ANIMACIONES
-// ============================================
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.header-section {
-  animation: slideInUp 0.4s ease-out;
-}
-
-.table-card {
-  animation: slideInUp 0.5s ease-out 0.1s both;
-}
-
-// ============================================
-// RESPONSIVE
-// ============================================
-@media (max-width: 1024px) {
-  .usuarios-container {
-    padding: 20px 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .section-title {
-    font-size: 1.25rem;
-
-    mat-icon {
-      width: 24px;
-      height: 24px;
-      font-size: 24px;
-    }
-  }
-
-  .header-actions button {
-    height: 40px;
-    font-size: 0.875rem;
-  }
-}
+// ─── FIN DE ARCHIVO ───────────────────────────────

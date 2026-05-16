@@ -11,7 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
 // Tu servicio de Auth
-import { Auth } from '../services/auth';
+import { Auth } from '../../core/services/auth';
 
 @Component({
   selector: 'app-forgot-password',

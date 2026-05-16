@@ -27,7 +27,7 @@ export class InicioComponent implements OnInit {
   totalUsuarios = 0;
   totalVehiculos = 0;
   totalFichas = 0;
-  totalIngresos = 0;
+  totalDispositivos = 0;
 
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
@@ -48,30 +48,35 @@ export class InicioComponent implements OnInit {
     }
 
     // 2. Traer el conteo real desde las tablas (endpoints)
-    this.http.get<any[]>('http://localhost:3000/api/users').subscribe({
-      next: (res) => { this.totalUsuarios = res.length; this.cdr.detectChanges(); },
+    this.http.get<any>('http://localhost:3000/api/users').subscribe({
+      next: (res) => { this.totalUsuarios = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
       error: () => console.log('Sin usuarios')
     });
 
-    this.http.get<any[]>('http://localhost:3000/api/vehiculos').subscribe({
-      next: (res) => { this.totalVehiculos = res.length; this.cdr.detectChanges(); },
+    this.http.get<any>('http://localhost:3000/api/vehiculos').subscribe({
+      next: (res) => { this.totalVehiculos = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
       error: () => console.log('Sin vehículos')
     });
 
-    this.http.get<any[]>('http://localhost:3000/api/ficha').subscribe({
-      next: (res) => { this.totalFichas = res.length; this.cdr.detectChanges(); },
+    this.http.get<any>('http://localhost:3000/api/ficha').subscribe({
+      next: (res) => { this.totalFichas = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
       error: () => console.log('Sin fichas')
     });
 
-    this.http.get<any[]>('http://localhost:3000/api/reg-acceso').subscribe({
+    this.http.get<any>('http://localhost:3000/api/dispositivos').subscribe({
+      next: (res) => { this.totalDispositivos = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
+      error: () => console.log('Sin dispositivos')
+    });
+
+    this.http.get<any>('http://localhost:3000/api/reg-acceso').subscribe({
       next: (res) => { 
-        this.totalIngresos = res.length;
+        const registros = res.data || res;
         
         // Mapear los últimos 4 registros de acceso para la vista de actividad
-        if (res.length > 0) {
-          const ultimos = res.slice(-4).reverse();
+        if (registros.length > 0) {
+          const ultimos = registros.slice(-4).reverse();
           this.recentActivity = ultimos.map((acc: any) => {
-            const userStr = acc.usuario ? `${acc.usuario.name} ${acc.usuario.lastName}` : `Usuario ID: ${acc.id}`;
+            const userStr = acc.usuario ? `${acc.usuario.name} ${acc.usuario.lastName}` : `Usuario ID: ${acc.usuarioId || acc.id}`;
             const timeStr = new Date(acc.horaIngreso).toLocaleTimeString();
             return {
               type: acc.horaSalida ? 'Salida' : 'Ingreso',

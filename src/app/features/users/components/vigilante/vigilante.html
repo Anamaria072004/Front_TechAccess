@@ -1,0 +1,32 @@
+<div class="vigilante-container">
+
+  <!-- Cabecera -->
+  <div class="page-header">
+    <div class="header-info">
+      <h1>
+        <mat-icon class="shield-icon">security</mat-icon>
+        Panel de Vigilancia
+      </h1>
+      <p>Gestiona el registro de visitantes al centro SENA.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-flat-button class="btn-nuevo" (click)="abrirModalNuevoVisitante()" [disabled]="loading() || !visitanteRoleId()">
+        <mat-icon>person_add</mat-icon>
+        Nuevo Visitante
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla reutilizable con paginación -->
+  <div class="table-card">
+    <app-data-table
+      [columns]="userColumns"
+      [dataSource]="usuarios()"
+      [loading]="loading()"
+      (onView)="verUsuario($event)"
+      (onEdit)="editarVisitante($event)"
+      (onDelete)="eliminarVisitante($event)">
+    </app-data-table>
+  </div>
+
+</div>

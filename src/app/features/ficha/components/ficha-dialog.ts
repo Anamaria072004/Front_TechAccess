@@ -71,4 +71,8 @@ export class FichaDialogComponent implements OnInit {
       this.dialogRef.close(formValue);
     }
   }
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }
