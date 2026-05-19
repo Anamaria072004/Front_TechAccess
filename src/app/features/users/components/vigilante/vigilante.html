@@ -10,7 +10,8 @@
       <p>Gestiona el registro de visitantes al centro SENA.</p>
     </div>
     <div class="header-actions">
-      <button mat-flat-button class="btn-nuevo" (click)="abrirModalNuevoVisitante()" [disabled]="loading() || !visitanteRoleId()">
+      <button mat-flat-button class="btn-nuevo" (click)="abrirModalNuevoVisitante()"
+        [disabled]="loading() || !visitanteRoleId()">
         <mat-icon>person_add</mat-icon>
         Nuevo Visitante
       </button>
@@ -19,12 +20,8 @@
 
   <!-- Tabla reutilizable con paginación -->
   <div class="table-card">
-    <app-data-table
-      [columns]="userColumns"
-      [dataSource]="usuarios()"
-      [loading]="loading()"
-      (onView)="verUsuario($event)"
-      (onEdit)="editarVisitante($event)"
+    <app-data-table [columns]="userColumns" [dataSource]="usuarios()" [loading]="loading()" [showEdit]="true"
+      [showDelete]="true" (onView)="verUsuario($event)" (onEdit)="editarVisitante($event)"
       (onDelete)="eliminarVisitante($event)">
     </app-data-table>
   </div>

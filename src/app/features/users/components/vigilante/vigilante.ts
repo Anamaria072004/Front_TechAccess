@@ -27,25 +27,25 @@ import { DialogData } from '../../models/dialog-config.model';
   styleUrls: ['./vigilante.scss'],
 })
 export class VigilanteComponent implements OnInit {
-  private snackBar     = inject(MatSnackBar);
-  private dialog       = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
   private usersService = inject(UsersService);
 
   /** ID del rol VISITANTE — se auto-detecta desde el backend */
   visitanteRoleId = signal<number | null>(null);
 
   usuariosRaw = signal<Usuario[]>([]);
-  usuarios    = signal<any[]>([]);
-  loading     = signal(true); // Inicia en true para evitar parpadeo inicial
+  usuarios = signal<any[]>([]);
+  loading = signal(true);
 
   userColumns = [
-    { key: 'nombreCompleto', label: 'Nombre completo', type: 'text'    },
-    { key: 'docType',        label: 'Tipo doc.',        type: 'text'    },
-    { key: 'docNumber',      label: 'N° documento',     type: 'text'    },
-    { key: 'email',          label: 'Email',            type: 'text'    },
-    { key: 'rolTexto',       label: 'Rol',             type: 'text'    },
-    { key: 'state',          label: 'Estado',           type: 'text'    },
-    { key: 'actions',        label: 'Acciones',         type: 'actions' },
+    { key: 'nombreCompleto', label: 'Nombre completo', type: 'text' },
+    { key: 'docType', label: 'Tipo doc.', type: 'text' },
+    { key: 'docNumber', label: 'N° documento', type: 'text' },
+    { key: 'email', label: 'Email', type: 'text' },
+    { key: 'rolTexto', label: 'Rol', type: 'text' },
+    { key: 'state', label: 'Estado', type: 'text' },
+    { key: 'actions', label: 'Acciones', type: 'actions' },
   ];
 
   ngOnInit(): void {
@@ -79,7 +79,7 @@ export class VigilanteComponent implements OnInit {
         this.usuarios.set(allUsers.map((u: Usuario) => ({
           ...u,
           nombreCompleto: `${u.name} ${u.lastName || ''}`.trim(),
-          rolTexto:       u.roles?.map(r => r.name).join(', ') || 'Sin Rol',
+          rolTexto: u.roles?.map(r => r.name).join(', ') || 'Sin Rol',
         })));
 
         this.loading.set(false);
@@ -97,39 +97,58 @@ export class VigilanteComponent implements OnInit {
   }
 
   // ─── Acciones ─────────────────────────────────────────────
-
-  abrirModalNuevoVisitante(): void {
-    const rolId = this.visitanteRoleId();
-
-    const ref = this.dialog.open(UsuarioDialogComponent, {
-      width: '100%',
-      maxWidth: '460px',
-      data: {
-        title:          'Registrar Visitante',
-        saveButtonText: 'Registrar',
-        isAdmin:        false,
-        vigilanteMode:  true,
-        user: rolId ? { roleIds: [rolId] } as any : undefined,
-      } as DialogData,
-    });
-
-    ref.afterClosed().subscribe(result => {
-      if (!result) return;
-      this.loading.set(true);
-      if (rolId) result.roleIds = [rolId];
-
-      this.usersService.create(result).subscribe({
-        next: () => {
-          this.snackBar.open('Visitante registrado exitosamente', 'Cerrar', { duration: 3000 });
-          this.cargarUsuarios();
-        },
-        error: (err) => {
-          this.snackBar.open(err.error?.message || 'Error al registrar visitante', 'Cerrar', { duration: 3000 });
-          this.loading.set(false);
-        }
-      });
-    });
+abrirModalNuevoVisitante(): void {
+  const rolId = this.visitanteRoleId();
+  if (!rolId) {
+    this.snackBar.open('Esperando carga de roles...', 'Cerrar', { duration: 3000 });
+    return;
   }
+
+  const ref = this.dialog.open(UsuarioDialogComponent, {
+    width: '100%',
+    maxWidth: '460px',
+    data: {
+      title: 'Registrar Visitante',
+      saveButtonText: 'Registrar',
+      isAdmin: false,
+      vigilanteMode: true,
+    } as DialogData,
+  });
+
+  ref.afterClosed().subscribe(result => {
+    if (!result) return;
+    this.loading.set(true);
+
+    // Construir payload completo con rol forzado
+   const payload: any = {
+  name: result.name,
+  lastName: result.lastName,
+  docType: result.docType,
+  docNumber: result.docNumber,
+  email: result.email,
+  telephone: result.telephone || null,
+  roleIds: [Number(rolId)],
+  isActive: true,  // Boolean explícito
+  state: 'activo'
+};
+
+    if (result.password) payload.password = result.password;
+
+    console.log('Payload a enviar:', payload); // DEBUG
+
+    this.usersService.create(payload).subscribe({
+      next: () => {
+        this.snackBar.open('Visitante registrado exitosamente', 'Cerrar', { duration: 3000 });
+        this.cargarUsuarios();
+      },
+      error: (err) => {
+        console.log('Error del backend:', err.error); // DEBUG
+        this.snackBar.open(err.error?.message || 'Error al registrar visitante', 'Cerrar', { duration: 3000 });
+        this.loading.set(false);
+      }
+    });
+  });
+}
 
   verUsuario(usuario: any): void {
     const original = this.usuariosRaw().find(u => u.id === usuario.id);
@@ -137,55 +156,70 @@ export class VigilanteComponent implements OnInit {
 
     this.dialog.open(UsuarioDialogComponent, {
       data: {
-        user:     original as any,
-        isAdmin:  false,
+        user: original as any,
+        isAdmin: false,
         readonly: true,
-        title:    'Información del Usuario',
+        title: 'Información del Usuario',
       } as DialogData,
       width: '95vw',
       maxWidth: '460px',
     });
   }
 
-  editarVisitante(usuario: any): void {
-    if (!this.esVisitante(usuario)) {
-      this.snackBar.open('Solo puedes editar usuarios con rol Visitante', 'Cerrar', { duration: 3000 });
-      return;
-    }
-
-    const original = this.usuariosRaw().find(u => u.id === usuario.id);
-    if (!original) return;
-
-    const ref = this.dialog.open(UsuarioDialogComponent, {
-      data: {
-        user:           original as any,
-        isAdmin:        false,
-        vigilanteMode:  true,
-        title:          'Editar Visitante',
-        saveButtonText: 'Actualizar',
-      } as DialogData,
-      width: '95vw',
-      maxWidth: '460px',
-    });
-
-    ref.afterClosed().subscribe(result => {
-      if (!result) return;
-      this.loading.set(true);
-      const rolId = this.visitanteRoleId();
-      if (rolId) result.roleIds = [rolId];
-
-      this.usersService.update(original.id, result).subscribe({
-        next: () => {
-          this.snackBar.open('Visitante actualizado', 'Cerrar', { duration: 3000 });
-          this.cargarUsuarios();
-        },
-        error: (err) => {
-          this.snackBar.open(err.error?.message || 'Error al actualizar', 'Cerrar', { duration: 3000 });
-          this.loading.set(false);
-        }
-      });
-    });
+ editarVisitante(usuario: any): void {
+  if (!this.esVisitante(usuario)) {
+    this.snackBar.open('Solo puedes editar usuarios con rol Visitante', 'Cerrar', { duration: 3000 });
+    return;
   }
+
+  const original = this.usuariosRaw().find(u => u.id === usuario.id);
+  if (!original) return;
+
+  const ref = this.dialog.open(UsuarioDialogComponent, {
+    data: {
+      user: original as any,
+      isAdmin: false,
+      vigilanteMode: true,
+      title: 'Editar Visitante',
+      saveButtonText: 'Actualizar',
+    } as DialogData,
+    width: '95vw',
+    maxWidth: '460px',
+  });
+
+  ref.afterClosed().subscribe(result => {
+    if (!result) return;
+    this.loading.set(true);
+    
+    const rolId = this.visitanteRoleId();
+
+    // FIX: Construir payload completo con el rol forzado
+    const payload: any = {
+      name: result.name,
+      lastName: result.lastName,
+      docType: result.docType,
+      docNumber: result.docNumber,
+      email: result.email,
+      telephone: result.telephone || null,
+      roleIds: rolId ? [rolId] : [],
+      isActive: true,
+      state: 'activo'
+    };
+
+    if (result.password) payload.password = result.password;
+
+    this.usersService.update(original.id, payload).subscribe({  // ← payload, no result
+      next: () => {
+        this.snackBar.open('Visitante actualizado', 'Cerrar', { duration: 3000 });
+        this.cargarUsuarios();
+      },
+      error: (err) => {
+        this.snackBar.open(err.error?.message || 'Error al actualizar', 'Cerrar', { duration: 3000 });
+        this.loading.set(false);
+      }
+    });
+  });
+}
 
   eliminarVisitante(usuario: any): void {
     if (!this.esVisitante(usuario)) {
@@ -197,11 +231,11 @@ export class VigilanteComponent implements OnInit {
       width: '95vw',
       maxWidth: '420px',
       data: {
-        title:       'Eliminar Visitante',
-        message:     `¿Estás seguro de que deseas eliminar a ${usuario.nombreCompleto}?`,
-        detail:      'Esta acción no se puede deshacer.',
+        title: 'Eliminar Visitante',
+        message: `¿Estás seguro de que deseas eliminar a ${usuario.nombreCompleto}?`,
+        detail: 'Esta acción no se puede deshacer.',
         confirmText: 'Sí, eliminar',
-        cancelText:  'Cancelar',
+        cancelText: 'Cancelar',
       }
     });
 
@@ -220,4 +254,5 @@ export class VigilanteComponent implements OnInit {
       });
     });
   }
+  
 }

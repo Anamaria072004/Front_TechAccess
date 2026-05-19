@@ -40,7 +40,7 @@ export class UsersComponent implements OnInit {
   usuariosRaw  = signal<Usuario[]>([]);
   usuarios     = signal<any[]>([]);
   loading      = signal(true); // Inicia en true para evitar el parpadeo inicial "Tabla vacía -> Spinner"
-
+ visitanteRoleId = signal<number | null>(null);
   // Columnas estáticas (Como en Vigilante) para máxima estabilidad
   userColumns = [
     { key: 'rolesTexto',     label: 'Rol / Roles',      type: 'text'    },
@@ -53,9 +53,26 @@ export class UsersComponent implements OnInit {
     { key: 'actions',        label: 'Acciones',          type: 'actions' }
   ];
 
+
   ngOnInit(): void {
     this.cargarUsuarios();
+    if (this.isVigilante()) {
+      this.cargarVisitanteRole();
+    }
   }
+
+    private cargarVisitanteRole(): void {
+    this.usersService.getRoles().subscribe({
+      next: (res) => {
+        const roles: any[] = res.data || res;
+        const visitante = roles.find((r: any) => r.name.toUpperCase().includes('VISITANTE'));
+        if (visitante) {
+          this.visitanteRoleId.set(Number(visitante.id));
+        }
+      }
+    });
+  }
+
 
   cargarUsuarios(): void {
     this.loading.set(true);
@@ -103,39 +120,61 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  abrirModalNuevo(): void {
-    const ref = this.dialog.open(UsuarioDialogComponent, {
-      width:    '100%',
-      maxWidth: '460px',
-      data: {
-        isAdmin: this.isAdmin(),
-        vigilanteMode: this.isVigilante(),
-        title: this.isVigilante() ? 'Registrar Visitante' : 'Nuevo Usuario'
-      } as DialogData
+abrirModalNuevo(): void {
+  const isVigilante = this.isVigilante();
+  const rolId = this.visitanteRoleId();
+  
+  const ref = this.dialog.open(UsuarioDialogComponent, {
+    width: '100%',
+    maxWidth: '460px',
+    data: {
+      isAdmin: this.isAdmin(),
+      vigilanteMode: isVigilante,
+      title: isVigilante ? 'Registrar Visitante' : 'Nuevo Usuario'
+    } as DialogData
+  });
+
+  ref.afterClosed().subscribe((result: any) => {
+    console.log('Result del diálogo:', result); // DEBUG
+    
+    if (!result) return;
+    this.loading.set(true);
+
+    let payload: any;
+
+    if (isVigilante && rolId) {
+      payload = {
+        ...result,
+        roleIds: [Number(rolId)],
+        isActive: true,
+        state: 'activo'
+      };
+    } else {
+      // Modo admin: asegurar que roleIds, isActive y state estén presentes
+      payload = {
+        ...result,
+        roleIds: result.roleIds?.length > 0 ? result.roleIds.map(Number) : [],
+        isActive: true,
+        state: 'activo'
+      };
+    }
+
+    console.log('Payload a enviar:', payload); // DEBUG
+
+    this.usersService.create(payload).subscribe({
+      next: () => {
+        const msg = isVigilante ? 'Visitante registrado exitosamente' : 'Usuario creado';
+        this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
+        this.cargarUsuarios();
+      },
+      error: (err: any) => {
+        console.log('Error completo:', err.error);
+        this.snackBar.open(err.error?.message || 'Error al crear', 'Cerrar', { duration: 3000 });
+        this.loading.set(false);
+      }
     });
-
-    ref.afterClosed().subscribe((result: any) => {
-      if (!result) return;
-
-      this.loading.set(true);
-
-      this.usersService.create(result).subscribe({
-        next: () => {
-          this.snackBar.open('Usuario creado', 'Cerrar', { duration: 3000 });
-          this.cargarUsuarios();
-        },
-        error: (err: any) => {
-          this.snackBar.open(
-            err.error?.message || 'Error al crear usuario',
-            'Cerrar',
-            { duration: 3000 }
-          );
-          this.loading.set(false);
-          console.error(err);
-        }
-      });
-    });
-  }
+  });
+}
 
   editarUsuario(usuario: any): void {
     const original = this.usuariosRaw().find(u => u.id === usuario.id);
