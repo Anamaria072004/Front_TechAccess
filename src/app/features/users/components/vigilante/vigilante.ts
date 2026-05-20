@@ -30,26 +30,25 @@ export class VigilanteComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private usersService = inject(UsersService);
+  public isVigilante: boolean = true;
 
-  /** ID del rol VISITANTE — se auto-detecta desde el backend */
   visitanteRoleId = signal<number | null>(null);
-
   usuariosRaw = signal<Usuario[]>([]);
   usuarios = signal<any[]>([]);
   loading = signal(true);
+
 
   userColumns = [
     { key: 'nombreCompleto', label: 'Nombre completo', type: 'text' },
     { key: 'docType', label: 'Tipo doc.', type: 'text' },
     { key: 'docNumber', label: 'N° documento', type: 'text' },
     { key: 'email', label: 'Email', type: 'text' },
-    { key: 'rolTexto', label: 'Rol', type: 'text' },
+    { key: 'telephone', label: 'Teléfono', type: 'text' },
     { key: 'state', label: 'Estado', type: 'text' },
     { key: 'actions', label: 'Acciones', type: 'actions' },
   ];
 
   ngOnInit(): void {
-    // Iniciamos ambas cargas en paralelo para evitar retrasos
     this.cargarUsuarios();
     this.cargarVisitanteRole();
   }
@@ -63,6 +62,8 @@ export class VigilanteComponent implements OnInit {
           const id = Number(visitante.id);
           this.visitanteRoleId.set(id);
           console.log('ID de Rol VISITANTE detectado:', id);
+          // Recargar usuarios para asegurar que se muestren correctamente
+          this.cargarUsuarios();
         }
       }
     });
@@ -75,11 +76,18 @@ export class VigilanteComponent implements OnInit {
         const allUsers: Usuario[] = res.data || res;
         this.usuariosRaw.set(allUsers);
 
-        // Preparamos los datos para la tabla compartida
-        this.usuarios.set(allUsers.map((u: Usuario) => ({
+        // 🔴 IMPORTANTE: Filtrar SOLO usuarios con rol VISITANTE
+        const soloVisitantes = allUsers.filter((u: Usuario) =>
+          u.roles?.some((r: any) => r.name?.toUpperCase() === 'VISITANTE')
+        );
+
+        console.log('Total usuarios:', allUsers.length);
+        console.log('Solo visitantes:', soloVisitantes.length);
+
+        // Preparamos los datos para la tabla
+        this.usuarios.set(soloVisitantes.map((u: Usuario) => ({
           ...u,
           nombreCompleto: `${u.name} ${u.lastName || ''}`.trim(),
-          rolTexto: u.roles?.map(r => r.name).join(', ') || 'Sin Rol',
         })));
 
         this.loading.set(false);
@@ -91,64 +99,58 @@ export class VigilanteComponent implements OnInit {
     });
   }
 
-  /** Retorna true si el usuario tiene el rol VISITANTE */
   private esVisitante(usuario: any): boolean {
     return usuario.roles?.some((r: any) => r.name.toUpperCase().includes('VISITANTE'));
   }
 
-  // ─── Acciones ─────────────────────────────────────────────
-abrirModalNuevoVisitante(): void {
-  const rolId = this.visitanteRoleId();
-  if (!rolId) {
-    this.snackBar.open('Esperando carga de roles...', 'Cerrar', { duration: 3000 });
-    return;
-  }
+  abrirModalNuevoVisitante(): void {
+    const rolId = this.visitanteRoleId();
+    if (!rolId) {
+      this.snackBar.open('Esperando carga de roles...', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const ref = this.dialog.open(UsuarioDialogComponent, {
-    width: '100%',
-    maxWidth: '460px',
-    data: {
-      title: 'Registrar Visitante',
-      saveButtonText: 'Registrar',
-      isAdmin: false,
-      vigilanteMode: true,
-    } as DialogData,
-  });
-
-  ref.afterClosed().subscribe(result => {
-    if (!result) return;
-    this.loading.set(true);
-
-    // Construir payload completo con rol forzado
-   const payload: any = {
-  name: result.name,
-  lastName: result.lastName,
-  docType: result.docType,
-  docNumber: result.docNumber,
-  email: result.email,
-  telephone: result.telephone || null,
-  roleIds: [Number(rolId)],
-  isActive: true,  // Boolean explícito
-  state: 'activo'
-};
-
-    if (result.password) payload.password = result.password;
-
-    console.log('Payload a enviar:', payload); // DEBUG
-
-    this.usersService.create(payload).subscribe({
-      next: () => {
-        this.snackBar.open('Visitante registrado exitosamente', 'Cerrar', { duration: 3000 });
-        this.cargarUsuarios();
-      },
-      error: (err) => {
-        console.log('Error del backend:', err.error); // DEBUG
-        this.snackBar.open(err.error?.message || 'Error al registrar visitante', 'Cerrar', { duration: 3000 });
-        this.loading.set(false);
-      }
+    const ref = this.dialog.open(UsuarioDialogComponent, {
+      width: '100%',
+      maxWidth: '460px',
+      data: {
+        title: 'Registrar Visitante',
+        saveButtonText: 'Registrar',
+        isAdmin: false,
+        vigilanteMode: true,
+      } as DialogData,
     });
-  });
-}
+
+    ref.afterClosed().subscribe(result => {
+      if (!result) return;
+      this.loading.set(true);
+
+      const payload: any = {
+        name: result.name,
+        lastName: result.lastName,
+        docType: result.docType,
+        docNumber: result.docNumber,
+        email: result.email,
+        telephone: result.telephone || null,
+        roleIds: [Number(rolId)],
+        isActive: true,
+        state: 'activo'
+      };
+
+      if (result.password) payload.password = result.password;
+
+      this.usersService.create(payload).subscribe({
+        next: () => {
+          this.snackBar.open('Visitante registrado exitosamente', 'Cerrar', { duration: 3000 });
+          this.cargarUsuarios();
+        },
+        error: (err) => {
+          this.snackBar.open(err.error?.message || 'Error al registrar visitante', 'Cerrar', { duration: 3000 });
+          this.loading.set(false);
+        }
+      });
+    });
+  }
 
   verUsuario(usuario: any): void {
     const original = this.usuariosRaw().find(u => u.id === usuario.id);
@@ -159,67 +161,66 @@ abrirModalNuevoVisitante(): void {
         user: original as any,
         isAdmin: false,
         readonly: true,
-        title: 'Información del Usuario',
+        title: 'Información del Visitante',
       } as DialogData,
       width: '95vw',
       maxWidth: '460px',
     });
   }
 
- editarVisitante(usuario: any): void {
-  if (!this.esVisitante(usuario)) {
-    this.snackBar.open('Solo puedes editar usuarios con rol Visitante', 'Cerrar', { duration: 3000 });
-    return;
-  }
+  editarVisitante(usuario: any): void {
+    if (!this.esVisitante(usuario)) {
+      this.snackBar.open('Solo puedes editar usuarios con rol Visitante', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  const original = this.usuariosRaw().find(u => u.id === usuario.id);
-  if (!original) return;
+    const original = this.usuariosRaw().find(u => u.id === usuario.id);
+    if (!original) return;
 
-  const ref = this.dialog.open(UsuarioDialogComponent, {
-    data: {
-      user: original as any,
-      isAdmin: false,
-      vigilanteMode: true,
-      title: 'Editar Visitante',
-      saveButtonText: 'Actualizar',
-    } as DialogData,
-    width: '95vw',
-    maxWidth: '460px',
-  });
-
-  ref.afterClosed().subscribe(result => {
-    if (!result) return;
-    this.loading.set(true);
-    
-    const rolId = this.visitanteRoleId();
-
-    // FIX: Construir payload completo con el rol forzado
-    const payload: any = {
-      name: result.name,
-      lastName: result.lastName,
-      docType: result.docType,
-      docNumber: result.docNumber,
-      email: result.email,
-      telephone: result.telephone || null,
-      roleIds: rolId ? [rolId] : [],
-      isActive: true,
-      state: 'activo'
-    };
-
-    if (result.password) payload.password = result.password;
-
-    this.usersService.update(original.id, payload).subscribe({  // ← payload, no result
-      next: () => {
-        this.snackBar.open('Visitante actualizado', 'Cerrar', { duration: 3000 });
-        this.cargarUsuarios();
-      },
-      error: (err) => {
-        this.snackBar.open(err.error?.message || 'Error al actualizar', 'Cerrar', { duration: 3000 });
-        this.loading.set(false);
-      }
+    const ref = this.dialog.open(UsuarioDialogComponent, {
+      data: {
+        user: original as any,
+        isAdmin: false,
+        vigilanteMode: true,
+        title: 'Editar Visitante',
+        saveButtonText: 'Actualizar',
+      } as DialogData,
+      width: '95vw',
+      maxWidth: '460px',
     });
-  });
-}
+
+    ref.afterClosed().subscribe(result => {
+      if (!result) return;
+      this.loading.set(true);
+
+      const rolId = this.visitanteRoleId();
+
+      const payload: any = {
+        name: result.name,
+        lastName: result.lastName,
+        docType: result.docType,
+        docNumber: result.docNumber,
+        email: result.email,
+        telephone: result.telephone || null,
+        roleIds: rolId ? [rolId] : [],
+        isActive: true,
+        state: 'activo'
+      };
+
+      if (result.password) payload.password = result.password;
+
+      this.usersService.update(original.id, payload).subscribe({
+        next: () => {
+          this.snackBar.open('Visitante actualizado exitosamente', 'Cerrar', { duration: 3000 });
+          this.cargarUsuarios();
+        },
+        error: (err) => {
+          this.snackBar.open(err.error?.message || 'Error al actualizar', 'Cerrar', { duration: 3000 });
+          this.loading.set(false);
+        }
+      });
+    });
+  }
 
   eliminarVisitante(usuario: any): void {
     if (!this.esVisitante(usuario)) {
@@ -244,7 +245,7 @@ abrirModalNuevoVisitante(): void {
       this.loading.set(true);
       this.usersService.delete(usuario.id).subscribe({
         next: () => {
-          this.snackBar.open('Visitante eliminado', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Visitante eliminado exitosamente', 'Cerrar', { duration: 3000 });
           this.cargarUsuarios();
         },
         error: (err) => {
@@ -254,5 +255,4 @@ abrirModalNuevoVisitante(): void {
       });
     });
   }
-  
 }
