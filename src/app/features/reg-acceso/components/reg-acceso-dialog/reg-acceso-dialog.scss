@@ -304,3 +304,41 @@ mat-dialog-actions {
     color: #cbd5e1;
   }
 }
+
+.info-list.selectable {
+  padding: 4px 14px;
+}
+
+.info-item.selectable-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 4px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1.5px solid transparent;
+
+  &:hover {
+    background: #f0f4ff;
+    border-color: #e3f0ff;
+  }
+
+  &.selected {
+    background: #e3f0ff;
+    border-color: #1565c0;
+  }
+
+  mat-checkbox {
+    margin-right: 4px;
+  }
+
+  .info-badge {
+    flex-shrink: 0;
+  }
+
+  .info-text {
+    flex: 1;
+  }
+}

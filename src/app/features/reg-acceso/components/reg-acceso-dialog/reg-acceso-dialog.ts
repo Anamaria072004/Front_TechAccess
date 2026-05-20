@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { RegAccesoService } from '../../services/reg-acceso.service';
 import { Acceso } from '../../models/reg-acceso.model';
@@ -32,7 +33,8 @@ import { FichaService } from '@features/ficha/services/ficha.service';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatDividerModule
+    MatDividerModule,
+    MatCheckboxModule
   ],
   templateUrl: './reg-acceso-dialog.html',
   styleUrls: ['./reg-acceso-dialog.scss']
@@ -57,6 +59,10 @@ export class RegAccesoDialogComponent implements OnInit {
   vehiculosUsuario: any[] = [];
   fichasUsuario: any[] = [];
   cargandoInfoAdicional = false;
+
+  // Items seleccionados
+  vehiculosSeleccionados: any[] = [];
+  dispositivosSeleccionados: any[] = [];
 
   ngOnInit(): void {
     this.accesoForm = this.fb.group({
@@ -105,26 +111,22 @@ export class RegAccesoDialogComponent implements OnInit {
     this.cargandoInfoAdicional = true;
     this.cdr.detectChanges();
 
-    // Primero cargar dispositivos y vehículos
     forkJoin({
       dispositivos: this.dispositivoService.getAll().pipe(catchError(() => of({ data: [] }))),
       vehiculos: this.vehiculoService.getAll().pipe(catchError(() => of({ data: [] }))),
       fichas: this.fichaService.getAll().pipe(catchError(() => of({ data: [] })))
     }).subscribe({
       next: (resultados) => {
-        // Procesar dispositivos
         const todosDispositivos = resultados.dispositivos.data || resultados.dispositivos || [];
         this.dispositivosUsuario = todosDispositivos.filter((d: any) => 
           d.usuarioId === usuarioId || d.usuario?.id === usuarioId
         );
 
-        // Procesar vehículos
         const todosVehiculos = resultados.vehiculos.data || resultados.vehiculos || [];
         this.vehiculosUsuario = todosVehiculos.filter((v: any) => 
           v.usuarioId === usuarioId || v.usuario?.id === usuarioId
         );
 
-        // Procesar fichas - obtener todas y verificar una por una
         const todasFichas = resultados.fichas.data || resultados.fichas || [];
         
         if (todasFichas.length === 0) {
@@ -134,7 +136,6 @@ export class RegAccesoDialogComponent implements OnInit {
           return;
         }
 
-        // Para cada ficha, verificar si el usuario es aprendiz
         from(todasFichas).pipe(
           switchMap((ficha: any) => 
             this.fichaService.getAprendices(ficha.id).pipe(
@@ -153,7 +154,6 @@ export class RegAccesoDialogComponent implements OnInit {
         ).subscribe({
           next: (fichasDelUsuario) => {
             this.fichasUsuario = fichasDelUsuario;
-            console.log('Fichas del usuario encontradas:', this.fichasUsuario.length);
             this.cargandoInfoAdicional = false;
             this.cdr.detectChanges();
           },
@@ -168,10 +168,75 @@ export class RegAccesoDialogComponent implements OnInit {
     });
   }
 
+  // ========== SELECCIÓN DE VEHÍCULOS ==========
+  onVehiculoToggle(vehiculo: any, checked: boolean): void {
+    if (checked) {
+      this.vehiculosSeleccionados.push(vehiculo);
+    } else {
+      this.vehiculosSeleccionados = this.vehiculosSeleccionados.filter(v => v.id !== vehiculo.id);
+    }
+    this.actualizarObservacion();
+  }
+
+  isVehiculoSeleccionado(vehiculo: any): boolean {
+    return this.vehiculosSeleccionados.some(v => v.id === vehiculo.id);
+  }
+
+  // ========== SELECCIÓN DE DISPOSITIVOS ==========
+  onDispositivoToggle(dispositivo: any, checked: boolean): void {
+    if (checked) {
+      this.dispositivosSeleccionados.push(dispositivo);
+    } else {
+      this.dispositivosSeleccionados = this.dispositivosSeleccionados.filter(d => d.id !== dispositivo.id);
+    }
+    this.actualizarObservacion();
+  }
+
+  isDispositivoSeleccionado(dispositivo: any): boolean {
+    return this.dispositivosSeleccionados.some(d => d.id === dispositivo.id);
+  }
+
+  // ========== ACTUALIZAR OBSERVACIÓN ==========
+  private actualizarObservacion(): void {
+    const partes: string[] = [];
+    
+    if (this.vehiculosSeleccionados.length > 0) {
+      const vehiculosTexto = this.vehiculosSeleccionados.map(v => 
+        ` ${v.placa} (${v.marca})`
+      ).join(', ');
+      partes.push(vehiculosTexto);
+    }
+    
+    if (this.dispositivosSeleccionados.length > 0) {
+      const dispositivosTexto = this.dispositivosSeleccionados.map(d => 
+        ` ${d.tipoDispositivo} ${d.marca}`
+      ).join(', ');
+      partes.push(dispositivosTexto);
+    }
+
+    const observacionActual = this.accesoForm.get('observacion')?.value || '';
+    // Limpiar observaciones anteriores de vehículos/dispositivos
+    const baseObservacion = observacionActual
+      .split(' | ')
+      .filter((p: string) => 
+        !p.includes('') && !p.includes('💻')
+      )
+      .join(' | ');
+
+    const nuevaObservacion = [
+      baseObservacion,
+      ...partes
+    ].filter(p => p.trim() !== '').join(' | ');
+
+    this.accesoForm.patchValue({ observacion: nuevaObservacion });
+  }
+
   private limpiarInfoAdicional(): void {
     this.dispositivosUsuario = [];
     this.vehiculosUsuario = [];
     this.fichasUsuario = [];
+    this.vehiculosSeleccionados = [];
+    this.dispositivosSeleccionados = [];
     this.cargandoInfoAdicional = false;
   }
 

@@ -38,7 +38,6 @@ export class RegAccesoComponent implements OnInit {
   mostrarTabla: boolean = false;
 
   tableColumns = [
-    { key: 'id', label: 'ID', type: 'text' },
     { key: 'usuarioNombre', label: 'Usuario', type: 'text' },
     { key: 'documento', label: 'Documento', type: 'text' },
     { key: 'horaFecha', label: 'Fecha/Hora', type: 'date' },

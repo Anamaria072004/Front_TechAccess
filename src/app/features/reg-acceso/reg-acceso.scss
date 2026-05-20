@@ -4,7 +4,7 @@
 
 .accesos-container {
   padding: 24px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 
   @media (max-width: 768px) { padding: 16px; }
@@ -233,6 +233,75 @@
   }
 }
 
+// ─── CORRECCIÓN: TABLA LIMPIA CON FUENTE UNIFORME ─────
+::ng-deep {
+  // ─── FUENTE BASE UNIFORME PARA TODA LA TABLA ───────────
+  // Aplica la misma familia, tamaño y peso a headers, celdas, texto y badges
+  .mat-mdc-header-cell,
+  .mat-mdc-cell,
+  .mat-mdc-cell .cell-text,
+  .badge-entrada,
+  .badge-salida {
+    font-family: 'Roboto', 'Helvetica Neue', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+  }
+
+  // Ajustar altura de filas para que se vean compactas
+  .mat-mdc-row {
+    height: auto !important;
+    min-height: 52px;
+  }
+
+  // ─── ENCABEZADOS DE TABLA ───────────────────────
+  .mat-mdc-header-cell {
+    padding: 10px 14px !important;
+    vertical-align: middle;
+    color: #1a3a8f !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+  }
+
+  .mat-mdc-cell {
+    padding: 8px 14px !important;
+    vertical-align: middle;
+    color: #1e293b !important;
+
+    // COLUMNA DE OBSERVACIÓN - Limpia y compacta
+    &:nth-child(5) .cell-text, // Ajustado: ahora es la columna 5 (sin ID)
+    &:last-child .cell-text {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      word-break: break-word !important;
+      max-width: none !important;
+      color: #475569 !important;
+
+      // Estilo para los iconos de vehículo/dispositivo
+      &::before {
+        content: '';
+      }
+    }
+  }
+
+  // Estilo especial para filas con observaciones largas
+  .mat-mdc-row:has(.cell-text) {
+    .mat-mdc-cell {
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+    }
+  }
+
+  // Tooltip bonito al pasar el mouse
+  .mat-mdc-tooltip {
+    font-size: 0.85rem !important;
+    background: #1e293b !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+  }
+}
+
 // ─── BADGES DE TIPO DE ACCESO ─────────────────────
 ::ng-deep .mat-mdc-cell {
   .badge-entrada, .badge-salida {
@@ -241,8 +310,6 @@
     gap: 6px;
     padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
     letter-spacing: 0.2px;
 
     mat-icon {
@@ -272,43 +339,8 @@
 .accesos-container {
   animation: moduleFadeIn 0.4s ease;
 }
-// Agregar al final del archivo:
 
-.error-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 40px 20px;
-  color: #64748b;
-  font-size: 0.95rem;
-
-  mat-icon {
-    color: #ef4444;
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
-  }
-
-  button {
-    margin-left: 8px;
-    padding: 8px 16px;
-    border: 1px solid #1a3a8f;
-    background: transparent;
-    color: #1a3a8f;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: #1a3a8f;
-      color: white;
-    }
-  }
-}
-// Agregar al final del archivo:
-
+// ─── ESTADOS DE CARGA Y ERROR ─────────────────────
 .loading-propio {
   display: flex;
   flex-direction: column;

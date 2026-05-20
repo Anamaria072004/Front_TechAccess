@@ -61,8 +61,6 @@
           </mat-form-field>
         </div>
 
-        <!-- ========== INFORMACIÓN ADICIONAL ========== -->
-        
         @if (cargandoInfoAdicional) {
           <div class="loading-info-adicional">
             <mat-spinner diameter="24"></mat-spinner>
@@ -70,17 +68,21 @@
           </div>
         } @else {
           
-          <!-- DISPOSITIVOS -->
+          <!-- DISPOSITIVOS CON CHECKBOX -->
           <div class="info-section">
             <div class="section-header">
               <mat-icon>devices</mat-icon>
-              <span>Dispositivos Registrados</span>
+              <span>Dispositivos Registrados ({{ dispositivosUsuario.length }})</span>
             </div>
             @if (dispositivosUsuario.length > 0) {
-              <div class="info-list">
+              <div class="info-list selectable">
                 @for (disp of dispositivosUsuario; track disp.id) {
-                  <div class="info-item">
-                    <span class="info-badge tipo">{{ disp.tipoDispositivo || 'Dispositivo' }}</span>
+                  <div class="info-item selectable-item" [class.selected]="isDispositivoSeleccionado(disp)">
+                    <mat-checkbox 
+                      [checked]="isDispositivoSeleccionado(disp)"
+                      (change)="onDispositivoToggle(disp, $event.checked)">
+                    </mat-checkbox>
+                    <span class="info-badge tipo">{{ disp.tipoDispositivo }}</span>
                     <span class="info-text">{{ disp.marca }} - {{ disp.color }}</span>
                   </div>
                 }
@@ -93,16 +95,20 @@
             }
           </div>
 
-          <!-- VEHÍCULOS -->
+          <!-- VEHÍCULOS CON CHECKBOX -->
           <div class="info-section">
             <div class="section-header">
               <mat-icon>directions_car</mat-icon>
-              <span>Vehículos Registrados</span>
+              <span>Vehículos Registrados ({{ vehiculosUsuario.length }})</span>
             </div>
             @if (vehiculosUsuario.length > 0) {
-              <div class="info-list">
+              <div class="info-list selectable">
                 @for (veh of vehiculosUsuario; track veh.id) {
-                  <div class="info-item">
+                  <div class="info-item selectable-item" [class.selected]="isVehiculoSeleccionado(veh)">
+                    <mat-checkbox 
+                      [checked]="isVehiculoSeleccionado(veh)"
+                      (change)="onVehiculoToggle(veh, $event.checked)">
+                    </mat-checkbox>
                     <span class="info-badge placa">{{ veh.placa }}</span>
                     <span class="info-text">{{ veh.marca }} {{ veh.modelo }} ({{ veh.color }})</span>
                   </div>
@@ -116,11 +122,11 @@
             }
           </div>
 
-          <!-- FICHAS -->
+          <!-- FICHAS (solo informativo, sin checkbox) -->
           <div class="info-section">
             <div class="section-header">
               <mat-icon>school</mat-icon>
-              <span>Fichas de Formación</span>
+              <span>Fichas de Formación ({{ fichasUsuario.length }})</span>
             </div>
             @if (fichasUsuario.length > 0) {
               <div class="info-list">
@@ -148,7 +154,7 @@
         <div class="dialog-row">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Observación (Opcional)</mat-label>
-            <textarea matInput formControlName="observacion" rows="2" placeholder="Escriba detalles relevantes..."></textarea>
+            <textarea matInput formControlName="observacion" rows="3" placeholder="Seleccione vehículos/dispositivos o escriba detalles..."></textarea>
           </mat-form-field>
         </div>
       }
