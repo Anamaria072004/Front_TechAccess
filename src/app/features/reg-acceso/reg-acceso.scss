@@ -90,13 +90,24 @@
   background: white;
   border-radius: 16px;
   margin-bottom: 24px;
-  border: 1px solid #e8edf8;
+  border: 2px solid #e8edf8;
   box-shadow: 0 4px 20px rgba(26, 58, 143, 0.08);
   overflow: hidden;
-  transition: box-shadow 0.25s ease;
+  transition: all 0.3s ease;
 
-  &:hover {
-    box-shadow: 0 8px 32px rgba(26, 58, 143, 0.12);
+  // Estado activo: cuando el input tiene foco (lector listo)
+  &.lector-activo {
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15), 0 8px 32px rgba(26, 58, 143, 0.12);
+    
+    .lector-header {
+      background: #e8f5e9;
+      
+      mat-icon {
+        color: #2e7d32;
+        animation: scanPulse 2s infinite;
+      }
+    }
   }
 
   .lector-header {
@@ -109,12 +120,39 @@
     font-weight: 600;
     font-size: 0.95rem;
     color: #1a3a8f;
+    transition: background 0.3s ease;
 
     mat-icon {
       color: var(--color-accent);
       font-size: 22px;
       width: 22px;
       height: 22px;
+      transition: color 0.3s ease;
+    }
+    
+    .estado-indicador {
+      margin-left: auto;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: all 0.3s ease;
+      
+      &.listo {
+        background: #e8f5e9;
+        color: #2e7d32;
+        
+        &::before {
+          content: '● ';
+          animation: blink 1.5s infinite;
+        }
+      }
+      
+      &.procesando {
+        background: #fff3e0;
+        color: #e65100;
+      }
     }
   }
 
@@ -128,30 +166,35 @@
 
       input {
         flex: 1;
-        padding: 12px 16px;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 10px;
-        font-size: 0.95rem;
-        font-weight: 500;
+        padding: 16px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
         color: #1e293b;
         background: #f8faff;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: all 0.2s ease;
+        letter-spacing: 2px;
 
         &:focus {
           outline: none;
           border-color: #1a3a8f;
-          box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.1);
+          box-shadow: 0 0 0 4px rgba(26, 58, 143, 0.12);
+          background: white;
         }
 
         &::placeholder {
           color: #94a3b8;
           font-weight: 400;
+          font-size: 1rem;
+          letter-spacing: normal;
         }
 
         &:disabled {
           background: #f1f5f9;
           color: #94a3b8;
           cursor: not-allowed;
+          border-color: #e2e8f0;
         }
       }
 
@@ -159,16 +202,18 @@
         background: #1a3a8f;
         color: white;
         border: none;
-        padding: 12px 24px;
-        border-radius: 10px;
+        padding: 16px 28px;
+        border-radius: 12px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         transition: all 0.2s ease;
         white-space: nowrap;
+        min-width: 180px;
+        justify-content: center;
 
         &:hover:not([disabled]) {
           background: #142a6e;
@@ -181,6 +226,12 @@
           cursor: not-allowed;
           transform: none;
           box-shadow: none;
+        }
+        
+        // Estado de éxito rápido
+        &.registro-exitoso {
+          background: #2e7d32;
+          animation: successPulse 0.6s ease;
         }
       }
 
@@ -195,11 +246,55 @@
     }
 
     .help-text {
-      display: block;
-      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
       color: #64748b;
-      margin-top: 4px;
+      margin-top: 6px;
       padding-left: 4px;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #94a3b8;
+      }
+    }
+    
+    // Banner del último registro
+    .ultimo-registro-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      animation: slideInUp 0.4s ease;
+      
+      &.entrada {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #a5d6a7;
+      }
+      
+      &.salida {
+        background: #ffebee;
+        color: #c62828;
+        border: 1px solid #ef9a9a;
+      }
+      
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+      
+      small {
+        opacity: 0.7;
+        font-size: 0.8rem;
+      }
     }
   }
 }
@@ -334,6 +429,27 @@
 @keyframes moduleFadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scanPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .accesos-container {

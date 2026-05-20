@@ -27,6 +27,40 @@
   }
 }
 
+// ─── MODO ESCANEO BANNER ──────────────────────────
+.modo-escaneo-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 24px 16px;
+  padding: 10px 16px;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
+  color: #2e7d32;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: slideDown 0.3s ease;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #2e7d32;
+    animation: scanPulse 2s infinite;
+  }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scanPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.2); }
+}
+
 // ─── Secciones ────────────────────────────────────────────
 .section-label {
   margin: 20px 0 8px 2px;
@@ -42,13 +76,12 @@
 // ─── Filas de campos ──────────────────────────────────────
 .dialog-row {
   display: flex;
-  align-items: flex-start; // Alinea la parte superior para evitar que el error mueva el botón
+  align-items: flex-start;
   gap: 12px;
   margin-bottom: 4px;
 
   mat-form-field { flex: 1; }
 
-  // Alineación perfecta del botón buscar con la altura del input de Material
   button[mat-flat-button] {
     height: 56px; 
     border-radius: 8px;

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button'; 
@@ -20,6 +20,11 @@ import { forkJoin, of, from } from 'rxjs';
 import { catchError, map, switchMap, toArray } from 'rxjs/operators';
 import { VehiculoService } from '@features/vehiculo/services/vehiculo.service';
 import { FichaService } from '@features/ficha/services/ficha.service';
+
+// Interface para los datos que puede recibir el diálogo
+export interface RegAccesoDialogData {
+  documento?: string | null;
+}
 
 @Component({
   selector: 'app-reg-acceso-dialog',
@@ -45,6 +50,9 @@ export class RegAccesoDialogComponent implements OnInit {
   private regAccesoService = inject(RegAccesoService);
   private cdr = inject(ChangeDetectorRef);
 
+  // Datos recibidos al abrir el diálogo (documento escaneado)
+  public data: RegAccesoDialogData = inject(MAT_DIALOG_DATA);
+
   private dispositivoService = inject(DispositivoService);
   private vehiculoService = inject(VehiculoService);
   private fichaService = inject(FichaService);
@@ -64,11 +72,24 @@ export class RegAccesoDialogComponent implements OnInit {
   vehiculosSeleccionados: any[] = [];
   dispositivosSeleccionados: any[] = [];
 
+  // Indica si el diálogo fue abierto con un documento escaneado
+  modoEscaneo = false;
+
   ngOnInit(): void {
     this.accesoForm = this.fb.group({
       documento: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
       observacion: ['']
     });
+
+    // Si se recibió un documento escaneado, precargarlo y buscar automáticamente
+    if (this.data?.documento) {
+      this.modoEscaneo = true;
+      this.accesoForm.patchValue({ documento: this.data.documento });
+      // Buscar usuario automáticamente después de un pequeño delay para que Angular renderice
+      setTimeout(() => {
+        this.buscarUsuario();
+      }, 300);
+    }
   }
 
   buscarUsuario(): void {
@@ -215,7 +236,6 @@ export class RegAccesoDialogComponent implements OnInit {
     }
 
     const observacionActual = this.accesoForm.get('observacion')?.value || '';
-    // Limpiar observaciones anteriores de vehículos/dispositivos
     const baseObservacion = observacionActual
       .split(' | ')
       .filter((p: string) => 

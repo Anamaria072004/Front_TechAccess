@@ -7,6 +7,12 @@
     </button>
   </div>
 
+  <!-- Banner de modo escaneo -->
+  <div *ngIf="modoEscaneo" class="modo-escaneo-banner">
+    <mat-icon>qr_code_scanner</mat-icon>
+    <span>Documento escaneado automáticamente</span>
+  </div>
+
   <div mat-dialog-content>
     <form [formGroup]="accesoForm">
       
@@ -15,7 +21,14 @@
       <div class="dialog-row">
         <mat-form-field appearance="outline">
           <mat-label>Documento del Usuario</mat-label>
-          <input matInput type="text" formControlName="documento" placeholder="Ingrese el documento" autocomplete="off">
+          <input 
+            matInput 
+            type="text" 
+            formControlName="documento" 
+            placeholder="Ingrese el documento" 
+            autocomplete="off"
+            [readonly]="modoEscaneo"
+          >
           <mat-error *ngIf="accesoForm.get('documento')?.hasError('required')">
             El documento es requerido
           </mat-error>
@@ -24,10 +37,13 @@
           </mat-error>
         </mat-form-field>
 
-        <button mat-flat-button color="primary" 
-                type="button" 
-                [disabled]="accesoForm.get('documento')?.invalid || buscando"
-                (click)="buscarUsuario()">
+        <button 
+          mat-flat-button 
+          color="primary" 
+          type="button" 
+          [disabled]="accesoForm.get('documento')?.invalid || buscando"
+          (click)="buscarUsuario()"
+        >
           <mat-icon *ngIf="!buscando">search</mat-icon>
           <mat-spinner diameter="20" *ngIf="buscando"></mat-spinner>
           Buscar
@@ -163,9 +179,12 @@
 
   <mat-dialog-actions align="end">
     <button mat-button (click)="cancelar()">Cancelar</button>
-    <button mat-raised-button color="primary" 
-            [disabled]="accesoForm.get('documento')?.invalid || !usuarioEncontrado || guardando" 
-            (click)="guardar()">
+    <button 
+      mat-raised-button 
+      color="primary" 
+      [disabled]="accesoForm.get('documento')?.invalid || !usuarioEncontrado || guardando" 
+      (click)="guardar()"
+    >
       {{ guardando ? 'Guardando...' : 'Confirmar Acceso' }}
     </button>
   </mat-dialog-actions>
