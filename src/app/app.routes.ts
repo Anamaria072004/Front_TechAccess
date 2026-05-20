@@ -14,6 +14,7 @@ import { PageNotFound } from './features/page-not-found/page-not-found';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password';
 import { VigilanteComponent } from './features/users/components/vigilante/vigilante';
+import { RegAccesoComponent } from '@features/reg-acceso/reg-acceso';
 
 
 export const routes: Routes = [
@@ -66,10 +67,17 @@ export const routes: Routes = [
         data: { module: 'dispositivos' }
       },
       {
+        path: 'accesos',
+       component: RegAccesoComponent,
+       canActivate: [moduleGuard],
+       data: { module: 'accesos' }
+},
+      {
         path: 'vigilante',
         component: VigilanteComponent,
         canActivate: [authGuard]
       },
+    
       // Redirección interna: de / a /inicio
       { path: '', redirectTo: 'inicio', pathMatch: 'full' }
     ]

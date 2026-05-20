@@ -1,0 +1,77 @@
+<div class="accesos-container">
+  
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-info">
+      <h1>
+        <mat-icon>fingerprint</mat-icon>
+        Gestión de Accesos
+      </h1>
+      <p>Registra y administra los accesos de usuarios al sistema.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-flat-button (click)="abrirDialogo()">
+        <mat-icon>add_circle</mat-icon>
+        Registrar Acceso Manual
+      </button>
+    </div>
+  </div>
+
+  <!-- Lector -->
+  <div class="lector-card">
+    <div class="lector-header">
+      <mat-icon>qr_code_scanner</mat-icon>
+      <span>Registro Rápido por Documento</span>
+    </div>
+    <div class="lector-body">
+      <div class="codigo-input-group">
+        <input
+          #codigoInput
+          type="text"
+          [(ngModel)]="codigoBarras"
+          placeholder="Escanee o ingrese el número de documento (cédula)"
+          (keyup.enter)="procesarCodigoBarras()"
+          [disabled]="isLoading"
+          autocomplete="off"
+        >
+        <button (click)="procesarCodigoBarras()" [disabled]="!codigoBarras.trim() || isLoading">
+          <mat-icon *ngIf="!isLoading">login</mat-icon>
+          <mat-spinner diameter="18" *ngIf="isLoading"></mat-spinner>
+          {{ isLoading ? 'Procesando...' : 'Registrar Acceso' }}
+        </button>
+      </div>
+      <small class="help-text">
+          Escanee su documento o ingrese su número de cédula
+      </small>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-card">
+    <div class="table-header">
+      <h3>  Registros Recientes</h3>
+    </div>
+    
+    <!-- Spinner propio mientras carga (antes de mostrar el data-table) -->
+    <div *ngIf="isLoadingTable && !mostrarTabla" class="loading-propio">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando datos...</span>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="tableError" class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ tableError }}</span>
+      <button (click)="cargarHistorial()">Reintentar</button>
+    </div>
+
+    <!-- Data-table solo se renderiza cuando mostrarTabla es true -->
+    <app-data-table
+      *ngIf="mostrarTabla && !tableError"
+      [dataSource]="accesosRecientes"
+      [columns]="tableColumns"
+      [loading]="isLoadingTable"
+      [pageSize]="10">
+    </app-data-table>
+  </div>
+</div>

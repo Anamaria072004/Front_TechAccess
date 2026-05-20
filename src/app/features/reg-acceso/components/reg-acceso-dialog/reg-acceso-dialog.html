@@ -1,0 +1,84 @@
+<div class="dialog-container">
+  
+  <div class="dialog-header">
+    <h2>Registrar Acceso</h2>
+    <button mat-icon-button (click)="cancelar()" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content>
+    <form [formGroup]="accesoForm">
+      
+      <p class="section-label">Búsqueda de Usuario</p>
+      
+      <div class="dialog-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Documento del Usuario</mat-label>
+          <input matInput type="text" formControlName="documento" placeholder="Ingrese el documento" autocomplete="off">
+          <mat-error *ngIf="accesoForm.get('documento')?.hasError('required')">
+            El documento es requerido
+          </mat-error>
+          <mat-error *ngIf="accesoForm.get('documento')?.hasError('pattern')">
+            El documento debe contener solo números
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" 
+                type="button" 
+                [disabled]="accesoForm.get('documento')?.invalid || buscando"
+                (click)="buscarUsuario()">
+          <mat-icon *ngIf="!buscando">search</mat-icon>
+          <mat-spinner diameter="20" *ngIf="buscando"></mat-spinner>
+          Buscar
+        </button>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      @if (usuarioEncontrado) {
+        <p class="section-label">Datos del Usuario</p>
+        
+        <div class="dialog-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre Completo</mat-label>
+            <input matInput [value]="usuarioEncontrado.name + ' ' + usuarioEncontrado.lastName" readonly>
+          </mat-form-field>
+        </div>
+
+        <div class="dialog-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Email institucional</mat-label>
+            <input matInput [value]="usuarioEncontrado.email" readonly>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <input matInput [value]="usuarioEncontrado.state" readonly>
+          </mat-form-field>
+        </div>
+
+        <p class="section-label">Información Adicional</p>
+        
+        <div class="dialog-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Observación (Opcional)</mat-label>
+            <textarea matInput formControlName="observacion" rows="2" placeholder="Escriba detalles relevantes..."></textarea>
+          </mat-form-field>
+        </div>
+      }
+    </form>
+  </div>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()">Cancelar</button>
+    <button mat-raised-button color="primary" 
+            [disabled]="accesoForm.get('documento')?.invalid || !usuarioEncontrado || guardando" 
+            (click)="guardar()">
+      {{ guardando ? 'Guardando...' : 'Confirmar Acceso' }}
+    </button>
+  </mat-dialog-actions>
+</div>
