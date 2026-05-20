@@ -41,14 +41,13 @@ export class DataTableComponent implements OnChanges {
   @Input() showEdit: boolean = true;
   @Input() showDelete: boolean = true;
   
-  // ✅ ELIMINA esta línea: @Input() isVigilante: boolean = false;
   
   private _isVigilante: boolean = false;
 
   @Input()
   set isVigilante(value: boolean) {
     this._isVigilante = value;
-    console.log('🔥 isVigilante setter llamado con:', value);
+    console.log('isVigilante setter llamado con:', value);
   }
 
   get isVigilante(): boolean {

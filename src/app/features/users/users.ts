@@ -42,7 +42,6 @@ export class UsersComponent implements OnInit {
   loading      = signal(true);
   visitanteRoleId = signal<number | null>(null);
   
-  // 🔥 Control de botones según el rol
   showEditButton = signal(true);
   showDeleteButton = signal(true);
   
@@ -93,12 +92,12 @@ export class UsersComponent implements OnInit {
       next: (res: any) => {
         let allUsers = res.data || res;
         
-        // 🔥 Si es VIGILANTE, filtrar SOLO usuarios con rol VISITANTE
+        // Si es VIGILANTE, filtrar SOLO usuarios con rol VISITANTE
         if (this.isVigilante()) {
           allUsers = allUsers.filter((u: Usuario) =>
             u.roles?.some((r: any) => r.name?.toUpperCase() === 'VISITANTE')
           );
-          console.log('🔍 Vigilante - Solo visitantes:', allUsers.length);
+          console.log(' Vigilante - Solo visitantes:', allUsers.length);
         }
 
         this.usuariosRaw.set(allUsers);
@@ -270,7 +269,7 @@ export class UsersComponent implements OnInit {
   }
 
   eliminarUsuario(usuario: any): void {
-    // 🔥 Vigilante NO puede eliminar
+    //  Vigilante NO puede eliminar
     if (this.isVigilante()) {
       this.snackBar.open('No tienes permiso para eliminar usuarios', 'Cerrar', { duration: 3000 });
       return;

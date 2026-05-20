@@ -62,7 +62,6 @@ export class VigilanteComponent implements OnInit {
           const id = Number(visitante.id);
           this.visitanteRoleId.set(id);
           console.log('ID de Rol VISITANTE detectado:', id);
-          // Recargar usuarios para asegurar que se muestren correctamente
           this.cargarUsuarios();
         }
       }
@@ -76,7 +75,7 @@ export class VigilanteComponent implements OnInit {
         const allUsers: Usuario[] = res.data || res;
         this.usuariosRaw.set(allUsers);
 
-        // 🔴 IMPORTANTE: Filtrar SOLO usuarios con rol VISITANTE
+        // Filtrar SOLO usuarios con rol VISITANTE
         const soloVisitantes = allUsers.filter((u: Usuario) =>
           u.roles?.some((r: any) => r.name?.toUpperCase() === 'VISITANTE')
         );
