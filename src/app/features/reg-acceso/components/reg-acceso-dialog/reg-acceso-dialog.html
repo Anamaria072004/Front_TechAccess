@@ -61,6 +61,88 @@
           </mat-form-field>
         </div>
 
+        <!-- ========== INFORMACIÓN ADICIONAL ========== -->
+        
+        @if (cargandoInfoAdicional) {
+          <div class="loading-info-adicional">
+            <mat-spinner diameter="24"></mat-spinner>
+            <span>Cargando información adicional...</span>
+          </div>
+        } @else {
+          
+          <!-- DISPOSITIVOS -->
+          <div class="info-section">
+            <div class="section-header">
+              <mat-icon>devices</mat-icon>
+              <span>Dispositivos Registrados</span>
+            </div>
+            @if (dispositivosUsuario.length > 0) {
+              <div class="info-list">
+                @for (disp of dispositivosUsuario; track disp.id) {
+                  <div class="info-item">
+                    <span class="info-badge tipo">{{ disp.tipoDispositivo || 'Dispositivo' }}</span>
+                    <span class="info-text">{{ disp.marca }} - {{ disp.color }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-info">
+                <mat-icon>block</mat-icon>
+                <span>No tiene dispositivos registrados</span>
+              </div>
+            }
+          </div>
+
+          <!-- VEHÍCULOS -->
+          <div class="info-section">
+            <div class="section-header">
+              <mat-icon>directions_car</mat-icon>
+              <span>Vehículos Registrados</span>
+            </div>
+            @if (vehiculosUsuario.length > 0) {
+              <div class="info-list">
+                @for (veh of vehiculosUsuario; track veh.id) {
+                  <div class="info-item">
+                    <span class="info-badge placa">{{ veh.placa }}</span>
+                    <span class="info-text">{{ veh.marca }} {{ veh.modelo }} ({{ veh.color }})</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-info">
+                <mat-icon>block</mat-icon>
+                <span>No tiene vehículos registrados</span>
+              </div>
+            }
+          </div>
+
+          <!-- FICHAS -->
+          <div class="info-section">
+            <div class="section-header">
+              <mat-icon>school</mat-icon>
+              <span>Fichas de Formación</span>
+            </div>
+            @if (fichasUsuario.length > 0) {
+              <div class="info-list">
+                @for (ficha of fichasUsuario; track ficha.id) {
+                  <div class="info-item">
+                    <span class="info-badge ficha">{{ ficha.numficha }}</span>
+                    <span class="info-text">{{ ficha.programa }} - {{ ficha.jornada }} ({{ ficha.estado }})</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-info">
+                <mat-icon>block</mat-icon>
+                <span>No tiene fichas asignadas</span>
+              </div>
+            }
+          </div>
+
+        }
+
+        <mat-divider style="margin: 16px 0;"></mat-divider>
+
         <p class="section-label">Información Adicional</p>
         
         <div class="dialog-row">
