@@ -27,13 +27,14 @@ function arrayRequired(control: AbstractControl): ValidationErrors | null {
   styleUrls: ['./usuario-dialog.scss']
 })
 export class UsuarioDialogComponent implements OnInit {
-  private fb           = inject(FormBuilder);
-  private dialogRef    = inject(MatDialogRef<UsuarioDialogComponent>);
+  private fb = inject(FormBuilder);
+  private dialogRef = inject(MatDialogRef<UsuarioDialogComponent>);
   private usersService = inject(UsersService);
   private fichaService = inject(FichaService);
-  data: DialogData     = inject(MAT_DIALOG_DATA);
+  data: DialogData = inject(MAT_DIALOG_DATA);
 
-  roles  = signal<Role[]>([]);
+
+  roles = signal<Role[]>([]);
   fichas = signal<Ficha[]>([]);
   userForm!: FormGroup;
 
@@ -45,26 +46,32 @@ export class UsuarioDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const user       = this.data?.user;
+    const user = this.data?.user;
     const isReadOnly = this.data?.readonly;
-    const isEditing  = !!user?.id;
-    const isVigilante    = this.data?.vigilanteMode;
-    
-    // En modo vigilante el rol viene como roleIds directo en el objeto user
-    const presetRoleIds  = (user as any)?.roleIds ?? user?.roles?.map((r: any) => r.id) ?? [];
-    
+    const isEditing = !!user?.id;
+    const isVigilante = this.data?.vigilanteMode;
+
+    // FIX: Construir presetRoleIds considerando vigilanteRoleId
+    let presetRoleIds: number[] = [];
+
+    if (isVigilante && this.data?.vigilanteRoleId) {
+      presetRoleIds = [this.data.vigilanteRoleId];
+    } else if (user) {
+      presetRoleIds = user.roleIds ?? user.roles?.map((r: any) => r.id) ?? [];
+    }
+
     console.log('Inicializando Diálogo - Modo Vigilante:', isVigilante, 'Roles asignados:', presetRoleIds);
 
     this.userForm = this.fb.group({
-      roleIds:   [presetRoleIds, [arrayRequired]],
-      name:      [user?.name      ?? '', Validators.required],
-      lastName:  [user?.lastName  ?? '', Validators.required],
-      docType:   [user?.docType   ?? 'CC', Validators.required],
+      roleIds: [presetRoleIds, isVigilante ? [] : [arrayRequired]],
+      name: [user?.name ?? '', Validators.required],
+      lastName: [user?.lastName ?? '', Validators.required],
+      docType: [user?.docType ?? 'CC', Validators.required],
       docNumber: [user?.docNumber ?? '', Validators.required],
-      email:     [user?.email     ?? '', [Validators.required, Validators.email]],
+      email: [user?.email ?? '', [Validators.required, Validators.email]],
       telephone: [user?.telephone ?? ''],
-      fichaId:   [(user as any)?.fichas?.id ?? null],
-      password:  ['', !isEditing && !isReadOnly && !isVigilante
+      fichaId: [(user as any)?.fichas?.id ?? null],
+      password: ['', !isEditing && !isReadOnly && !isVigilante
         ? [Validators.required, Validators.minLength(6)]
         : []
       ]
@@ -90,7 +97,7 @@ export class UsuarioDialogComponent implements OnInit {
   }
 
   private actualizarValidacionFicha(): void {
-    const fichaControl    = this.userForm.get('fichaId');
+    const fichaControl = this.userForm.get('fichaId');
     const passwordControl = this.userForm.get('password');
 
     if (this.esAprendiz) {
@@ -105,7 +112,7 @@ export class UsuarioDialogComponent implements OnInit {
       if (this.data?.vigilanteMode) {
         passwordControl?.clearValidators();
         passwordControl?.setValue('');
-      } 
+      }
       else if (!this.data.user?.id && !this.data.readonly) {
         passwordControl?.setValidators([Validators.required, Validators.minLength(6)]);
       }
@@ -114,44 +121,32 @@ export class UsuarioDialogComponent implements OnInit {
     fichaControl?.updateValueAndValidity();
     passwordControl?.updateValueAndValidity();
   }
+save(): void {
+  if (this.data.readonly) return;
+  if (!this.userForm.valid) return;
 
-  save(): void {
-    if (this.data.readonly) return;
-    if (!this.userForm.valid) return;
+  const formValue = this.userForm.getRawValue();
 
-    const formValue = this.userForm.getRawValue();
-
-    let roleIds = formValue.roleIds.map(Number);
-    
-    // Si estamos en modo vigilante, FORZAMOS el rol que viene en los datos
-    // ignorando cualquier otro valor para mayor seguridad.
-    if (this.data?.vigilanteMode) {
-      const presetRoleIds = (this.data.user as any)?.roleIds;
-      if (presetRoleIds && presetRoleIds.length > 0) {
-        roleIds = presetRoleIds.map(Number);
-      }
-    }
-
-    const payload: any = {
-      name:      formValue.name,
-      lastName:  formValue.lastName,
-      docType:   formValue.docType,
-      docNumber: formValue.docNumber,
-      email:     formValue.email,
-      telephone: formValue.telephone,
-      roleIds:   roleIds,
-      isActive:  true,
-      state:     'activo'
-    };
-
-    if (formValue.password) payload.password = formValue.password;
-
-    if (this.esAprendiz && formValue.fichaId) {
-      payload.fichasId = Number(formValue.fichaId);
-    }
-
-    this.dialogRef.close(payload);
+  // Validar que haya al menos un rol si no es vigilante
+  if (!this.data.vigilanteMode && (!formValue.roleIds || formValue.roleIds.length === 0)) {
+    // No cerrar el diálogo, mostrar error
+    return;
   }
+
+  const payload: any = {
+    name: formValue.name,
+    lastName: formValue.lastName,
+    docType: formValue.docType,
+    docNumber: formValue.docNumber,
+    email: formValue.email,
+    telephone: formValue.telephone || null,
+     roleIds: formValue.roleIds,
+  };
+
+  if (formValue.password) payload.password = formValue.password;
+
+  this.dialogRef.close(payload);
+}
 
   close() { this.dialogRef.close(); }
 }

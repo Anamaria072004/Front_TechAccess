@@ -1,0 +1,104 @@
+.confirmar-salida-container {
+  width: 380px;
+  max-width: 95vw;
+  padding: 0;
+  text-align: center;
+}
+
+.dialog-header-simple {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 24px 16px;
+
+  .icono-salida {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #c62828;
+    animation: pulseIcon 2s infinite;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+}
+
+.dialog-body {
+  padding: 8px 24px 24px;
+
+  .mensaje {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    color: #64748b;
+    line-height: 1.5;
+
+    strong {
+      color: #c62828;
+      font-weight: 600;
+    }
+  }
+
+  .nombre-usuario {
+    margin: 0 0 4px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a3a8f;
+  }
+
+  .documento {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 24px 24px;
+
+  button {
+    min-width: 120px;
+    height: 44px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    &[mat-button] {
+      color: #64748b;
+    }
+
+    &.btn-confirmar-salida {
+      background: #c62828 !important;
+      color: white !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 24px;
+
+      &:hover:not([disabled]) {
+        background: #b71c1c !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+      }
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}

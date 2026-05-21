@@ -2,22 +2,42 @@
 
   <!-- Overlay de carga no destructivo para evitar parpadeos/saltos de layout -->
   @if (loading) {
-    <div class="loading-overlay">
-      <div class="loader-content">
-        <mat-spinner diameter="40"></mat-spinner>
-        <span class="loading-text">Cargando datos...</span>
-      </div>
+  <div class="loading-overlay">
+    <div class="loader-content">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span class="loading-text">Cargando datos...</span>
     </div>
+  </div>
   }
 
   <!-- El contenido de la tabla se mantiene SIEMPRE en el DOM para evitar el "micro-corte" -->
-  <div class="table-responsive" [style.visibility]="(internalDataSource.data.length === 0 && !loading) ? 'hidden' : 'visible'">
+  <div class="table-responsive"
+    [style.visibility]="(internalDataSource.data.length === 0 && !loading) ? 'hidden' : 'visible'">
     <table mat-table [dataSource]="internalDataSource">
 
       @for (col of columns; track col.key) {
-        <ng-container [matColumnDef]="col.key">
-          <th mat-header-cell *matHeaderCellDef>{{ col.label }}</th>
-          <td mat-cell *matCellDef="let element">
+      <ng-container [matColumnDef]="col.key">
+        <th mat-header-cell *matHeaderCellDef>{{ col.label }}</th>
+        <td mat-cell *matCellDef="let element">
+
+          @switch (col.type) {
+          @case ('date') {
+          <span class="cell-text">{{ element[col.key] | date:'dd/MM/yyyy' }}</span>
+          }
+          @case ('actions') {
+          <div class="action-buttons">
+            @if (!element.isAdmin) {
+            @if (onView.observed) {
+            <button mat-icon-button class="view-btn" (click)="onView.emit(element)" matTooltip="Ver detalles">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            }
+            @if (showEdit) {
+            <button mat-icon-button class="edit-btn" (click)="onEdit.emit(element)" matTooltip="Editar registro">
+              <mat-icon>edit</mat-icon>
+            </button>
+            }
+
 
             @switch (col.type) {
 
@@ -71,10 +91,18 @@
               @default {
                 <span class="cell-text">{{element[col.key] }}</span>
               }
-            }
 
-          </td>
-        </ng-container>
+            }
+            }
+          </div>
+          }
+          @default {
+          <span class="cell-text">{{element[col.key] }}</span>
+          }
+          }
+
+        </td>
+      </ng-container>
       }
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -85,12 +113,11 @@
 
   <!-- Estado vacío (solo se muestra si NO está cargando y no hay datos) -->
   @if (!loading && internalDataSource.data.length === 0) {
-    <div class="no-data-container">
-      <mat-icon>sentiment_dissatisfied</mat-icon>
-      <p>No hay registros disponibles en este momento.</p>
-    </div>
+  <div class="no-data-container">
+    <mat-icon>sentiment_dissatisfied</mat-icon>
+    <p>No hay registros disponibles en este momento.</p>
+  </div>
   }
-
   <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons />
 
   

@@ -30,4 +30,5 @@ export interface UserData {
 
 export interface DialogData extends DialogModeConfig {
   user?: UserData;
+  vigilanteRoleId?: number;
 }

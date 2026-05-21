@@ -1,0 +1,510 @@
+// ==================================================
+//  REGISTRO DE ACCESOS - Gestión de Accesos
+// ==================================================
+
+.accesos-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) { padding: 16px; }
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.header-info {
+  h1 {
+    margin: 0 0 4px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a3a8f;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 24px;
+      background: var(--color-accent);
+      border-radius: 4px;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #64748b;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+
+  @media (max-width: 640px) { width: 100%; }
+
+  button[mat-flat-button],
+  button[mat-raised-button] {
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-accent) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(216, 27, 96, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+
+    &:hover:not([disabled]) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(216, 27, 96, 0.35);
+    }
+
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+    @media (max-width: 640px) { width: 100%; justify-content: center; }
+  }
+}
+
+// ─── LECTOR DE CÓDIGO DE BARRAS ───────────────────
+.lector-card {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  border: 2px solid #e8edf8;
+  box-shadow: 0 4px 20px rgba(26, 58, 143, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  // Estado activo: cuando el input tiene foco (lector listo)
+  &.lector-activo {
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15), 0 8px 32px rgba(26, 58, 143, 0.12);
+    
+    .lector-header {
+      background: #e8f5e9;
+      
+      mat-icon {
+        color: #2e7d32;
+        animation: scanPulse 2s infinite;
+      }
+    }
+  }
+
+  .lector-header {
+    padding: 14px 20px;
+    background: #f8faff;
+    border-bottom: 1px solid #e8edf8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1a3a8f;
+    transition: background 0.3s ease;
+
+    mat-icon {
+      color: var(--color-accent);
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      transition: color 0.3s ease;
+    }
+    
+    .estado-indicador {
+      margin-left: auto;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: all 0.3s ease;
+      
+      &.listo {
+        background: #e8f5e9;
+        color: #2e7d32;
+        
+        &::before {
+          content: '● ';
+          animation: blink 1.5s infinite;
+        }
+      }
+      
+      &.procesando {
+        background: #fff3e0;
+        color: #e65100;
+      }
+    }
+  }
+
+  .lector-body {
+    padding: 20px;
+
+    .codigo-input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 8px;
+
+      input {
+        flex: 1;
+        padding: 16px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
+        background: #f8faff;
+        transition: all 0.2s ease;
+        letter-spacing: 2px;
+
+        &:focus {
+          outline: none;
+          border-color: #1a3a8f;
+          box-shadow: 0 0 0 4px rgba(26, 58, 143, 0.12);
+          background: white;
+        }
+
+        &::placeholder {
+          color: #94a3b8;
+          font-weight: 400;
+          font-size: 1rem;
+          letter-spacing: normal;
+        }
+
+        &:disabled {
+          background: #f1f5f9;
+          color: #94a3b8;
+          cursor: not-allowed;
+          border-color: #e2e8f0;
+        }
+      }
+
+      button {
+        background: #1a3a8f;
+        color: white;
+        border: none;
+        padding: 16px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        min-width: 180px;
+        justify-content: center;
+
+        &:hover:not([disabled]) {
+          background: #142a6e;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(26, 58, 143, 0.25);
+        }
+
+        &:disabled {
+          background: #cbd5e1;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+        
+        // Estado de éxito rápido
+        &.registro-exitoso {
+          background: #2e7d32;
+          animation: successPulse 0.6s ease;
+        }
+      }
+
+      @media (max-width: 640px) {
+        flex-direction: column;
+
+        button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+
+    .help-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-top: 6px;
+      padding-left: 4px;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #94a3b8;
+      }
+    }
+    
+    // Banner del último registro
+    .ultimo-registro-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      animation: slideInUp 0.4s ease;
+      
+      &.entrada {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #a5d6a7;
+      }
+      
+      &.salida {
+        background: #ffebee;
+        color: #c62828;
+        border: 1px solid #ef9a9a;
+      }
+      
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+      
+      small {
+        opacity: 0.7;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+// ─── TABLA DE REGISTROS ───────────────────────────
+.table-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e8edf8;
+  box-shadow: 0 4px 20px rgba(26, 58, 143, 0.08);
+  transition: box-shadow 0.25s ease;
+
+  &:hover {
+    box-shadow: 0 8px 32px rgba(26, 58, 143, 0.12);
+  }
+
+  .table-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #e8edf8;
+
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a3a8f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+// ─── CORRECCIÓN: TABLA LIMPIA CON FUENTE UNIFORME ─────
+::ng-deep {
+  // ─── FUENTE BASE UNIFORME PARA TODA LA TABLA ───────────
+  // Aplica la misma familia, tamaño y peso a headers, celdas, texto y badges
+  .mat-mdc-header-cell,
+  .mat-mdc-cell,
+  .mat-mdc-cell .cell-text,
+  .badge-entrada,
+  .badge-salida {
+    font-family: 'Roboto', 'Helvetica Neue', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+  }
+
+  // Ajustar altura de filas para que se vean compactas
+  .mat-mdc-row {
+    height: auto !important;
+    min-height: 52px;
+  }
+
+  // ─── ENCABEZADOS DE TABLA ───────────────────────
+  .mat-mdc-header-cell {
+    padding: 10px 14px !important;
+    vertical-align: middle;
+    color: #1a3a8f !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+  }
+
+  .mat-mdc-cell {
+    padding: 8px 14px !important;
+    vertical-align: middle;
+    color: #1e293b !important;
+
+    // COLUMNA DE OBSERVACIÓN - Limpia y compacta
+    &:nth-child(5) .cell-text, // Ajustado: ahora es la columna 5 (sin ID)
+    &:last-child .cell-text {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      word-break: break-word !important;
+      max-width: none !important;
+      color: #475569 !important;
+
+      // Estilo para los iconos de vehículo/dispositivo
+      &::before {
+        content: '';
+      }
+    }
+  }
+
+  // Estilo especial para filas con observaciones largas
+  .mat-mdc-row:has(.cell-text) {
+    .mat-mdc-cell {
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+    }
+  }
+
+  // Tooltip bonito al pasar el mouse
+  .mat-mdc-tooltip {
+    font-size: 0.85rem !important;
+    background: #1e293b !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+  }
+}
+
+// ─── BADGES DE TIPO DE ACCESO ─────────────────────
+::ng-deep .mat-mdc-cell {
+  .badge-entrada, .badge-salida {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.2px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .badge-entrada {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .badge-salida {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+// ─── ANIMACIONES ──────────────────────────────────
+@keyframes moduleFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scanPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.accesos-container {
+  animation: moduleFadeIn 0.4s ease;
+}
+
+// ─── ESTADOS DE CARGA Y ERROR ─────────────────────
+.loading-propio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 64px 32px;
+  color: #1a3a8f;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  mat-spinner {
+    ::ng-deep circle {
+      stroke: #1a3a8f;
+    }
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 0.95rem;
+
+  mat-icon {
+    color: #ef4444;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  button {
+    margin-left: 8px;
+    padding: 8px 16px;
+    border: 1px solid #1a3a8f;
+    background: transparent;
+    color: #1a3a8f;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #1a3a8f;
+      color: white;
+    }
+  }
+}
