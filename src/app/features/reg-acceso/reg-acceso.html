@@ -1,0 +1,102 @@
+<div class="accesos-container">
+  
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-info">
+      <h1>
+        <mat-icon>fingerprint</mat-icon>
+        Gestión de Accesos
+      </h1>
+      <p>Registra y administra los accesos de usuarios al sistema.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-flat-button (click)="abrirDialogo()">
+        <mat-icon>add_circle</mat-icon>
+        Registrar Acceso Manual
+      </button>
+    </div>
+  </div>
+
+  <!-- Lector de Código de Barras -->
+  <div class="lector-card" [class.lector-activo]="!isLoading && !dialogAbierto">
+    <div class="lector-header">
+      <mat-icon>qr_code_scanner</mat-icon>
+      <span>Lector de Código de Barras</span>
+      <span class="estado-indicador" [class.listo]="!isLoading" [class.procesando]="isLoading">
+        {{ isLoading ? 'Procesando...' : 'Listo para escanear' }}
+      </span>
+    </div>
+    <div class="lector-body">
+      <div class="codigo-input-group">
+        <input
+          #codigoInput
+          type="text"
+          [(ngModel)]="codigoBarras"
+          placeholder="Escanee el código de barras del documento"
+          (keyup.enter)="procesarCodigoBarras()"
+          (focus)="onInputFocus()"
+          (blur)="onInputBlur()"
+          [disabled]="isLoading"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          inputmode="numeric"
+          pattern="[0-9]*"
+        >
+        <button 
+          (click)="procesarCodigoBarras()" 
+          [disabled]="!codigoBarras.trim() || isLoading"
+          [class.registro-exitoso]="registroExitoso"
+        >
+          <mat-icon *ngIf="!isLoading && !registroExitoso">login</mat-icon>
+          <mat-icon *ngIf="registroExitoso">check_circle</mat-icon>
+          <mat-spinner diameter="18" *ngIf="isLoading"></mat-spinner>
+          {{ isLoading ? 'Procesando...' : (registroExitoso ? '¡Registrado!' : 'Registrar Acceso') }}
+        </button>
+      </div>
+      <small class="help-text">
+        <mat-icon>info</mat-icon>
+        Escanee el código de barras de la cédula. El lector enviará automáticamente el documento.
+      </small>
+      
+      <!-- Indicador visual del último registro -->
+      <div *ngIf="ultimoRegistro" class="ultimo-registro-banner" [class.entrada]="ultimoRegistro.tipo === 'Entrada'" [class.salida]="ultimoRegistro.tipo === 'Salida'">
+        <mat-icon>{{ ultimoRegistro.tipo === 'Entrada' ? 'login' : 'logout' }}</mat-icon>
+        <span>
+          <strong>{{ ultimoRegistro.tipo }}</strong> — {{ ultimoRegistro.usuario }} 
+          <small>({{ ultimoRegistro.hora }})</small>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-card">
+    <div class="table-header">
+      <h3>Registros Recientes</h3>
+    </div>
+    
+    <!-- Spinner propio mientras carga -->
+    <div *ngIf="isLoadingTable && !mostrarTabla" class="loading-propio">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando datos...</span>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="tableError" class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ tableError }}</span>
+      <button (click)="cargarHistorial()">Reintentar</button>
+    </div>
+
+    <!-- Data-table -->
+    <app-data-table
+      *ngIf="mostrarTabla && !tableError"
+      [dataSource]="accesosRecientes"
+      [columns]="tableColumns"
+      [loading]="isLoadingTable"
+      [pageSize]="10">
+    </app-data-table>
+  </div>
+</div>

@@ -1,0 +1,191 @@
+<div class="dialog-container">
+  
+  <div class="dialog-header">
+    <h2>Registrar Acceso</h2>
+    <button mat-icon-button (click)="cancelar()" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Banner de modo escaneo -->
+  <div *ngIf="modoEscaneo" class="modo-escaneo-banner">
+    <mat-icon>qr_code_scanner</mat-icon>
+    <span>Documento escaneado automáticamente</span>
+  </div>
+
+  <div mat-dialog-content>
+    <form [formGroup]="accesoForm">
+      
+      <p class="section-label">Búsqueda de Usuario</p>
+      
+      <div class="dialog-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Documento del Usuario</mat-label>
+          <input 
+            matInput 
+            type="text" 
+            formControlName="documento" 
+            placeholder="Ingrese el documento" 
+            autocomplete="off"
+            [readonly]="modoEscaneo"
+          >
+          <mat-error *ngIf="accesoForm.get('documento')?.hasError('required')">
+            El documento es requerido
+          </mat-error>
+          <mat-error *ngIf="accesoForm.get('documento')?.hasError('pattern')">
+            El documento debe contener solo números
+          </mat-error>
+        </mat-form-field>
+
+        <button 
+          mat-flat-button 
+          color="primary" 
+          type="button" 
+          [disabled]="accesoForm.get('documento')?.invalid || buscando"
+          (click)="buscarUsuario()"
+        >
+          <mat-icon *ngIf="!buscando">search</mat-icon>
+          <mat-spinner diameter="20" *ngIf="buscando"></mat-spinner>
+          Buscar
+        </button>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      @if (usuarioEncontrado) {
+        <p class="section-label">Datos del Usuario</p>
+        
+        <div class="dialog-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre Completo</mat-label>
+            <input matInput [value]="usuarioEncontrado.name + ' ' + usuarioEncontrado.lastName" readonly>
+          </mat-form-field>
+        </div>
+
+        <div class="dialog-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Email institucional</mat-label>
+            <input matInput [value]="usuarioEncontrado.email" readonly>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <input matInput [value]="usuarioEncontrado.state" readonly>
+          </mat-form-field>
+        </div>
+
+        @if (cargandoInfoAdicional) {
+          <div class="loading-info-adicional">
+            <mat-spinner diameter="24"></mat-spinner>
+            <span>Cargando información adicional...</span>
+          </div>
+        } @else {
+          
+          <!-- DISPOSITIVOS CON CHECKBOX -->
+          <div class="info-section">
+            <div class="section-header">
+              <mat-icon>devices</mat-icon>
+              <span>Dispositivos Registrados ({{ dispositivosUsuario.length }})</span>
+            </div>
+            @if (dispositivosUsuario.length > 0) {
+              <div class="info-list selectable">
+                @for (disp of dispositivosUsuario; track disp.id) {
+                  <div class="info-item selectable-item" [class.selected]="isDispositivoSeleccionado(disp)">
+                    <mat-checkbox 
+                      [checked]="isDispositivoSeleccionado(disp)"
+                      (change)="onDispositivoToggle(disp, $event.checked)">
+                    </mat-checkbox>
+                    <span class="info-badge tipo">{{ disp.tipoDispositivo }}</span>
+                    <span class="info-text">{{ disp.marca }} - {{ disp.color }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-info">
+                <mat-icon>block</mat-icon>
+                <span>No tiene dispositivos registrados</span>
+              </div>
+            }
+          </div>
+
+          <!-- VEHÍCULOS CON CHECKBOX -->
+          <div class="info-section">
+            <div class="section-header">
+              <mat-icon>directions_car</mat-icon>
+              <span>Vehículos Registrados ({{ vehiculosUsuario.length }})</span>
+            </div>
+            @if (vehiculosUsuario.length > 0) {
+              <div class="info-list selectable">
+                @for (veh of vehiculosUsuario; track veh.id) {
+                  <div class="info-item selectable-item" [class.selected]="isVehiculoSeleccionado(veh)">
+                    <mat-checkbox 
+                      [checked]="isVehiculoSeleccionado(veh)"
+                      (change)="onVehiculoToggle(veh, $event.checked)">
+                    </mat-checkbox>
+                    <span class="info-badge placa">{{ veh.placa }}</span>
+                    <span class="info-text">{{ veh.marca }} {{ veh.modelo }} ({{ veh.color }})</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-info">
+                <mat-icon>block</mat-icon>
+                <span>No tiene vehículos registrados</span>
+              </div>
+            }
+          </div>
+
+          <!-- FICHAS (solo informativo, sin checkbox) -->
+          <div class="info-section">
+            <div class="section-header">
+              <mat-icon>school</mat-icon>
+              <span>Fichas de Formación ({{ fichasUsuario.length }})</span>
+            </div>
+            @if (fichasUsuario.length > 0) {
+              <div class="info-list">
+                @for (ficha of fichasUsuario; track ficha.id) {
+                  <div class="info-item">
+                    <span class="info-badge ficha">{{ ficha.numficha }}</span>
+                    <span class="info-text">{{ ficha.programa }} - {{ ficha.jornada }} ({{ ficha.estado }})</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-info">
+                <mat-icon>block</mat-icon>
+                <span>No tiene fichas asignadas</span>
+              </div>
+            }
+          </div>
+
+        }
+
+        <mat-divider style="margin: 16px 0;"></mat-divider>
+
+        <p class="section-label">Información Adicional</p>
+        
+        <div class="dialog-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Observación (Opcional)</mat-label>
+            <textarea matInput formControlName="observacion" rows="3" placeholder="Seleccione vehículos/dispositivos o escriba detalles..."></textarea>
+          </mat-form-field>
+        </div>
+      }
+    </form>
+  </div>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()">Cancelar</button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      [disabled]="accesoForm.get('documento')?.invalid || !usuarioEncontrado || guardando" 
+      (click)="guardar()"
+    >
+      {{ guardando ? 'Guardando...' : 'Confirmar Acceso' }}
+    </button>
+  </mat-dialog-actions>
+</div>

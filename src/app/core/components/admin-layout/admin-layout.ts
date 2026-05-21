@@ -72,6 +72,7 @@ export class AdminLayoutComponent {
       'configuración': 'settings',
       'settings':      'settings',
       'vigilante':     'security',
+      'accesos':       'fingerprint',
     };
     return iconMap[name] ?? 'extension';
   }
