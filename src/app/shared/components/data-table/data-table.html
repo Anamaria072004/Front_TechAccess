@@ -20,9 +20,21 @@
           <td mat-cell *matCellDef="let element">
 
             @switch (col.type) {
+
               @case ('date') {
                 <span class="cell-text">{{ element[col.key] | date:'dd/MM/yyyy' }}</span>
               }
+
+               @case ('colorCircle') {
+                <div class="color-indicator-container">
+                  <span 
+                    class="color-circle" 
+                    [style.background-color]="obtenerHexColor(element[col.key])"
+                    [matTooltip]="element[col.key]">
+                  </span>
+                </div>
+              }
+
               @case ('actions') {
                 <div class="action-buttons">
                   @if (!element.isAdmin) {
@@ -81,4 +93,5 @@
 
   <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons />
 
+  
 </div>

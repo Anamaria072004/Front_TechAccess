@@ -39,11 +39,30 @@
       </div>
 
       <div class="dialog-row">
+
         <mat-form-field appearance="outline">
+
           <mat-label>Color</mat-label>
-          <input matInput formControlName="color" placeholder="Ej. Azul" required />
+          <mat-select formControlName="color" required>
+            <mat-option value="blanco">Blanco</mat-option>
+            <mat-option value="negro">Negro</mat-option>
+            <mat-option value="gris plata">Gris plata</mat-option>
+            <mat-option value="gris oscuro">Gris oscuro</mat-option>
+            <mat-option value="azul">Azul</mat-option>
+            <mat-option value="azul oscuro">Azul oscuro</mat-option>
+            <mat-option value="rojo">Rojo</mat-option>
+            <mat-option value="rojo oscuro">rojo oscuro</mat-option>
+            <mat-option value="verde">Verde</mat-option>
+            <mat-option value="marron">Marrón</mat-option>
+            <mat-option value="naranja">Naranja</mat-option>
+            <mat-option value="otros">Otros</mat-option>
+
+          </mat-select>
+
         </mat-form-field>
+
         <mat-form-field appearance="outline">
+
           <mat-label>Propietario / Conductor</mat-label>
           <mat-select formControlName="usuarioId" required>
             @for (u of usuarios; track u) {
@@ -53,6 +72,7 @@
             }
           </mat-select>
         </mat-form-field>
+
       </div>
 
     </form>

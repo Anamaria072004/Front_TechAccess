@@ -36,6 +36,7 @@ export class VehiculosComponent implements OnInit {
     { key: 'placa', label: 'Placa', type: 'text' },
     { key: 'infoVehiculo', label: 'Información', type: 'text' }, // Marca + Modelo
     { key: 'usuarioNombre', label: 'Propietario', type: 'text' },
+    { key: 'color', label: 'Color', type: 'colorCircle'},
     { key: 'actions', label: 'Acciones', type: 'actions' },
   ];
 

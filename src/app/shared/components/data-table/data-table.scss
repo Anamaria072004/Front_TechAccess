@@ -85,14 +85,17 @@ table {
 
 // ─── ENCABEZADO DE COLUMNAS ───────────────────────
 .mat-mdc-header-row {
-  background: #ffffff;
-  border-bottom: 2px solid #e8edf8;
+  background: #ffffff;  
+  border-bottom: 2px solid #9fbcfa;
 }
 
 .mat-mdc-header-cell {
-  color: #475569 !important;
+  color: #eceef0 !important;
+  background-color: #193581 !important;
   font-weight: 700 !important;
-  font-size: 0.73rem !important;
+  font-size: 0.73rem !important;  
+  text-align: center;
+  justify-content: center;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   padding: 12px 14px !important;
@@ -102,7 +105,6 @@ table {
 
 // ─── FILAS DE DATOS ───────────────────────────────
 .mat-mdc-row {
-  height: 52px;
   border-bottom: 1px solid #eef2ff !important;
   transition: background 0.15s ease;
 
@@ -134,6 +136,9 @@ table {
   font-size: 0.85rem;
   font-weight: 500;
   display: block;
+  
+  text-align: center;
+  justify-content: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -144,6 +149,9 @@ table {
 .action-buttons {
   display: flex;
   align-items: center;
+  
+  text-align: center;
+  justify-content: center;
   gap: 4px;
 }
 
@@ -234,4 +242,22 @@ button.delete-btn {
   .mat-mdc-icon-button {
     color: #1a3a8f !important;
   }
+
+}
+
+.color-indicator-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; // Mantiene el centrado en la columna
+  gap: 8px;                // Separación entre el círculo y la palabra
+}
+
+.color-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.15); // Define el borde para tonos claros como el blanco
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  flex-shrink: 0; // Evita que el círculo se deforme si el texto es muy largo
 }
