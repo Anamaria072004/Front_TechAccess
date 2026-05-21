@@ -110,4 +110,30 @@ export class DataTableComponent implements OnChanges {
 
     this.intl.changes.next();
   }
+  /**
+   * Traduce el nombre del color en texto a un código HEX para el CSS
+   */
+  obtenerHexColor(nombreColor: string): string {
+    if (!nombreColor) return '#e0e0e0'; // Color gris claro por defecto si es nulo
+
+    // Diccionario de colores (llave: texto exacto o en minúsculas -> valor: código Hexadecimal)
+    const mapaColores: { [key: string]: string } = {
+      'gris oscuro': '#4A4A4A',
+      'gris plata': '#c5c3c3',
+      'rojo': '#f50c08',
+      'rojo oscuro': '#ad0707',
+      'azul': '#0471cf',
+      'azul oscuro' : '#0a045e',
+      'blanco': '#FFFFFF',
+      'negro': '#1A1A1A',
+      'verde': '#059e0d',
+      'amarillo': '#f5ca09'
+    };
+
+    // Limpiamos el texto (quitamos espacios de más y lo pasamos a minúsculas)
+    const colorNormalizado = nombreColor.toLowerCase().trim();
+
+    // Si el color existe en el diccionario lo devuelve, si no, usa el gris por defecto
+    return mapaColores[colorNormalizado] || 'Otros';
+  }
 }

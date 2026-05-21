@@ -39,10 +39,59 @@
             }
 
 
-            @if (showDelete) {
-            <button mat-icon-button class="delete-btn" (click)="onDelete.emit(element)" matTooltip="Eliminar registro">
-              <mat-icon>delete</mat-icon>
-            </button>
+            @switch (col.type) {
+
+              @case ('date') {
+                <span class="cell-text">{{ element[col.key] | date:'dd/MM/yyyy' }}</span>
+              }
+
+               @case ('colorCircle') {
+                <div class="color-indicator-container">
+                  <span 
+                    class="color-circle" 
+                    [style.background-color]="obtenerHexColor(element[col.key])"
+                    [matTooltip]="element[col.key]">
+                  </span>
+                </div>
+              }
+
+              @case ('actions') {
+                <div class="action-buttons">
+                  @if (!element.isAdmin) {
+                    @if (onView.observed) {
+                      <button
+                        mat-icon-button
+                        class="view-btn"
+                        (click)="onView.emit(element)"
+                        matTooltip="Ver detalles">
+                        <mat-icon>visibility</mat-icon>
+                      </button>
+                    }
+                    @if (showEdit) {
+                      <button
+                        mat-icon-button
+                        class="edit-btn"
+                        (click)="onEdit.emit(element)"
+                        matTooltip="Editar registro">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    }
+                    @if (showDelete) {
+                      <button
+                        mat-icon-button
+                        class="delete-btn"
+                        (click)="onDelete.emit(element)"
+                        matTooltip="Eliminar registro">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    }
+                  }
+                </div>
+              }
+              @default {
+                <span class="cell-text">{{element[col.key] }}</span>
+              }
+
             }
             }
           </div>
@@ -70,4 +119,6 @@
   </div>
   }
   <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons />
+
+  
 </div>
