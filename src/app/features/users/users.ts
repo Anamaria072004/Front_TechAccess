@@ -39,9 +39,13 @@ export class UsersComponent implements OnInit {
   isVigilante  = signal(this.auth.isVigilante());
   usuariosRaw  = signal<Usuario[]>([]);
   usuarios     = signal<any[]>([]);
-  loading      = signal(true); // Inicia en true para evitar el parpadeo inicial "Tabla vacía -> Spinner"
-
-  // Columnas estáticas (Como en Vigilante) para máxima estabilidad
+  loading      = signal(true);
+  visitanteRoleId = signal<number | null>(null);
+  
+  showEditButton = signal(true);
+  showDeleteButton = signal(true);
+  
+  // Columnas estáticas
   userColumns = [
     { key: 'rolesTexto',     label: 'Rol / Roles',      type: 'text'    },
     { key: 'nombreCompleto', label: 'Nombre completo',  type: 'text'    },
@@ -54,7 +58,31 @@ export class UsersComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    // Configurar permisos según el rol
+    if (this.isVigilante()) {
+      // Vigilante: NO puede eliminar, solo ver y editar visitantes
+      this.showDeleteButton.set(false);
+      this.showEditButton.set(true);
+      this.cargarVisitanteRole();
+    } else {
+      // Admin: puede editar y eliminar todo
+      this.showDeleteButton.set(true);
+      this.showEditButton.set(true);
+    }
+    
     this.cargarUsuarios();
+  }
+
+  private cargarVisitanteRole(): void {
+    this.usersService.getRoles().subscribe({
+      next: (res) => {
+        const roles: any[] = res.data || res;
+        const visitante = roles.find((r: any) => r.name.toUpperCase().includes('VISITANTE'));
+        if (visitante) {
+          this.visitanteRoleId.set(Number(visitante.id));
+        }
+      }
+    });
   }
 
   cargarUsuarios(): void {
@@ -62,12 +90,19 @@ export class UsersComponent implements OnInit {
 
     this.usersService.getAll().subscribe({
       next: (res: any) => {
-        const allUsers = res.data || res;
-        const filtrados = allUsers; 
+        let allUsers = res.data || res;
+        
+        // Si es VIGILANTE, filtrar SOLO usuarios con rol VISITANTE
+        if (this.isVigilante()) {
+          allUsers = allUsers.filter((u: Usuario) =>
+            u.roles?.some((r: any) => r.name?.toUpperCase() === 'VISITANTE')
+          );
+          console.log(' Vigilante - Solo visitantes:', allUsers.length);
+        }
 
-        this.usuariosRaw.set(filtrados);
+        this.usuariosRaw.set(allUsers);
 
-        this.usuarios.set(filtrados.map((u: Usuario) => ({
+        this.usuarios.set(allUsers.map((u: Usuario) => ({
           ...u,
           nombreCompleto: `${u.name} ${u.lastName || ''}`.trim(),
           rolesTexto:     u.roles?.map(r => r.name).join(', ') || 'Sin Rol',
@@ -104,58 +139,119 @@ export class UsersComponent implements OnInit {
   }
 
   abrirModalNuevo(): void {
+    const isVigilante = this.isVigilante();
+    const rolId = this.visitanteRoleId();
+    
+    // Si es vigilante y no tiene el rol ID, esperar
+    if (isVigilante && !rolId) {
+      this.snackBar.open('Cargando roles, intenta de nuevo...', 'Cerrar', { duration: 3000 });
+      return;
+    }
+    
     const ref = this.dialog.open(UsuarioDialogComponent, {
-      width:    '100%',
+      width: '100%',
       maxWidth: '460px',
       data: {
         isAdmin: this.isAdmin(),
-        vigilanteMode: this.isVigilante(),
-        title: this.isVigilante() ? 'Registrar Visitante' : 'Nuevo Usuario'
+        vigilanteMode: isVigilante,
+        title: isVigilante ? 'Registrar Visitante' : 'Nuevo Usuario'
       } as DialogData
     });
 
     ref.afterClosed().subscribe((result: any) => {
       if (!result) return;
-
       this.loading.set(true);
 
-      this.usersService.create(result).subscribe({
+      let payload: any;
+
+      if (isVigilante && rolId) {
+        // Vigilante: crear solo visitante
+        payload = {
+          name: result.name,
+          lastName: result.lastName,
+          docType: result.docType,
+          docNumber: result.docNumber,
+          email: result.email,
+          telephone: result.telephone || null,
+          roleIds: [Number(rolId)],
+          isActive: true,
+          state: 'activo'
+        };
+        if (result.password) payload.password = result.password;
+      } else {
+        // Admin: crear cualquier usuario
+        payload = {
+          ...result,
+          roleIds: result.roleIds?.length > 0 ? result.roleIds.map(Number) : [],
+          isActive: true,
+          state: 'activo'
+        };
+      }
+
+      this.usersService.create(payload).subscribe({
         next: () => {
-          this.snackBar.open('Usuario creado', 'Cerrar', { duration: 3000 });
+          const msg = isVigilante ? 'Visitante registrado exitosamente' : 'Usuario creado';
+          this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
           this.cargarUsuarios();
         },
         error: (err: any) => {
-          this.snackBar.open(
-            err.error?.message || 'Error al crear usuario',
-            'Cerrar',
-            { duration: 3000 }
-          );
+          this.snackBar.open(err.error?.message || 'Error al crear', 'Cerrar', { duration: 3000 });
           this.loading.set(false);
-          console.error(err);
         }
       });
     });
   }
 
   editarUsuario(usuario: any): void {
+    // Si es vigilante, verificar que sea visitante
+    if (this.isVigilante()) {
+      const esVisitante = usuario.roles?.some((r: any) => r.name?.toUpperCase() === 'VISITANTE');
+      if (!esVisitante) {
+        this.snackBar.open('Solo puedes editar usuarios con rol Visitante', 'Cerrar', { duration: 3000 });
+        return;
+      }
+    }
+    
     const original = this.usuariosRaw().find(u => u.id === usuario.id);
     if (!original) return;
 
     const ref = this.dialog.open(UsuarioDialogComponent, {
       data: {
-        user:    original,
-        isAdmin: this.isAdmin()
+        user: original,
+        isAdmin: this.isAdmin(),
+        vigilanteMode: this.isVigilante()
       } as DialogData,
-      width:    '95vw',
+      width: '95vw',
       maxWidth: '460px'
     });
 
     ref.afterClosed().subscribe((result: any) => {
       if (!result) return;
-
       this.loading.set(true);
 
-      this.usersService.update(original.id, result).subscribe({
+      let payload: any;
+      
+      if (this.isVigilante()) {
+        // Vigilante: mantener rol visitante
+        const rolId = this.visitanteRoleId();
+        payload = {
+          name: result.name,
+          lastName: result.lastName,
+          docType: result.docType,
+          docNumber: result.docNumber,
+          email: result.email,
+          telephone: result.telephone || null,
+          roleIds: rolId ? [rolId] : [],
+          isActive: true,
+          state: 'activo'
+        };
+        if (result.password) payload.password = result.password;
+      } else {
+        // Admin: actualizar todo
+        payload = result;
+      }
+
+      this.usersService.update(original.id, payload).subscribe({
         next: () => {
           this.snackBar.open('Usuario actualizado', 'Cerrar', { duration: 3000 });
           this.cargarUsuarios();
@@ -167,13 +263,18 @@ export class UsersComponent implements OnInit {
             { duration: 3000 }
           );
           this.loading.set(false);
-          console.error(err);
         }
       });
     });
   }
 
   eliminarUsuario(usuario: any): void {
+    //  Vigilante NO puede eliminar
+    if (this.isVigilante()) {
+      this.snackBar.open('No tienes permiso para eliminar usuarios', 'Cerrar', { duration: 3000 });
+      return;
+    }
+    
     if (!usuario.id) {
       this.snackBar.open('Error: usuario sin ID válido', 'Cerrar', { duration: 3000 });
       return;
@@ -193,7 +294,6 @@ export class UsersComponent implements OnInit {
 
     ref.afterClosed().subscribe((confirmed: boolean) => {
       if (!confirmed) return;
-
       this.loading.set(true);
 
       this.usersService.delete(usuario.id).subscribe({
@@ -208,7 +308,6 @@ export class UsersComponent implements OnInit {
             { duration: 3000 }
           );
           this.loading.set(false);
-          console.error(err);
         }
       });
     });

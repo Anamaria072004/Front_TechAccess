@@ -1,5 +1,4 @@
 <div class="users-container">
-
   <div class="page-header">
     <div class="header-info">
       <h1>
@@ -10,27 +9,25 @@
     </div>
 
     @if (isAdmin() || isVigilante()) {
-      <div class="header-actions">
-        <button
-          mat-flat-button
-          (click)="abrirModalNuevo()"
-          [disabled]="loading()">
-          <mat-icon>{{ isVigilante() ? 'person_add' : 'add' }}</mat-icon>
-          {{ isVigilante() ? 'Nuevo Visitante' : 'Nuevo Usuario' }}
-        </button>
-      </div>
+    <div class="header-actions">
+      <button mat-flat-button (click)="abrirModalNuevo()" [disabled]="loading()">
+        <mat-icon>add</mat-icon>
+        {{ isVigilante() ? 'Nuevo Visitante' : 'Nuevo Usuario' }}
+      </button>
+    </div>
     }
   </div>
 
   <div class="table-card">
-    <app-data-table
-      [columns]="userColumns"
-      [dataSource]="usuarios()"
-      [loading]="loading()"
-      (onEdit)="editarUsuario($event)"
-      (onDelete)="eliminarUsuario($event)"
+    <app-data-table 
+      [columns]="userColumns" 
+      [dataSource]="usuarios()" 
+      [loading]="loading()" 
+      [showEdit]="showEditButton()"
+      [showDelete]="showDeleteButton()"
+      (onEdit)="editarUsuario($event)" 
+      (onDelete)="eliminarUsuario($event)" 
       (onView)="verUsuario($event)">
     </app-data-table>
   </div>
-
 </div>

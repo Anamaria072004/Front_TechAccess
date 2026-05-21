@@ -1,13 +1,11 @@
-import { 
-  Component, 
-  Input, 
-  Output, 
-  EventEmitter, 
-  inject, 
-  ViewChild, 
-  AfterViewInit, 
-  AfterViewChecked, 
-  OnChanges, 
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  ViewChild,
+  OnChanges,
   SimpleChanges,
   ChangeDetectorRef
 } from '@angular/core';
@@ -42,6 +40,19 @@ export class DataTableComponent implements OnChanges {
   @Input() pageSize: number = 5;
   @Input() showEdit: boolean = true;
   @Input() showDelete: boolean = true;
+  
+  
+  private _isVigilante: boolean = false;
+
+  @Input()
+  set isVigilante(value: boolean) {
+    this._isVigilante = value;
+    console.log('isVigilante setter llamado con:', value);
+  }
+
+  get isVigilante(): boolean {
+    return this._isVigilante;
+  }
 
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
@@ -50,11 +61,9 @@ export class DataTableComponent implements OnChanges {
   private intl = inject(MatPaginatorIntl);
   private cdr = inject(ChangeDetectorRef);
   internalDataSource = new MatTableDataSource<any>([]);
-  
+
   @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
     if (paginator) {
-      // Usamos setTimeout para evitar el error NG0100 (ExpressionChangedAfterItHasBeenChecked)
-      // al vincular el paginador durante el ciclo de renderizado.
       setTimeout(() => {
         this.internalDataSource.paginator = paginator;
         this.cdr.markForCheck();
@@ -75,13 +84,11 @@ export class DataTableComponent implements OnChanges {
       this.internalDataSource.data = this.dataSource || [];
     }
     
-    // Debug para ver si las flags de permisos llegan bien
-    if (changes['showEdit'] || changes['showDelete']) {
-      console.log('DataTable - Permisos actualizados:', {
-        showEdit: this.showEdit,
-        showDelete: this.showDelete
-      });
-    }
+    // DEBUG: Ver qué valores están llegando
+    console.log('=== DATATABLE DEBUG ===');
+    console.log('showDelete:', this.showDelete);
+    console.log('isVigilante:', this.isVigilante);
+    console.log('¿Mostrar eliminar?', this.showDelete && !this.isVigilante);
   }
 
   private setupSpanishPaginator(): void {
@@ -95,8 +102,8 @@ export class DataTableComponent implements OnChanges {
       if (length === 0 || pageSize === 0) return `0 de ${length}`;
       length = Math.max(length, 0);
       const startIndex = page * pageSize;
-      const endIndex = startIndex < length ? 
-        Math.min(startIndex + pageSize, length) : 
+      const endIndex = startIndex < length ?
+        Math.min(startIndex + pageSize, length) :
         startIndex + pageSize;
       return `${startIndex + 1} - ${endIndex} de ${length}`;
     };
