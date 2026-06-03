@@ -72,7 +72,7 @@
         </mat-form-field>
       </div>
 
-      @if (data.isAdmin) {
+      @if (data.isAdmin && !esAprendiz) {
         <p class="section-label">Seguridad</p>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ data.user?.id ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</mat-label>
