@@ -40,19 +40,6 @@ export class DataTableComponent implements OnChanges {
   @Input() pageSize: number = 5;
   @Input() showEdit: boolean = true;
   @Input() showDelete: boolean = true;
-  
-  
-  private _isVigilante: boolean = false;
-
-  @Input()
-  set isVigilante(value: boolean) {
-    this._isVigilante = value;
-    console.log('isVigilante setter llamado con:', value);
-  }
-
-  get isVigilante(): boolean {
-    return this._isVigilante;
-  }
 
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
@@ -83,12 +70,6 @@ export class DataTableComponent implements OnChanges {
     if (changes['dataSource']) {
       this.internalDataSource.data = this.dataSource || [];
     }
-    
-    // DEBUG: Ver qué valores están llegando
-    console.log('=== DATATABLE DEBUG ===');
-    console.log('showDelete:', this.showDelete);
-    console.log('isVigilante:', this.isVigilante);
-    console.log('¿Mostrar eliminar?', this.showDelete && !this.isVigilante);
   }
 
   private setupSpanishPaginator(): void {
@@ -127,7 +108,8 @@ export class DataTableComponent implements OnChanges {
       'blanco': '#FFFFFF',
       'negro': '#1A1A1A',
       'verde': '#059e0d',
-      'amarillo': '#f5ca09'
+      'marron': '#534816',
+      'naranja': '#ff8400'
     };
 
     // Limpiamos el texto (quitamos espacios de más y lo pasamos a minúsculas)

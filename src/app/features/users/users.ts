@@ -42,8 +42,8 @@ export class UsersComponent implements OnInit {
   loading      = signal(true);
   visitanteRoleId = signal<number | null>(null);
   
-  showEditButton = signal(true);
-  showDeleteButton = signal(true);
+  showEditButton = computed(() => true); // Ambos roles pueden editar
+  showDeleteButton = computed(() => this.isAdmin()); // Solo admin puede eliminar
   
   // Columnas estáticas
   userColumns = [
@@ -58,16 +58,9 @@ export class UsersComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Configurar permisos según el rol
+    // Cargar roles si es vigilante
     if (this.isVigilante()) {
-      // Vigilante: NO puede eliminar, solo ver y editar visitantes
-      this.showDeleteButton.set(false);
-      this.showEditButton.set(true);
       this.cargarVisitanteRole();
-    } else {
-      // Admin: puede editar y eliminar todo
-      this.showDeleteButton.set(true);
-      this.showEditButton.set(true);
     }
     
     this.cargarUsuarios();
@@ -97,7 +90,6 @@ export class UsersComponent implements OnInit {
           allUsers = allUsers.filter((u: Usuario) =>
             u.roles?.some((r: any) => r.name?.toUpperCase() === 'VISITANTE')
           );
-          console.log(' Vigilante - Solo visitantes:', allUsers.length);
         }
 
         this.usuariosRaw.set(allUsers);
@@ -162,31 +154,9 @@ export class UsersComponent implements OnInit {
       if (!result) return;
       this.loading.set(true);
 
-      let payload: any;
-
-      if (isVigilante && rolId) {
-        // Vigilante: crear solo visitante
-        payload = {
-          name: result.name,
-          lastName: result.lastName,
-          docType: result.docType,
-          docNumber: result.docNumber,
-          email: result.email,
-          telephone: result.telephone || null,
-          roleIds: [Number(rolId)],
-          isActive: true,
-          state: 'activo'
-        };
-        if (result.password) payload.password = result.password;
-      } else {
-        // Admin: crear cualquier usuario
-        payload = {
-          ...result,
-          roleIds: result.roleIds?.length > 0 ? result.roleIds.map(Number) : [],
-          isActive: true,
-          state: 'activo'
-        };
-      }
+      const payload = isVigilante
+        ? this.construirPayloadVigilante(result, rolId)
+        : this.construirPayloadAdmin(result);
 
       this.usersService.create(payload).subscribe({
         next: () => {
@@ -200,6 +170,31 @@ export class UsersComponent implements OnInit {
         }
       });
     });
+  }
+
+  private construirPayloadVigilante(result: any, rolId: number | null): any {
+    const payload: any = {
+      name: result.name,
+      lastName: result.lastName,
+      docType: result.docType,
+      docNumber: result.docNumber,
+      email: result.email,
+      telephone: result.telephone || null,
+      roleIds: rolId ? [Number(rolId)] : [],
+      isActive: true,
+      state: 'activo'
+    };
+    if (result.password) payload.password = result.password;
+    return payload;
+  }
+
+  private construirPayloadAdmin(result: any): any {
+    return {
+      ...result,
+      roleIds: result.roleIds?.length > 0 ? result.roleIds.map(Number) : [],
+      isActive: true,
+      state: 'activo'
+    };
   }
 
   editarUsuario(usuario: any): void {
@@ -229,27 +224,9 @@ export class UsersComponent implements OnInit {
       if (!result) return;
       this.loading.set(true);
 
-      let payload: any;
-      
-      if (this.isVigilante()) {
-        // Vigilante: mantener rol visitante
-        const rolId = this.visitanteRoleId();
-        payload = {
-          name: result.name,
-          lastName: result.lastName,
-          docType: result.docType,
-          docNumber: result.docNumber,
-          email: result.email,
-          telephone: result.telephone || null,
-          roleIds: rolId ? [rolId] : [],
-          isActive: true,
-          state: 'activo'
-        };
-        if (result.password) payload.password = result.password;
-      } else {
-        // Admin: actualizar todo
-        payload = result;
-      }
+      const payload = this.isVigilante()
+        ? this.construirPayloadVigilanteEdicion(result)
+        : this.construirPayloadAdminEdicion(result);
 
       this.usersService.update(original.id, payload).subscribe({
         next: () => {
@@ -268,8 +245,27 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  private construirPayloadVigilanteEdicion(result: any): any {
+    const rolId = this.visitanteRoleId();
+    return {
+      name: result.name,
+      lastName: result.lastName,
+      docType: result.docType,
+      docNumber: result.docNumber,
+      email: result.email,
+      telephone: result.telephone || null,
+      roleIds: rolId ? [rolId] : [],
+      isActive: true,
+      state: 'activo'
+    };
+  }
+
+  private construirPayloadAdminEdicion(result: any): any {
+    return result;
+  }
+
   eliminarUsuario(usuario: any): void {
-    //  Vigilante NO puede eliminar
+    // Vigilante NO puede eliminar
     if (this.isVigilante()) {
       this.snackBar.open('No tienes permiso para eliminar usuarios', 'Cerrar', { duration: 3000 });
       return;

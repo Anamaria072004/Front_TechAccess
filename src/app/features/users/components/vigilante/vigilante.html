@@ -18,7 +18,7 @@
 
   <div class="table-card">
     <app-data-table [columns]="userColumns" [dataSource]="usuarios()" [loading]="loading()" [showEdit]="true"
-      [isVigilante]="isVigilante" [showDelete]="false" (onEdit)="editarVisitante($event)"
+      [showDelete]="false" (onEdit)="editarVisitante($event)"
       (onDelete)="eliminarVisitante($event)" (onView)="verUsuario($event)">
     </app-data-table>
   </div>
