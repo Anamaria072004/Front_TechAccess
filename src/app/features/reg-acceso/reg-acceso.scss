@@ -490,7 +490,16 @@
     width: 24px;
     height: 24px;
   }
-
+// ─── TÍTULO DE REGISTROS RECIENTES ─────────────────
+.registros-titulo {
+  margin: 0 0 16px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a3a8f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
   button {
     margin-left: 8px;
     padding: 8px 16px;

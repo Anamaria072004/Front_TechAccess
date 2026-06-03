@@ -12,7 +12,9 @@ import { RegAccesoDialogComponent } from './components/reg-acceso-dialog/reg-acc
 import { RegAccesoService } from './services/reg-acceso.service';
 import { Acceso } from './models/reg-acceso.model';
 import { DataTableComponent } from '@shared/components/data-table/data-table';
-import { ConfirmarSalidaDialogComponent } from './components/confirmar-salida-dialog';
+import { ConfirmarSalidaDialogComponent } from './components/reg-confirmar-salida-dialog/confirmar-salida-dialog';
+import { RegistroManualDialogComponent } from './components/registro-manual-dialog/registro-manual-dialog';
+
 
 interface UltimoRegistro {
   tipo: string;
@@ -31,7 +33,8 @@ interface UltimoRegistro {
     MatButtonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    DataTableComponent
+    DataTableComponent,
+    
   ],
   templateUrl: './reg-acceso.html',
   styleUrls: ['./reg-acceso.scss']
@@ -66,7 +69,7 @@ export class RegAccesoComponent implements OnInit {
     private regAccesoService: RegAccesoService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarHistorial();
@@ -99,7 +102,7 @@ export class RegAccesoComponent implements OnInit {
     const target = event.target as HTMLElement;
     const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
     const isDialog = !!target.closest('mat-dialog-container');
-    
+
     if (!isInput && !isDialog && !this.isLoading && !this.dialogAbierto) {
       if (event.key.length === 1 || event.key === 'Enter') {
         this.enfocarInput();
@@ -107,9 +110,57 @@ export class RegAccesoComponent implements OnInit {
     }
   }
 
-  // ─── PROCESAMIENTO DEL CÓDIGO DE BARRAS ─────────
-  // Detecta si es ENTRADA (diálogo completo) o SALIDA (confirmación simple)
+  // ─── LÓGICA COMPARTIDA: detectar entrada/salida por documento ───
+  private detectarYAbrirDialogo(documento: string): void {
+    this.regAccesoService.buscarUsuarioPorDocumento(documento).subscribe({
+      next: (usuario) => {
+        if (!usuario || !usuario.id) {
+          this.mostrarError(`Documento N° ${documento} no registrado.`);
+          return;
+        }
 
+        this.regAccesoService.obtenerAccesos().subscribe({
+          next: (accesos) => {
+            this.isLoading = false;
+
+            const accesosUsuario = (accesos || [])
+              .filter((a: any) => {
+                const idAcceso = a.usuarioId ?? a.usuario?.id;
+                return Number(idAcceso) === Number(usuario.id);
+              })
+              .sort((a: any, b: any) => {
+                const fechaA = new Date(a.horaFecha || 0).getTime();
+                const fechaB = new Date(b.horaFecha || 0).getTime();
+                return fechaB - fechaA;
+              });
+
+            const ultimoAcceso = accesosUsuario.length > 0 ? accesosUsuario[0] : null;
+            const esSalida = ultimoAcceso !== null && !!ultimoAcceso.accion;
+
+            if (esSalida) {
+              this.abrirConfirmarSalida(usuario);
+            } else {
+              this.abrirDialogoConDocumento(documento);
+            }
+          },
+          error: () => {
+            this.isLoading = false;
+            this.abrirDialogoConDocumento(documento);
+          }
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        if (err.status === 404) {
+          this.mostrarError(`Documento N° ${documento} no encontrado.`);
+        } else {
+          this.mostrarError('Error de conexión con el servidor.');
+        }
+      }
+    });
+  }
+
+  // ─── PROCESAMIENTO DEL CÓDIGO DE BARRAS ─────────
   procesarCodigoBarras(): void {
     const documento = this.codigoBarras.trim();
     if (!documento) {
@@ -128,82 +179,66 @@ export class RegAccesoComponent implements OnInit {
     this.mantenerFoco = false;
     this.cdr.detectChanges();
 
-    // 1. Buscar usuario por documento
-    this.regAccesoService.buscarUsuarioPorDocumento(documento).subscribe({
-      next: (usuario) => {
-        if (!usuario || !usuario.id) {
-          this.mostrarError(`Documento N° ${documento} no registrado.`);
-          return;
-        }
-
-        // 2. Obtener TODOS los accesos y filtrar por usuario para saber el último
-        this.regAccesoService.obtenerAccesos().subscribe({
-          next: (accesos) => {
-            this.isLoading = false;
-            
-            // Filtrar accesos del usuario y ordenar por fecha (más reciente primero)
-            const accesosUsuario = (accesos || [])
-              .filter((a: any) => a.usuarioId === usuario.id)
-              .sort((a: any, b: any) => {
-                const fechaA = new Date(a.horaFecha || 0).getTime();
-                const fechaB = new Date(b.horaFecha || 0).getTime();
-                return fechaB - fechaA;
-              });
-
-            const ultimoAcceso = accesosUsuario.length > 0 ? accesosUsuario[0] : null;
-            
-            // Si no tiene accesos previos -> ENTRADA (primer acceso)
-            // Si el último acceso fue ENTRADA (accion=true) -> próximo será SALIDA
-            // Si el último acceso fue SALIDA (accion=false) -> próximo será ENTRADA
-            const esSalida = ultimoAcceso !== null && ultimoAcceso.accion === true;
-            
-            console.log('[RegAcceso] Último acceso:', ultimoAcceso);
-            console.log('[RegAcceso] Es salida:', esSalida);
-            
-            if (esSalida) {
-              this.abrirConfirmarSalida(usuario);
-            } else {
-              this.abrirDialogoConDocumento(documento);
-            }
-          },
-          error: (err) => {
-            console.error('Error consultando accesos:', err);
-            this.isLoading = false;
-            this.abrirDialogoConDocumento(documento);
-          }
-        });
-      },
-      error: (err) => {
-        if (err.status === 404) {
-          this.mostrarError(`Documento N° ${documento} no encontrado.`);
-        } else {
-          this.mostrarError('Error de conexión con el servidor.');
-        }
-      }
-    });
+    this.detectarYAbrirDialogo(documento);
   }
+
+  // ─── BOTÓN REGISTRAR ACCESO MANUAL ──────────────
+
+  abrirDialogo(): void {
+  this.dialogAbierto = true;
+  this.mantenerFoco = false;
+
+  const dialogRef = this.dialog.open(RegistroManualDialogComponent, {
+    width: '400px',
+    disableClose: false
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    this.dialogAbierto = false;
+    this.mantenerFoco = true;
+
+    if (result && result.documento) {
+      const documento = result.documento;
+
+      if (!/^\d+$/.test(documento)) {
+        this.snackBar.open('El documento debe contener solo números.', 'Cerrar', { duration: 3000 });
+        this.enfocarInput();
+        return;
+      }
+
+      this.isLoading = true;
+      this.cdr.detectChanges();
+      this.detectarYAbrirDialogo(documento);
+    } else {
+      this.enfocarInput();
+    }
+  });
+}
 
   // ─── DIÁLOGO DE CONFIRMACIÓN SIMPLE PARA SALIDA ───
   private abrirConfirmarSalida(usuario: any): void {
     this.dialogAbierto = true;
     this.mantenerFoco = false;
 
+    const nombre = usuario.name || usuario.nombre || '';
+    const apellido = usuario.lastName || usuario.apellido || '';
+    const nombreCompleto = `${nombre} ${apellido}`.trim() || 'Usuario';
+
     const dialogRef = this.dialog.open(ConfirmarSalidaDialogComponent, {
       width: '400px',
       disableClose: false,
       data: {
         usuarioId: usuario.id,
-        usuarioNombre: `${usuario.name} ${usuario.lastName}`,
-        documento: usuario.docNumber || ''
+        usuarioNombre: nombreCompleto,
+        documento: usuario.docNumber || usuario.documento || ''
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       this.dialogAbierto = false;
       this.mantenerFoco = true;
-      
+
       if (result && result.id) {
-        const nombreCompleto = `${usuario.name} ${usuario.lastName}`;
         this.ultimoRegistro = {
           tipo: 'Salida',
           usuario: nombreCompleto,
@@ -211,7 +246,7 @@ export class RegAccesoComponent implements OnInit {
         };
 
         this.registroExitoso = true;
-        this.snackBar.open(`✅ Salida registrada: ${nombreCompleto}`, 'Cerrar', { duration: 3000 });
+        this.snackBar.open(` Salida registrada: ${nombreCompleto}`, 'Cerrar', { duration: 3000 });
         this.cargarHistorial();
 
         setTimeout(() => {
@@ -219,17 +254,13 @@ export class RegAccesoComponent implements OnInit {
           this.cdr.detectChanges();
         }, 2000);
       }
-      
+
       this.codigoBarras = '';
       setTimeout(() => this.enfocarInput(), 300);
     });
   }
 
   // ─── DIÁLOGO COMPLETO PARA ENTRADA ──────────────
-  abrirDialogo(): void {
-    this.abrirDialogoConDocumento(null);
-  }
-
   private abrirDialogoConDocumento(documentoEscaneado: string | null): void {
     this.dialogAbierto = true;
     this.mantenerFoco = false;
@@ -243,19 +274,21 @@ export class RegAccesoComponent implements OnInit {
       this.dialogAbierto = false;
       this.mantenerFoco = true;
       this.isLoading = false;
-      
+
       if (result) {
         const tipo = result.accion ? 'Entrada' : 'Salida';
-        const usuarioName = result.usuario ? `${result.usuario.name} ${result.usuario.lastName}` : 'Usuario';
-        
+        const nombre = result.usuario?.name || result.usuario?.nombre || '';
+        const apellido = result.usuario?.lastName || result.usuario?.apellido || '';
+        const usuarioName = `${nombre} ${apellido}`.trim() || 'Usuario';
+
         this.ultimoRegistro = {
-          tipo: tipo,
+          tipo,
           usuario: usuarioName,
           hora: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
         };
 
         this.registroExitoso = true;
-        this.snackBar.open(`✅ ${tipo} registrada: ${usuarioName}`, 'Cerrar', { duration: 3000 });
+        this.snackBar.open(` ${tipo} registrada: ${usuarioName}`, 'Cerrar', { duration: 3000 });
         this.cargarHistorial();
 
         setTimeout(() => {
@@ -263,7 +296,7 @@ export class RegAccesoComponent implements OnInit {
           this.cdr.detectChanges();
         }, 2000);
       }
-      
+
       this.codigoBarras = '';
       setTimeout(() => this.enfocarInput(), 300);
     });
@@ -296,8 +329,8 @@ export class RegAccesoComponent implements OnInit {
 
         this.accesosRecientes = data.map(acceso => ({
           ...acceso,
-          usuarioNombre: acceso.usuario 
-            ? `${acceso.usuario.name} ${acceso.usuario.lastName}` 
+          usuarioNombre: acceso.usuario
+            ? `${acceso.usuario.name} ${acceso.usuario.lastName}`
             : `Usuario ${acceso.usuarioId}`,
           documento: acceso.usuario?.docNumber || '-',
           tipoAcceso: this.getTipoAccesoLabel(acceso.accion),

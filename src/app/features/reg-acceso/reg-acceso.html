@@ -70,33 +70,31 @@
       </div>
     </div>
   </div>
+  
+  <!-- Título fuera de la tabla -->
+  <h3 class="registros-titulo">Registros Recientes</h3>
 
-  <!-- Tabla -->
   <div class="table-card">
-    <div class="table-header">
-      <h3>Registros Recientes</h3>
-    </div>
-    
-    <!-- Spinner propio mientras carga -->
-    <div *ngIf="isLoadingTable && !mostrarTabla" class="loading-propio">
-      <mat-spinner diameter="40"></mat-spinner>
-      <span>Cargando datos...</span>
-    </div>
-
-    <!-- Mensaje de error -->
-    <div *ngIf="tableError" class="error-message">
-      <mat-icon>error_outline</mat-icon>
-      <span>{{ tableError }}</span>
-      <button (click)="cargarHistorial()">Reintentar</button>
-    </div>
-
-    <!-- Data-table -->
-    <app-data-table
-      *ngIf="mostrarTabla && !tableError"
-      [dataSource]="accesosRecientes"
-      [columns]="tableColumns"
-      [loading]="isLoadingTable"
-      [pageSize]="10">
-    </app-data-table>
+  <!-- Spinner propio mientras carga -->
+  <div *ngIf="isLoadingTable && !mostrarTabla" class="loading-propio">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Cargando datos...</span>
   </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="tableError" class="error-message">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ tableError }}</span>
+    <button (click)="cargarHistorial()">Reintentar</button>
+  </div>
+
+  <!-- Data-table -->
+  <app-data-table
+    *ngIf="mostrarTabla && !tableError"
+    [dataSource]="accesosRecientes"
+    [columns]="tableColumns"
+    [loading]="isLoadingTable"
+    [pageSize]="10">
+  </app-data-table>
+
 </div>
