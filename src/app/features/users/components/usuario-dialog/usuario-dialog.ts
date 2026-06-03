@@ -102,6 +102,7 @@ export class UsuarioDialogComponent implements OnInit {
 
     if (this.esAprendiz) {
       fichaControl?.setValidators(Validators.required);
+      // Aprendiz NO necesita contraseña (no se loguea)
       passwordControl?.clearValidators();
       passwordControl?.setValue('');
     } else {
@@ -114,6 +115,7 @@ export class UsuarioDialogComponent implements OnInit {
         passwordControl?.setValue('');
       }
       else if (!this.data.user?.id && !this.data.readonly) {
+        // Solo pedir contraseña para usuarios nuevos (admin) que no sean vigilante
         passwordControl?.setValidators([Validators.required, Validators.minLength(6)]);
       }
     }
@@ -140,10 +142,18 @@ save(): void {
     docNumber: formValue.docNumber,
     email: formValue.email,
     telephone: formValue.telephone || null,
-     roleIds: formValue.roleIds,
+    roleIds: formValue.roleIds,
   };
 
-  if (formValue.password) payload.password = formValue.password;
+  // Incluir fichasId si es aprendiz (usar fichasId para coincidir con backend)
+  if (this.esAprendiz && formValue.fichaId) {
+    payload.fichasId = formValue.fichaId;
+  }
+
+  // Solo incluir password si tiene valor y no es aprendiz
+  if (formValue.password && !this.esAprendiz) {
+    payload.password = formValue.password;
+  }
 
   this.dialogRef.close(payload);
 }

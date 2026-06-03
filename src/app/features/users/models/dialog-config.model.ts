@@ -24,6 +24,7 @@ export interface UserData {
   state: string;
   isActive?: boolean;
   password?: string;
+  fichasId?: number | null;
   roles?: Role[];
   roleIds?: number[];
 }
