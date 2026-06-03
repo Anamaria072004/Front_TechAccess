@@ -6,8 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { RegAccesoService } from '../services/reg-acceso.service';
-import { Acceso } from '../models/reg-acceso.model';
+import { RegAccesoService } from '@features/reg-acceso/services/reg-acceso.service';
+import { Acceso } from '@features/reg-acceso/models/reg-acceso.model';
+
 
 export interface ConfirmarSalidaData {
   usuarioId: number;
@@ -32,7 +33,6 @@ export class ConfirmarSalidaDialogComponent {
   private dialogRef = inject(MatDialogRef<ConfirmarSalidaDialogComponent>);
   private regAccesoService = inject(RegAccesoService);
 
-  // ✅ CORREGIDO: Usar MAT_DIALOG_DATA para recibir datos
   public data: ConfirmarSalidaData = inject(MAT_DIALOG_DATA);
 
   guardando = false;
