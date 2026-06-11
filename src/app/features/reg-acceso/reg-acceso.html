@@ -4,12 +4,29 @@
   <div class="page-header">
     <div class="header-info">
       <h1>
-        <mat-icon>fingerprint</mat-icon>
         Gestión de Accesos
       </h1>
       <p>Registra y administra los accesos de usuarios al sistema.</p>
     </div>
     <div class="header-actions">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input 
+          type="text" 
+          [value]="filtroTexto"
+          (input)="aplicarFiltro($event)" 
+          (focus)="onSearchFocus()"
+          (blur)="onSearchBlur()"
+          placeholder="Buscar..." 
+          class="search-input"
+        >
+        @if (filtroTexto) {
+          <button class="clear-btn" (click)="limpiarFiltro()" type="button">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+
       <button mat-flat-button (click)="abrirDialogo()">
         <mat-icon>add_circle</mat-icon>
         Registrar Acceso Manual
@@ -49,9 +66,15 @@
           [disabled]="!codigoBarras.trim() || isLoading"
           [class.registro-exitoso]="registroExitoso"
         >
-          <mat-icon *ngIf="!isLoading && !registroExitoso">login</mat-icon>
-          <mat-icon *ngIf="registroExitoso">check_circle</mat-icon>
-          <mat-spinner diameter="18" *ngIf="isLoading"></mat-spinner>
+          @if (!isLoading && !registroExitoso) {
+            <mat-icon>login</mat-icon>
+          }
+          @if (registroExitoso) {
+            <mat-icon>check_circle</mat-icon>
+          }
+          @if (isLoading) {
+            <mat-spinner diameter="18"></mat-spinner>
+          }
           {{ isLoading ? 'Procesando...' : (registroExitoso ? '¡Registrado!' : 'Registrar Acceso') }}
         </button>
       </div>
@@ -61,13 +84,15 @@
       </small>
       
       <!-- Indicador visual del último registro -->
-      <div *ngIf="ultimoRegistro" class="ultimo-registro-banner" [class.entrada]="ultimoRegistro.tipo === 'Entrada'" [class.salida]="ultimoRegistro.tipo === 'Salida'">
-        <mat-icon>{{ ultimoRegistro.tipo === 'Entrada' ? 'login' : 'logout' }}</mat-icon>
-        <span>
-          <strong>{{ ultimoRegistro.tipo }}</strong> — {{ ultimoRegistro.usuario }} 
-          <small>({{ ultimoRegistro.hora }})</small>
-        </span>
-      </div>
+      @if (ultimoRegistro) {
+        <div class="ultimo-registro-banner" [class.entrada]="ultimoRegistro.tipo === 'Entrada'" [class.salida]="ultimoRegistro.tipo === 'Salida'">
+          <mat-icon>{{ ultimoRegistro.tipo === 'Entrada' ? 'login' : 'logout' }}</mat-icon>
+          <span>
+            <strong>{{ ultimoRegistro.tipo }}</strong> — {{ ultimoRegistro.usuario }} 
+            <small>({{ ultimoRegistro.hora }})</small>
+          </span>
+        </div>
+      }
     </div>
   </div>
   
@@ -76,25 +101,30 @@
 
   <div class="table-card">
   <!-- Spinner propio mientras carga -->
-  <div *ngIf="isLoadingTable && !mostrarTabla" class="loading-propio">
-    <mat-spinner diameter="40"></mat-spinner>
-    <span>Cargando datos...</span>
-  </div>
+  @if (isLoadingTable && !mostrarTabla) {
+    <div class="loading-propio">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando datos...</span>
+    </div>
+  }
 
   <!-- Mensaje de error -->
-  <div *ngIf="tableError" class="error-message">
-    <mat-icon>error_outline</mat-icon>
-    <span>{{ tableError }}</span>
-    <button (click)="cargarHistorial()">Reintentar</button>
-  </div>
+  @if (tableError) {
+    <div class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ tableError }}</span>
+      <button (click)="cargarHistorial()">Reintentar</button>
+    </div>
+  }
 
   <!-- Data-table -->
-  <app-data-table
-    *ngIf="mostrarTabla && !tableError"
-    [dataSource]="accesosRecientes"
-    [columns]="tableColumns"
-    [loading]="isLoadingTable"
-    [pageSize]="10">
-  </app-data-table>
+  @if (mostrarTabla && !tableError) {
+    <app-data-table #tabla
+      [dataSource]="accesosRecientes"
+      [columns]="tableColumns"
+      [loading]="isLoadingTable"
+      [pageSize]="5">
+    </app-data-table>
+  }
 
 </div>

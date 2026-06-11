@@ -16,6 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginator, MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-data-table',
@@ -28,6 +30,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatProgressSpinnerModule,
     MatPaginatorModule,
     MatTooltipModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   providers: [MatPaginatorIntl],
   templateUrl: './data-table.html',
@@ -69,6 +73,25 @@ export class DataTableComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['dataSource']) {
       this.internalDataSource.data = this.dataSource || [];
+    }
+  }
+
+  filterValue: string = '';
+
+  onFilterChange(event: Event): void {
+    this.filterValue = (event.target as HTMLInputElement).value;
+    this.internalDataSource.filter = this.filterValue.trim().toLowerCase();
+
+    if (this.internalDataSource.paginator) {
+      this.internalDataSource.paginator.firstPage();
+    }
+  }
+
+  clearFilter(): void {
+    this.filterValue = '';
+    this.internalDataSource.filter = '';
+    if (this.internalDataSource.paginator) {
+      this.internalDataSource.paginator.firstPage();
     }
   }
 

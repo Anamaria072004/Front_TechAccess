@@ -54,20 +54,21 @@
 
 .header-actions {
   display: flex;
+  align-items: center;
   gap: 10px;
 
   @media (max-width: 640px) { width: 100%; }
 
   button[mat-flat-button],
   button[mat-raised-button] {
-    height: 44px;
-    padding: 0 22px;
-    border-radius: 10px;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 0.9rem;
-    display: flex;
+    font-size: 0.85rem;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: var(--color-accent) !important;
     color: white !important;
     box-shadow: 0 4px 12px rgba(216, 27, 96, 0.25);
@@ -88,8 +89,8 @@
 // ─── LECTOR DE CÓDIGO DE BARRAS ───────────────────
 .lector-card {
   background: white;
-  border-radius: 16px;
-  margin-bottom: 24px;
+  border-radius: 12px;
+  margin-bottom: 16px;
   border: 2px solid #e8edf8;
   box-shadow: 0 4px 20px rgba(26, 58, 143, 0.08);
   overflow: hidden;
@@ -111,30 +112,30 @@
   }
 
   .lector-header {
-    padding: 14px 20px;
+    padding: 10px 16px;
     background: #f8faff;
     border-bottom: 1px solid #e8edf8;
     display: flex;
     align-items: center;
     gap: 10px;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #1a3a8f;
     transition: background 0.3s ease;
 
     mat-icon {
       color: var(--color-accent);
-      font-size: 22px;
-      width: 22px;
-      height: 22px;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
       transition: color 0.3s ease;
     }
     
     .estado-indicador {
       margin-left: auto;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       letter-spacing: 0.3px;
       transition: all 0.3s ease;
@@ -157,7 +158,7 @@
   }
 
   .lector-body {
-    padding: 20px;
+    padding: 16px;
 
     .codigo-input-group {
       display: flex;
@@ -166,27 +167,27 @@
 
       input {
         flex: 1;
-        padding: 16px 20px;
+        padding: 10px 16px;
         border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        font-size: 1.2rem;
+        border-radius: 10px;
+        font-size: 1.05rem;
         font-weight: 600;
         color: #1e293b;
         background: #f8faff;
         transition: all 0.2s ease;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
 
         &:focus {
           outline: none;
           border-color: #1a3a8f;
-          box-shadow: 0 0 0 4px rgba(26, 58, 143, 0.12);
+          box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.12);
           background: white;
         }
 
         &::placeholder {
           color: #94a3b8;
           font-weight: 400;
-          font-size: 1rem;
+          font-size: 0.92rem;
           letter-spacing: normal;
         }
 
@@ -202,17 +203,17 @@
         background: #1a3a8f;
         color: white;
         border: none;
-        padding: 16px 28px;
-        border-radius: 12px;
+        padding: 10px 22px;
+        border-radius: 10px;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         cursor: pointer;
         display: flex;
         align-items: center;
         gap: 8px;
         transition: all 0.2s ease;
         white-space: nowrap;
-        min-width: 180px;
+        min-width: 160px;
         justify-content: center;
 
         &:hover:not([disabled]) {
@@ -328,102 +329,6 @@
   }
 }
 
-// ─── CORRECCIÓN: TABLA LIMPIA CON FUENTE UNIFORME ─────
-::ng-deep {
-  // ─── FUENTE BASE UNIFORME PARA TODA LA TABLA ───────────
-  // Aplica la misma familia, tamaño y peso a headers, celdas, texto y badges
-  .mat-mdc-header-cell,
-  .mat-mdc-cell,
-  .mat-mdc-cell .cell-text,
-  .badge-entrada,
-  .badge-salida {
-    font-family: 'Roboto', 'Helvetica Neue', sans-serif !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-    line-height: 1.4 !important;
-  }
-
-  // Ajustar altura de filas para que se vean compactas
-  .mat-mdc-row {
-    height: auto !important;
-    min-height: 52px;
-  }
-
-  // ─── ENCABEZADOS DE TABLA ───────────────────────
-  .mat-mdc-header-cell {
-    padding: 10px 14px !important;
-    vertical-align: middle;
-    color: #1a3a8f !important;
-    letter-spacing: 0.5px !important;
-    text-transform: uppercase !important;
-  }
-
-  .mat-mdc-cell {
-    padding: 8px 14px !important;
-    vertical-align: middle;
-    color: #1e293b !important;
-
-    // COLUMNA DE OBSERVACIÓN - Limpia y compacta
-    &:nth-child(5) .cell-text, // Ajustado: ahora es la columna 5 (sin ID)
-    &:last-child .cell-text {
-      white-space: normal !important;
-      overflow: visible !important;
-      text-overflow: clip !important;
-      word-break: break-word !important;
-      max-width: none !important;
-      color: #475569 !important;
-
-      // Estilo para los iconos de vehículo/dispositivo
-      &::before {
-        content: '';
-      }
-    }
-  }
-
-  // Estilo especial para filas con observaciones largas
-  .mat-mdc-row:has(.cell-text) {
-    .mat-mdc-cell {
-      padding-top: 10px !important;
-      padding-bottom: 10px !important;
-    }
-  }
-
-  // Tooltip bonito al pasar el mouse
-  .mat-mdc-tooltip {
-    font-size: 0.85rem !important;
-    background: #1e293b !important;
-    padding: 8px 12px !important;
-    border-radius: 8px !important;
-  }
-}
-
-// ─── BADGES DE TIPO DE ACCESO ─────────────────────
-::ng-deep .mat-mdc-cell {
-  .badge-entrada, .badge-salida {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    letter-spacing: 0.2px;
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  .badge-entrada {
-    background: #e8f5e9;
-    color: #2e7d32;
-  }
-
-  .badge-salida {
-    background: #ffebee;
-    color: #c62828;
-  }
-}
 
 // ─── ANIMACIONES ──────────────────────────────────
 @keyframes moduleFadeIn {
@@ -450,6 +355,17 @@
 @keyframes slideInUp {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scanLaser {
+  0% { top: 5%; }
+  50% { top: 90%; }
+  100% { top: 5%; }
+}
+
+@keyframes pulseScanIcon {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
 }
 
 .accesos-container {
@@ -490,16 +406,7 @@
     width: 24px;
     height: 24px;
   }
-// ─── TÍTULO DE REGISTROS RECIENTES ─────────────────
-.registros-titulo {
-  margin: 0 0 16px 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a3a8f;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+
   button {
     margin-left: 8px;
     padding: 8px 16px;
@@ -515,5 +422,25 @@
       background: #1a3a8f;
       color: white;
     }
+  }
+}
+
+// ─── TÍTULO DE REGISTROS RECIENTES ─────────────────
+.registros-titulo {
+  margin: 24px 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a3a8f;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: var(--color-accent);
+    border-radius: 4px;
   }
 }

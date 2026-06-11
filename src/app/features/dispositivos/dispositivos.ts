@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, ViewChild } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,6 +22,29 @@ export class DispositivosComponent implements OnInit {
   private dialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
   private dispositivoService = inject(DispositivoService);
+
+  // Referencia al componente de la tabla de datos (#tabla en el HTML)
+  @ViewChild('tabla') tabla?: DataTableComponent;
+
+  // Guarda el valor de texto actual escrito por el usuario en el filtro
+  filtroTexto: string = '';
+
+  // Aplica el filtro sobre la tabla cuando el usuario digita en el buscador
+  aplicarFiltro(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
+    this.filtroTexto = valor;
+    if (this.tabla) {
+      this.tabla.onFilterChange(event); // Llama al método de filtrado de la tabla compartida
+    }
+  }
+
+  // Limpia el buscador y restablece los registros originales de la tabla
+  limpiarFiltro(): void {
+    this.filtroTexto = '';
+    if (this.tabla) {
+      this.tabla.clearFilter(); // Restablece el filtro interno de la tabla
+    }
+  }
 
   dispositivos: any[] = [];
   loading = false;

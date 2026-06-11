@@ -42,12 +42,16 @@ import { MatIconModule } from '@angular/material/icon';
               (keyup.enter)="confirmar()"
             >
             <mat-icon matPrefix>badge</mat-icon>
-            <mat-error *ngIf="manualForm.get('documento')?.hasError('required') && manualForm.get('documento')?.touched">
-              El documento es requerido
-            </mat-error>
-            <mat-error *ngIf="manualForm.get('documento')?.hasError('pattern') && manualForm.get('documento')?.touched">
-              Solo números permitidos
-            </mat-error>
+            @if (manualForm.get('documento')?.hasError('required') && manualForm.get('documento')?.touched) {
+              <mat-error>
+                El documento es requerido
+              </mat-error>
+            }
+            @if (manualForm.get('documento')?.hasError('pattern') && manualForm.get('documento')?.touched) {
+              <mat-error>
+                Solo números permitidos
+              </mat-error>
+            }
           </mat-form-field>
         </form>
       </div>

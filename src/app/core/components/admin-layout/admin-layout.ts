@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Auth } from '../../services/auth';
 
@@ -24,6 +26,7 @@ import { Auth } from '../../services/auth';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
+    MatMenuModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -47,7 +50,8 @@ export class AdminLayoutComponent {
     { initialValue: this.breakpointObserver.isMatched(Breakpoints.Handset) }
   );
   
-  // El título se maneja directamente en el template para máxima estabilidad funcional
+  // El título se evalúa una sola vez al instanciar el componente para evitar parpadeos al cerrar sesión
+  public panelTitle = this.authService.isVigilante() ? 'Panel Vigilante' : 'Panel Administrativo';
 
   /**
    * Mapea el nombre del módulo con un ícono de Material Design.

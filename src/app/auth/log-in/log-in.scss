@@ -33,7 +33,7 @@
 
 .header-content {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     width: 100%;
 
     mat-card-title {
@@ -54,7 +54,7 @@
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
 }
 
 /* --- Inputs Styling --- */
@@ -100,8 +100,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 8px;
-    margin-bottom: 32px;
+    margin-top: 4px;
+    margin-bottom: 8px;
     font-size: 0.95rem;
 
     .forgot-password {
@@ -137,6 +137,82 @@
         transform: translateY(-1px);
     }
 }
+
+.login-error-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #fff5f5;
+    border: 1.5px solid #fecaca;
+    color: #c0392b;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: -4px;
+    animation: slideInError 0.3s ease-out;
+
+    mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .error-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .error-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #b91c1c;
+        }
+
+        .error-desc {
+            font-size: 0.82rem;
+            font-weight: 400;
+            color: #7f1d1d;
+            opacity: 0.85;
+        }
+    }
+
+    // Usuario no encontrado
+    &.not_found {
+        background: #fff5f5;
+        border-color: #fecaca;
+        color: #b91c1c;
+    }
+
+    // Contraseña incorrecta
+    &.wrong_password {
+        background: #fff5f5;
+        border-color: #fecaca;
+        color: #b91c1c;
+    }
+
+    // Error de servidor / conexión
+    &.server {
+        background: #fffbeb;
+        border-color: #fcd34d;
+        color: #92400e;
+
+        mat-icon { color: #d97706; }
+
+        .error-text {
+            .error-title { color: #92400e; }
+            .error-desc { color: #78350f; }
+        }
+    }
+}
+
+@keyframes slideInError {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 
 .card-footer {
     padding: 40px 0 10px;

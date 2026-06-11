@@ -63,7 +63,7 @@
   <div class="activity-section">
     <div class="section-header">
       <h2><mat-icon>history_toggle_off</mat-icon> Feed de Actividad Reciente</h2>
-      <button mat-button color="primary">VER TODO</button>
+      <button mat-button color="primary" (click)="abrirModalActividad()">Ver todo</button>
     </div>
 
     <div class="activity-list">
@@ -74,7 +74,10 @@
           </div>
           <div class="activity-details">
             <span class="activity-message">{{ activity.message }}</span>
-            <span class="activity-time">{{ activity.time }}</span>
+            <span class="activity-time">
+              <mat-icon class="time-icon">schedule</mat-icon>
+              {{ activity.time }}
+            </span>
           </div>
           <button mat-icon-button class="action-btn">
             <mat-icon>chevron_right</mat-icon>

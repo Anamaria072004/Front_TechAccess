@@ -30,9 +30,6 @@ export const moduleGuard: CanActivateFn = (route, state) => {
     // Obtenemos los módulos que el ADMIN le asignó en la BD
     const userModuleNames = authService.userModules().map(m => m.toLowerCase());
 
-    // LOG DE DEPURACIÓN: Aquí verás si el vigilante trae el módulo de la BD
-    console.log(`Ruta: ${state.url} | Requiere: ${requiredModule} | Usuario tiene:`, userModuleNames);
-
     // Si la ruta no pide un módulo específico, lo dejamos pasar (ej: inicio)
     if (!requiredModule) return true;
 

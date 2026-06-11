@@ -1,7 +1,11 @@
 .dialog-container {
   width: 460px;
   max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 // ─── Header ───────────────────────────────────────────────
@@ -102,6 +106,7 @@ mat-dialog-actions {
   padding: 12px 24px 20px !important;
   border-top: 1px solid #eeeeee;
   gap: 8px;
+  flex-shrink: 0;
 
   &.justify-center {
     justify-content: center;
@@ -375,3 +380,22 @@ mat-dialog-actions {
     flex: 1;
   }
 }
+
+// ─── Scroll del contenido del modal ───────────────────────
+[mat-dialog-content],
+mat-dialog-content {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  max-height: calc(90vh - 140px) !important; // 90vh - header(65px) - footer(75px)
+  padding: 0 24px !important;
+
+  // Scrollbar premium sutil
+  &::-webkit-scrollbar        { width: 5px; }
+  &::-webkit-scrollbar-track  { background: transparent; }
+  &::-webkit-scrollbar-thumb  {
+    background: rgba(26, 58, 143, 0.2);
+    border-radius: 10px;
+    &:hover { background: rgba(26, 58, 143, 0.4); }
+  }
+}

@@ -1,25 +1,38 @@
 <div class="users-container">
   <div class="page-header">
     <div class="header-info">
-      <h1>
-        <mat-icon>manage_accounts</mat-icon>
-        Gestión de Usuarios
-      </h1>
+      <h1>Gestión de Usuarios</h1>
       <p>Administra los usuarios del sistema, sus roles y accesos.</p>
     </div>
 
-    @if (isAdmin() || isVigilante()) {
     <div class="header-actions">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input 
+          type="text" 
+          [value]="filtroTexto"
+          (input)="aplicarFiltro($event)" 
+          placeholder="Buscar..." 
+          class="search-input"
+        >
+        @if (filtroTexto) {
+          <button class="clear-btn" (click)="limpiarFiltro()" type="button">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+
+      @if (isAdmin() || isVigilante()) {
       <button mat-flat-button (click)="abrirModalNuevo()" [disabled]="loading()">
         <mat-icon>add</mat-icon>
         {{ isVigilante() ? 'Nuevo Visitante' : 'Nuevo Usuario' }}
       </button>
+      }
     </div>
-    }
   </div>
 
   <div class="table-card">
-    <app-data-table 
+    <app-data-table #tabla
       [columns]="userColumns" 
       [dataSource]="usuarios()" 
       [loading]="loading()" 

@@ -71,3 +71,206 @@ mat-form-field {
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
 }
+
+/* --- FILTRO DE BUSQUEDA PREMIUM GLOBAL --- */
+.search-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  max-width: 240px;
+  margin-right: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    color: #64748b;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 40px !important;
+    box-sizing: border-box;
+    padding: 8px 12px 8px 38px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: 500;
+    color: #1e293b;
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px !important;
+    outline: none;
+    transition: all 0.25s ease;
+
+    &::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    &:hover {
+      background-color: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    &:focus {
+      background-color: #ffffff;
+      border-color: var(--color-primary, #1a3a8f);
+      box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.15);
+      
+      & ~ .search-icon {
+        color: var(--color-primary, #1a3a8f);
+      }
+    }
+  }
+
+  .clear-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #e2e8f0;
+      color: #475569;
+    }
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+/* --- DROPDOWN MENÚ DE USUARIO (header) --- */
+
+/* Panel del menú */
+.user-dropdown-menu .mat-mdc-menu-panel {
+  border-radius: 14px !important;
+  box-shadow: 0 8px 32px rgba(26, 58, 143, 0.16), 0 2px 8px rgba(0,0,0,0.08) !important;
+  border: 1px solid rgba(26, 58, 143, 0.1) !important;
+  overflow: hidden !important;
+  min-width: 240px !important;
+  max-width: 280px !important;
+  max-height: none !important;
+}
+
+.user-dropdown-menu .mat-mdc-menu-content {
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  padding: 0 !important;
+}
+
+/* Botón "Cerrar sesión" dentro del mat-menu del header */
+.logout-menu-item.mat-mdc-menu-item,
+button.logout-menu-item {
+  color: #c0392b !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 18px !important;
+  height: 44px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  background: rgba(192, 57, 43, 0.08) !important;
+  border: none !important;
+  transition: background 0.2s ease, color 0.2s ease !important;
+
+  .mdc-list-item__primary-text {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    color: #c0392b !important;
+    font-weight: 600 !important;
+  }
+
+  .mat-icon,
+  mat-icon {
+    color: #c0392b !important;
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    transition: color 0.2s ease !important;
+  }
+
+  &:hover,
+  &:focus {
+    background: rgba(192, 57, 43, 0.16) !important;
+    border-color: rgba(192, 57, 43, 0.45) !important;
+    color: #922b21 !important;
+
+    .mdc-list-item__primary-text { color: #922b21 !important; }
+
+    .mat-icon,
+    mat-icon {
+      color: #922b21 !important;
+    }
+  }
+}
+
+/* --- ESTILO UNIFORME PARA BOTONES DE CABECERA --- */
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+
+  .mat-mdc-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-unelevated-button,
+  .mat-mdc-outlined-button,
+  button[mat-flat-button],
+  button[mat-raised-button] {
+    height: 40px !important;
+    padding: 0 20px !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+
+    .mdc-button__label {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      white-space: nowrap !important;
+    }
+
+    mat-icon {
+      font-size: 18px !important;
+      width: 18px !important;
+      height: 18px !important;
+      margin: 0 !important;
+    }
+  }
+}

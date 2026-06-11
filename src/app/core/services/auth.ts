@@ -48,10 +48,6 @@ export interface AuthResponse {
   providedIn: 'root',
 })
 export class Auth {
-  userRole() {
-      throw new Error('Method not implemented.');
-  }
-
   private http = inject(HttpClient);
   private router = inject(Router);
   private readonly API_URL = 'http://localhost:3000/api/auth';
@@ -116,9 +112,7 @@ export class Auth {
 
   public userRoles = computed(() => {
     const user = this._authStatus()?.user;
-    const roles = user ? user.roles.map(r => r.name.toUpperCase()) : [];
-    console.log('Auth - Roles detectados:', roles);
-    return roles;
+    return user ? user.roles.map(r => r.name.toUpperCase()) : [];
   });
 
   public isVigilante = computed(() => {

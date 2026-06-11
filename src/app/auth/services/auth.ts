@@ -57,18 +57,14 @@ export class Auth {
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
 
-    console.log('Restaurando auth:', { token: !!token, userStr: !!userStr });
-
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr);
-        console.log('Usuario restaurado:', user);
         this._authStatus.set({
           access_token: token,
           user: user
         });
-      } catch (e) {
-        console.error('Error restaurando auth', e);
+      } catch {
         this.logout();
       }
     }
@@ -78,21 +74,14 @@ export class Auth {
   public login(credentials: LoginInterface): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap((response) => {
-        console.log('LOGIN RESPONSE:', response);
-        console.log('USER:', response.user);
-
         this._authStatus.set(response);
 
         if (response.access_token) {
           localStorage.setItem('token', response.access_token);
-          console.log('Token guardado');
         }
 
         if (response.user) {
           localStorage.setItem('user', JSON.stringify(response.user));
-          console.log('Usuario guardado en localStorage:', JSON.parse(localStorage.getItem('user')!));
-        } else {
-          console.error('NO HAY USUARIO EN LA RESPUESTA');
         }
       })
     );

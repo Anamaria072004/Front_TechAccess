@@ -64,11 +64,7 @@
       <!-- Título del panel -->
       <div class="toolbar-greeting">
         <span class="greeting-name">
-          @if (authService.isVigilante()) {
-            Panel Vigilante
-          } @else {
-            Panel Administrativo
-          }
+          {{ panelTitle }}
         </span>
       </div>
 
@@ -76,7 +72,7 @@
 
       <!-- Info del usuario + estado -->
 
-      <div class="toolbar-user-info">
+      <div class="toolbar-user-info" [matMenuTriggerFor]="userMenu">
         <div class="user-avatar">
           <mat-icon>account_circle</mat-icon>
         </div>
@@ -86,7 +82,16 @@
           </span>
           <span class="user-email">{{ currentUser()?.email }}</span>
         </div>
+        <mat-icon class="chevron-icon">expand_more</mat-icon>
       </div>
+
+      <!-- Dropdown menu -->
+      <mat-menu #userMenu="matMenu" xPosition="before" class="user-dropdown-menu">
+        <button mat-menu-item (click)="logout()" class="logout-menu-item">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar sesión</span>
+        </button>
+      </mat-menu>
     </header>
 
     <!-- Contenido de la vista activa (router-outlet) -->

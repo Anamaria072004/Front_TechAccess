@@ -1,0 +1,115 @@
+<div class="modal-wrapper">
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="header-title-wrapper">
+      <div>
+        <h2>Historial de Actividad Completo</h2>
+      </div>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="cerrar()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box-custom">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input 
+        type="text" 
+        [(ngModel)]="filtroTexto" 
+        (input)="aplicarFiltros()" 
+        placeholder="Buscar por nombre o documento..." 
+        class="search-input"
+      >
+      @if (filtroTexto) {
+        <button class="clear-btn" (click)="filtroTexto = ''; aplicarFiltros()" type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="select-wrapper">
+      <label>Tipo</label>
+      <select [(ngModel)]="filtroTipo" (change)="aplicarFiltros()" class="filter-select">
+        <option value="Todos">Todos los accesos</option>
+        <option value="Ingresos">Solo Ingresos</option>
+        <option value="Salidas">Solo Salidas</option>
+      </select>
+    </div>
+
+    <div class="select-wrapper">
+      <label>Rango de Tiempo</label>
+      <select [(ngModel)]="filtroPeriodo" (change)="aplicarFiltros()" class="filter-select">
+        <option value="Todos">Cualquier fecha</option>
+        <option value="Hoy">Hoy</option>
+        <option value="Ayer">Ayer</option>
+        <option value="7dias">Últimos 7 días</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="modal-body">
+    @if (cargando) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Cargando el historial completo...</span>
+      </div>
+    } @else if (hayError) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon" style="color: #fca5a5;">wifi_off</mat-icon>
+        <h3>No se pudo cargar el historial</h3>
+        <p>Verifica que el servidor esté activo e intenta de nuevo.</p>
+        <button mat-stroked-button color="primary" (click)="cargarRegistros()" style="margin-top: 12px;">
+          <mat-icon>refresh</mat-icon> Reintentar
+        </button>
+      </div>
+    } @else {
+      @if (registrosFiltrados.length === 0) {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">search_off</mat-icon>
+          <h3>No se encontraron registros</h3>
+          <p>Prueba ajustando los filtros de búsqueda.</p>
+        </div>
+      } @else {
+        <div class="table-container">
+          <table class="records-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Documento</th>
+                <th>Acción</th>
+                <th>Fecha/Hora</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (reg of registrosFiltrados; track reg) {
+                <tr class="record-row">
+                  <td>
+                    <div class="user-cell">
+                      <div class="avatar-cell">
+                        {{ reg.usuarioNombre.substring(0, 2).toUpperCase() }}
+                      </div>
+                      <span class="user-name">{{ reg.usuarioNombre }}</span>
+                    </div>
+                  </td>
+                  <td class="doc-cell">{{ reg.documento }}</td>
+                  <td>
+                    <span class="type-badge" [ngClass]="reg.tipo.toLowerCase()">
+                      <mat-icon class="badge-icon">{{ reg.tipo === 'Ingreso' ? 'login' : 'logout' }}</mat-icon>
+                      {{ reg.tipo }}
+                    </span>
+                  </td>
+                  <td class="date-cell">{{ reg.timeStr }}</td>
+                  <td class="obs-cell" [title]="reg.observacion">{{ reg.observacion || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+</div>

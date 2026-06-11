@@ -15,7 +15,7 @@
 
                         <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Correo electrónico</mat-label>
-                            <input matInput formControlName="email" type="email" placeholder="nombre@ejemplo.com">
+                            <input matInput formControlName="email" type="email" placeholder="nombre@ejemplo.com" (input)="clearError()">
                             <mat-icon matPrefix>mail</mat-icon>
                             @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
                             <mat-error>Ingresa un correo válido</mat-error>
@@ -28,11 +28,17 @@
 
                         <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Contraseña</mat-label>
-                            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+                            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" (input)="clearError()">
                             <mat-icon matPrefix>lock</mat-icon>
                             <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
                                 <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>
+                            @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+                            <mat-error>La contraseña es obligatoria</mat-error>
+                            }
+                            @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
+                            <mat-error>Mínimo 6 caracteres</mat-error>
+                            }
                         </mat-form-field>
 
                         <div class="form-options">
@@ -40,8 +46,32 @@
                             <a routerLink="/auth/forgot-password" class="forgot-password">¿Olvidaste tu contraseña?</a>
                         </div>
 
-                        <button matButton="filled" class="login-button" [disabled]="loginForm.invalid">
-                            Iniciar Sesión
+                        @if (errorMessage) {
+                          <div class="login-error-msg" [ngClass]="errorType">
+                            @if (errorType === 'not_found') {
+                              <mat-icon>person_off</mat-icon>
+                              <div class="error-text">
+                                <span class="error-title">Usuario no encontrado</span>
+                                <span class="error-desc">{{ errorMessage }}</span>
+                              </div>
+                            } @else if (errorType === 'wrong_password') {
+                              <mat-icon>lock_person</mat-icon>
+                              <div class="error-text">
+                                <span class="error-title">Contraseña incorrecta</span>
+                                <span class="error-desc">{{ errorMessage }}</span>
+                              </div>
+                            } @else {
+                              <mat-icon>wifi_off</mat-icon>
+                              <div class="error-text">
+                                <span class="error-title">Error de conexión</span>
+                                <span class="error-desc">{{ errorMessage }}</span>
+                              </div>
+                            }
+                          </div>
+                        }
+
+                        <button matButton="filled" class="login-button" [disabled]="loginForm.invalid || isLoading">
+                            @if (isLoading) { Ingresando... } @else { Iniciar Sesión }
                         </button>
                     </form>
                 </mat-card-content>

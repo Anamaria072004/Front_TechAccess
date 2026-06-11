@@ -221,6 +221,7 @@ mat-nav-list {
   align-items: center;
   padding: 0 28px;
   height: 68px;
+  flex-shrink: 0;
   background: #ffffff;
   border-bottom: 1px solid #e8edf5;
   box-shadow: 0 2px 12px rgba(26, 58, 143, 0.07);
@@ -262,22 +263,31 @@ mat-nav-list {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px;
+  height: 46px;
+  padding: 0 14px;
   border-radius: 12px;
   background: #f0f4ff;
   border: 1px solid rgba(26, 58, 143, 0.1);
-  cursor: default;
+  cursor: pointer;
   transition: background 0.2s ease;
+  align-self: center;
 
   &:hover {
     background: #e4ebff;
   }
 
   .user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+
     mat-icon {
-      font-size: 2rem;
-      width: 2rem;
-      height: 2rem;
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
       color: #1a3a8f;
     }
   }
@@ -305,6 +315,7 @@ mat-nav-list {
     padding: 6px;
     background: transparent;
     border: none;
+    height: auto;
 
     .user-details { display: none; }
   }

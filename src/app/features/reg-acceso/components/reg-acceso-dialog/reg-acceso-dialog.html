@@ -8,10 +8,12 @@
   </div>
 
   <!-- Banner de modo escaneo -->
-  <div *ngIf="modoEscaneo" class="modo-escaneo-banner">
-    <mat-icon>qr_code_scanner</mat-icon>
-    <span>Documento escaneado automáticamente</span>
-  </div>
+  @if (modoEscaneo) {
+    <div class="modo-escaneo-banner">
+      <mat-icon>qr_code_scanner</mat-icon>
+      <span>Documento escaneado automáticamente</span>
+    </div>
+  }
 
   <div mat-dialog-content>
     <form [formGroup]="accesoForm">
@@ -29,12 +31,16 @@
             autocomplete="off"
             [readonly]="modoEscaneo"
           >
-          <mat-error *ngIf="accesoForm.get('documento')?.hasError('required')">
-            El documento es requerido
-          </mat-error>
-          <mat-error *ngIf="accesoForm.get('documento')?.hasError('pattern')">
-            El documento debe contener solo números
-          </mat-error>
+          @if (accesoForm.get('documento')?.hasError('required')) {
+            <mat-error>
+              El documento es requerido
+            </mat-error>
+          }
+          @if (accesoForm.get('documento')?.hasError('pattern')) {
+            <mat-error>
+              El documento debe contener solo números
+            </mat-error>
+          }
         </mat-form-field>
 
         <button 
@@ -44,16 +50,22 @@
           [disabled]="accesoForm.get('documento')?.invalid || buscando"
           (click)="buscarUsuario()"
         >
-          <mat-icon *ngIf="!buscando">search</mat-icon>
-          <mat-spinner diameter="20" *ngIf="buscando"></mat-spinner>
+          @if (!buscando) {
+            <mat-icon>search</mat-icon>
+          }
+          @if (buscando) {
+            <mat-spinner diameter="20"></mat-spinner>
+          }
           Buscar
         </button>
       </div>
 
-      <div *ngIf="errorMessage" class="error-banner">
-        <mat-icon>error_outline</mat-icon>
-        <span>{{ errorMessage }}</span>
-      </div>
+      @if (errorMessage) {
+        <div class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
 
       @if (usuarioEncontrado) {
         <p class="section-label">Datos del Usuario</p>

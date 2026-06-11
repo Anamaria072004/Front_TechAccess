@@ -1,15 +1,19 @@
 .dashboard-wrapper {
-  padding: 10px 20px 40px;
+  padding: 12px 24px 24px;
   animation: fadeIn 0.4s ease-out forwards;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 10px 16px 16px;
+  }
 }
 
 /* ── HERO BANNER ── */
 .hero-banner {
   background: linear-gradient(135deg, #0d2160 0%, #1a3a8f 60%, #2a52c9 100%);
   border-radius: 20px;
-  padding: 40px;
+  padding: 28px 40px;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -17,7 +21,7 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 15px 30px rgba(26, 58, 143, 0.3);
-  margin-bottom: 30px;
+  margin-bottom: 16px;
 
   .hero-content {
     position: relative;
@@ -75,7 +79,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 16px;
 }
 
 .kpi-card {
@@ -141,7 +145,7 @@
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  padding: 30px;
+  padding: 18px 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.6);
 
@@ -149,19 +153,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 12px;
 
     h2 {
       margin: 0;
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #333;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #475569;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      letter-spacing: 0.2px;
 
       mat-icon {
         color: #39A900;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
     }
   }
@@ -169,71 +177,155 @@
   .activity-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+
+    // Scrollbar visible y elegante
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    // Firefox
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
   }
 
   .activity-item {
     display: flex;
     align-items: center;
-    padding: 15px 20px;
-    background: white;
-    border-radius: 12px;
+    padding: 10px 14px;
+    background: #ffffff;
+    border-radius: 16px;
     gap: 20px;
-    transition: background 0.2s, transform 0.2s;
-    border: 1px solid #f9f9f9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #e8edf8;
+    box-shadow: 0 4px 12px rgba(26, 58, 143, 0.03);
     cursor: pointer;
 
     &:hover {
-      background: #fafafa;
-      transform: translateX(5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      background: #ffffff;
+      transform: translateY(-2px) translateX(4px);
+      box-shadow: 0 8px 24px rgba(26, 58, 143, 0.08);
+      border-color: rgba(26, 58, 143, 0.15);
+      
+      .action-btn {
+        color: #1a3a8f;
+        background: #eef2ff;
+        
+        mat-icon {
+          transform: translateX(2px);
+        }
+      }
     }
 
     .activity-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: transform 0.2s ease;
 
       mat-icon {
-        font-size: 22px;
-        width: 22px;
-        height: 22px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
       }
 
-      &.blue { background: #e3f2fd; color: #1e88e5; }
-      &.green { background: #e8f5e9; color: #43a047; }
-      &.warn { background: #ffebee; color: #e53935; }
-      &.orange { background: #fff3e0; color: #fb8c00; }
+      &.blue {
+        background: #eef2ff;
+        color: #1a3a8f;
+        border: 1px solid #dbeafe;
+      }
+      
+      &.orange {
+        background: #fff8f1;
+        color: #fb8c00;
+        border: 1px solid #ffe8d6;
+      }
+      
+      &.green {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+      }
+      
+      &.warn {
+        background: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+      }
     }
 
     .activity-details {
       flex: 1;
       display: flex;
       flex-direction: column;
+      gap: 3px;
 
       .activity-message {
-        font-weight: 500;
-        color: #444;
-        font-size: 0.95rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #334155;
+        letter-spacing: -0.1px;
+        line-height: 1.4;
       }
 
       .activity-time {
-        font-size: 0.8rem;
-        color: #999;
-        margin-top: 3px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.80rem;
+        color: #94a3b8;
+        font-weight: 500;
+        letter-spacing: 0.1px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        
+        .time-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+          color: #94a3b8;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
     }
 
     .action-btn {
-      color: #ccc;
-      mat-icon { transition: transform 0.2s; }
+      color: #94a3b8;
+      background: #f8fafc;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      border: none;
       
-      &:hover { 
-        color: #39A900; 
-        mat-icon { transform: translateX(3px); }
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        transition: transform 0.2s ease;
       }
     }
   }

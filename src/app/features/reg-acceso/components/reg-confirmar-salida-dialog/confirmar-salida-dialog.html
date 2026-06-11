@@ -23,8 +23,12 @@
       [disabled]="guardando"
       class="btn-confirmar-salida"
     >
-      <mat-icon *ngIf="!guardando">logout</mat-icon>
-      <mat-spinner diameter="20" *ngIf="guardando"></mat-spinner>
+      @if (!guardando) {
+        <mat-icon>logout</mat-icon>
+      }
+      @if (guardando) {
+        <mat-spinner diameter="20"></mat-spinner>
+      }
       {{ guardando ? 'Registrando...' : 'Confirmar Salida' }}
     </button>
   </div>

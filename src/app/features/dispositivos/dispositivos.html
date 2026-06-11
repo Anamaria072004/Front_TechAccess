@@ -7,6 +7,22 @@
     </div>
 
     <div class="header-actions">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input 
+          type="text" 
+          [value]="filtroTexto"
+          (input)="aplicarFiltro($event)" 
+          placeholder="Buscar..." 
+          class="search-input"
+        >
+        @if (filtroTexto) {
+          <button class="clear-btn" (click)="limpiarFiltro()" type="button">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+
       <button mat-flat-button (click)="openRegisterModal()">
         <mat-icon>add</mat-icon>
         Registrar Dispositivo
@@ -15,7 +31,7 @@
   </div>
 
   <div class="table-card">
-    <app-data-table
+    <app-data-table #tabla
       [dataSource]="dispositivos"
       [columns]="dispositivoColumns"
       [loading]="loading"
