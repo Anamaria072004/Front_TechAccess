@@ -9,20 +9,70 @@
   <mat-dialog-content>
     <form [formGroup]="vehiForm">
 
-      <p class="section-label">Identificación</p>
+      <p class="section-label">Propietario</p>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Propietario (N° Documento o Nombre)</mat-label>
+        <input type="text" 
+               matInput 
+               placeholder="Buscar por documento o nombre..." 
+               [formControl]="usuarioSearchControl"
+               [matAutocomplete]="autoUsuario"
+               (focus)="onInputFocus()"
+               (blur)="onInputBlur()">
+
+        <mat-autocomplete #autoUsuario="matAutocomplete" 
+                          [displayWith]="displayUsuarioFn"
+                          (optionSelected)="onUsuarioSelected($event)">
+          @for (user of filteredUsuarios; track user.id) {
+            <mat-option [value]="user">
+              <div class="usuario-option">
+                <strong>{{ user.docNumber }}</strong> - {{ user.name }} {{ user.lastName }}
+                @if (user.email) {
+                  <span class="user-email"> ({{ user.email }})</span>
+                }
+              </div>
+            </mat-option>
+          } @empty {
+            <mat-option disabled>No se encontraron usuarios</mat-option>
+          }
+        </mat-autocomplete>
+
+        @if (vehiForm.get('usuarioId')?.invalid && vehiForm.get('usuarioId')?.touched) {
+          <mat-error>Seleccione un usuario válido</mat-error>
+        }
+      </mat-form-field>
+
+      @if (vehiForm.get('usuarioId')?.value) {
+        <div class="selected-user-info">
+          <mat-icon>person</mat-icon>
+          <span>
+            {{ vehiForm.get('usuarioId')?.value?.docNumber }} -
+            {{ vehiForm.get('usuarioId')?.value?.name }} {{ vehiForm.get('usuarioId')?.value?.lastName }}
+          </span>
+        </div>
+      }
+
+      <p class="section-label">Identificación del Vehículo</p>
       <div class="dialog-row">
         <mat-form-field appearance="outline">
           <mat-label>Número de Placa</mat-label>
-          <input matInput formControlName="placa" placeholder="Ej. ABC123" required />
+          <input matInput formControlName="placa" placeholder="Ej. ABC123" />
+          @if (vehiForm.get('placa')?.invalid && vehiForm.get('placa')?.touched) {
+            <mat-error>La placa es obligatoria</mat-error>
+          }
         </mat-form-field>
+
         <mat-form-field appearance="outline">
           <mat-label>Tipo de Vehículo</mat-label>
-          <mat-select formControlName="tipoVehiculo" required>
+          <mat-select formControlName="tipoVehiculo">
             <mat-option value="Automóvil">Automóvil</mat-option>
             <mat-option value="Motocicleta">Motocicleta</mat-option>
             <mat-option value="Bicicleta">Bicicleta</mat-option>
             <mat-option value="Camioneta">Camioneta</mat-option>
           </mat-select>
+          @if (vehiForm.get('tipoVehiculo')?.invalid && vehiForm.get('tipoVehiculo')?.touched) {
+            <mat-error>El tipo es obligatorio</mat-error>
+          }
         </mat-form-field>
       </div>
 
@@ -30,20 +80,25 @@
       <div class="dialog-row">
         <mat-form-field appearance="outline">
           <mat-label>Marca</mat-label>
-          <input matInput formControlName="marca" placeholder="Ej. Yamaha, Mazda" required />
+          <input matInput formControlName="marca" placeholder="Ej. Yamaha, Mazda" />
+          @if (vehiForm.get('marca')?.invalid && vehiForm.get('marca')?.touched) {
+            <mat-error>La marca es obligatoria</mat-error>
+          }
         </mat-form-field>
+
         <mat-form-field appearance="outline">
           <mat-label>Modelo / Línea</mat-label>
-          <input matInput formControlName="modelo" placeholder="Ej. 2024, MT-03" required />
+          <input matInput formControlName="modelo" placeholder="Ej. 2024, MT-03" />
+          @if (vehiForm.get('modelo')?.invalid && vehiForm.get('modelo')?.touched) {
+            <mat-error>El modelo es obligatorio</mat-error>
+          }
         </mat-form-field>
       </div>
 
       <div class="dialog-row">
-
-        <mat-form-field appearance="outline">
-
+        <mat-form-field appearance="outline" class="full-width">
           <mat-label>Color</mat-label>
-          <mat-select formControlName="color" required>
+          <mat-select formControlName="color">
             <mat-option value="blanco">Blanco</mat-option>
             <mat-option value="negro">Negro</mat-option>
             <mat-option value="gris plata">Gris plata</mat-option>
@@ -51,28 +106,16 @@
             <mat-option value="azul">Azul</mat-option>
             <mat-option value="azul oscuro">Azul oscuro</mat-option>
             <mat-option value="rojo">Rojo</mat-option>
-            <mat-option value="rojo oscuro">rojo oscuro</mat-option>
+            <mat-option value="rojo oscuro">Rojo oscuro</mat-option>
             <mat-option value="verde">Verde</mat-option>
             <mat-option value="marron">Marrón</mat-option>
             <mat-option value="naranja">Naranja</mat-option>
             <mat-option value="otros">Otros</mat-option>
-
           </mat-select>
-
+          @if (vehiForm.get('color')?.invalid && vehiForm.get('color')?.touched) {
+            <mat-error>El color es obligatorio</mat-error>
+          }
         </mat-form-field>
-
-        <mat-form-field appearance="outline">
-
-          <mat-label>Propietario / Conductor</mat-label>
-          <mat-select formControlName="usuarioId" required>
-            @for (u of usuarios; track u) {
-              <mat-option [value]="u.id">
-                {{ u.name }} {{ u.lastName }} ({{ u.docNumber }})
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
       </div>
 
     </form>
