@@ -8,22 +8,6 @@
       <p>Gestiona el registro de visitantes al centro SENA.</p>
     </div>
     <div class="header-actions">
-      <div class="search-box">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input 
-          type="text" 
-          [value]="filtroTexto"
-          (input)="aplicarFiltro($event)" 
-          placeholder="Buscar..." 
-          class="search-input"
-        >
-        @if (filtroTexto) {
-          <button class="clear-btn" (click)="limpiarFiltro()" type="button">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </div>
-
       <button mat-flat-button class="btn-nuevo" (click)="abrirModalNuevoVisitante()"
         [disabled]="loading() || !visitanteRoleId()">
         <mat-icon>person_add</mat-icon>
@@ -33,7 +17,7 @@
   </div>
 
   <div class="table-card">
-    <app-data-table #tabla [columns]="userColumns" [dataSource]="usuarios()" [loading]="loading()" [showEdit]="true"
+    <app-data-table [columns]="userColumns" [dataSource]="usuarios()" [loading]="loading()" [showEdit]="true"
       [showDelete]="false" (onEdit)="editarVisitante($event)"
       (onDelete)="eliminarVisitante($event)" (onView)="verUsuario($event)">
     </app-data-table>

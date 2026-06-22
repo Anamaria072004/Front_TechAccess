@@ -12,8 +12,8 @@
       @if (data.isAdmin || data.readonly) {
         <p class="section-label">Rol</p>
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Roles</mat-label>
-          <mat-select formControlName="roleIds" multiple>
+          <mat-label>Rol</mat-label>
+          <mat-select formControlName="roleIds">
             @for (role of roles(); track role.id) {
               <mat-option [value]="role.id">{{ role.name }}</mat-option>
             }
@@ -72,13 +72,21 @@
         </mat-form-field>
       </div>
 
-      @if (data.isAdmin && !esAprendiz) {
+      @if (data.isAdmin && !data.readonly && !data.vigilanteMode && !esAprendiz && !esVisitante && !esInstructor) {
         <p class="section-label">Seguridad</p>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ data.user?.id ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</mat-label>
           <input matInput formControlName="password" type="password">
+          
           @if (!data.user?.id) {
             <mat-hint>Mínimo 6 caracteres</mat-hint>
+          }
+          
+          @if (userForm.get('password')?.hasError('required')) {
+            <mat-error>La contraseña es obligatoria</mat-error>
+          }
+          @if (userForm.get('password')?.hasError('minlength')) {
+            <mat-error>Debe tener al menos 6 caracteres</mat-error>
           }
         </mat-form-field>
       }
