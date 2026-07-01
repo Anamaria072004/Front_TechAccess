@@ -9,12 +9,14 @@ WORKDIR /app
 
 # Copiar dependencias
 COPY package*.json ./
+
+# Instalar dependencias
 RUN npm install
 
 # Copiar código fuente
 COPY . .
 
-# Construir el proyecto
+# 🔑 CONSTRUIR CON NPX (no usar npm run build)
 RUN npx ng build --configuration=production
 
 # ------- PRODUCCIÓN -------
@@ -23,7 +25,7 @@ FROM nginx:alpine
 # Copiar el build de Angular
 COPY --from=build /app/dist/adso_3063267 /usr/share/nginx/html
 
-# Configurar nginx para SPA (Single Page Application)
+# Configurar nginx para SPA
 RUN echo 'server { \
     listen 80; \
     server_name localhost; \
