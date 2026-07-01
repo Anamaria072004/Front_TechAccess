@@ -14,14 +14,14 @@ RUN npm install
 # Copiar código fuente
 COPY . .
 
-# 🔑 CONSTRUIR CON NPX (NO npm ng build)
+# Construir el proyecto
 RUN npx ng build --configuration=production
 
 # ------- PRODUCCIÓN -------
 FROM nginx:alpine
 
-# Copiar el build de Angular
-COPY --from=build /app/dist/adso_3063267 /usr/share/nginx/html
+# ✅ RUTA CORRECTA: dist/adso_3063267/browser
+COPY --from=build /app/dist/adso_3063267/browser /usr/share/nginx/html
 
 # Configurar nginx para SPA
 RUN echo 'server { \
