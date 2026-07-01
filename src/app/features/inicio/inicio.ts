@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { environment } from '../../environments/environment';
 import { ActividadModalComponent } from './components/actividad-modal/actividad-modal';
 
 @Component({
@@ -53,27 +54,27 @@ export class InicioComponent implements OnInit {
     }
 
     // 2. Traer el conteo real desde las tablas (endpoints)
-    this.http.get<any>('http://localhost:3000/api/users').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/users`).subscribe({
       next: (res) => { this.totalUsuarios = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
       error: () => console.log('Sin usuarios')
     });
 
-    this.http.get<any>('http://localhost:3000/api/vehiculos').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/vehiculos`).subscribe({
       next: (res) => { this.totalVehiculos = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
       error: () => console.log('Sin vehículos')
     });
 
-    this.http.get<any>('http://localhost:3000/api/ficha').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/ficha`).subscribe({
       next: (res) => { this.totalFichas = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
       error: () => console.log('Sin fichas')
     });
 
-    this.http.get<any>('http://localhost:3000/api/dispositivos').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/dispositivos`).subscribe({
       next: (res) => { this.totalDispositivos = res.total !== undefined ? res.total : (res.data || res).length; this.cdr.detectChanges(); },
       error: () => console.log('Sin dispositivos')
     });
 
-    this.http.get<any>('http://localhost:3000/api/reg-acceso').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/reg-acceso`).subscribe({
       next: (res) => { 
         const registros = res.data || res;
         

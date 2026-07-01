@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 interface AccesoMapeado {
   usuarioNombre: string;
@@ -62,7 +63,7 @@ export class ActividadModalComponent implements OnInit {
       }
     }, 10000);
 
-    this.http.get<any>('http://localhost:3000/api/reg-acceso').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/reg-acceso`).subscribe({
       next: (res) => {
         clearTimeout(safetyTimeout);
 

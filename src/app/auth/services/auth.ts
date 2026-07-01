@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { LoginInterface } from '../interfaces/login';
 
 export interface Module {
@@ -37,7 +38,7 @@ export interface AuthResponse {
 })
 export class Auth {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000/api/auth';
+  private readonly API_URL = `${environment.apiUrl}/api/auth`;
 
   private _authStatus = signal<AuthResponse | null>(null);
 

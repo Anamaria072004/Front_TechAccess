@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Acceso, CreateAccesoDto } from '../models/reg-acceso.model';
 import { Usuario } from '@features/users/models/users.model'; // Asegura esta importación
 
@@ -9,10 +10,10 @@ import { Usuario } from '@features/users/models/users.model'; // Asegura esta im
 })
 export class RegAccesoService {
   // Ruta para los accesos
-  private readonly API_URL = 'http://localhost:3000/api/reg-acceso'; 
+  private readonly API_URL = `${environment.apiUrl}/api/reg-acceso`; 
   
   // Ruta espejo para consultar el documento en el módulo de usuarios
-  private readonly USERS_API_URL = 'http://localhost:3000/api/users';
+  private readonly USERS_API_URL = `${environment.apiUrl}/api/users`;
 
   constructor(private http: HttpClient) {}
 
