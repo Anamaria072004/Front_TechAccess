@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Ficha } from '../models/ficha.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Ficha } from '../models/ficha.model';
 })
 export class FichaService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/ficha';
+  private apiUrl = `${environment.apiUrl}/api/ficha`;
 
   getAll(page: number = 1, limit: number = 100): Observable<any> {
     const params = new HttpParams()

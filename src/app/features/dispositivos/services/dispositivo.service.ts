@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Dispositivo } from '../models/dispositivos.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Dispositivo } from '../models/dispositivos.model';
 })
 export class DispositivoService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/dispositivos';
+  private apiUrl = `${environment.apiUrl}/api/dispositivos`;
 
   /**
    * Obtiene la lista de dispositivos con paginación
